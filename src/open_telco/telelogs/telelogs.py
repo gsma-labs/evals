@@ -9,7 +9,7 @@ from inspect_ai.solver import generate, TaskState
 from open_telco.telelogs.utils import maj_at_k
 
 DEFAULT_EVAL_TYPE: Literal["soft", "hard"] = "soft"
-DEFAULT_DATASET = "eaguaida/gsma_sample"
+DEFAULT_DATASET = "GSMA/open_telco"
 DEFAULT_DATASET_NAME = "telelogs"
 DEFAULT_SPLIT = "test"
 

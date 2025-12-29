@@ -6,7 +6,7 @@ from inspect_ai.dataset import FieldSpec, hf_dataset
 from inspect_ai.scorer import accuracy, CORRECT, INCORRECT, Score, scorer, stderr, Target
 from inspect_ai.solver import generate, system_message, TaskState
 
-DEFAULT_DATASET = "eaguaida/gsma_sample"
+DEFAULT_DATASET = "GSMA/open_telco"
 DEFAULT_DATASET_NAME = "telemath"
 DEFAULT_SPLIT = "test"
 

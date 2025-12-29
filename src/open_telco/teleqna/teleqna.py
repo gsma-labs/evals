@@ -4,7 +4,7 @@ from inspect_ai.scorer import choice
 from inspect_ai.solver import multiple_choice
 
 DEFAULT_SUBJECT = "full"
-DEFAULT_DATASET = "eaguaida/gsma_sample"
+DEFAULT_DATASET = "GSMA/open_telco"
 DEFAULT_DATASET_NAME = "teleqna"
 DEFAULT_SPLIT = "test"
 

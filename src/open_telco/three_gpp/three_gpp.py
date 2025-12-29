@@ -3,7 +3,7 @@ from inspect_ai.dataset import FieldSpec, hf_dataset
 from inspect_ai.scorer import pattern
 from inspect_ai.solver import generate
 
-DEFAULT_DATASET = "eaguaida/gsma_sample"
+DEFAULT_DATASET = "GSMA/open_telco"
 DEFAULT_DATASET_NAME = "3gpp_tsg"
 DEFAULT_SPLIT = "test"
 
