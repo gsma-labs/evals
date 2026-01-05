@@ -17,6 +17,9 @@ This project is built on [Inspect AI](https://inspect.aisi.org.uk/), we encourag
 
 ## Collaborators
 
-**Tech & Research:** Huawei, The Linux Foundation, Khalifa University, SK Telecom, Sierra AI, Nvidia
+**Tech & Research:** GSMA, Huawei GTS, The Linux Foundation, Khalifa University, Universitat Pompeu Fabra (UPF), University of Texas, and Queen’s University.
 
-**Telcos:** AT&T, China Telecom, Deutsche Telekom, Orange, Telefonica, Vodafone
+**Telcos:** AT&T, China Telecom, Deutsche Telekom, du, KDDI, KPN, Liberty Global, Orange, Telefónica, Turkcell, Swisscom, Vodafone.
+
+**Industry Labs & SMEs:** NetoAI, Datumo, Adaptive-AI
+
