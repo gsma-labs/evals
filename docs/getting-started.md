@@ -25,16 +25,6 @@ uv sync
 
 If you already have a supported Python version as default, you can skip the `uv python pin` step.
 
-## Dataset Access
-
-Before running evaluations, request access to the benchmark datasets on HuggingFace:
-
-- [TeleQnA](https://huggingface.co/datasets/netop/TeleQnA)
-- [TeleMath](https://huggingface.co/datasets/netop/TeleMath)
-- [TeleLogs](https://huggingface.co/datasets/netop/TeleLogs)
-
-Configure your HuggingFace token with read access to these repositories.
-
 ## Configuration
 
 Create a `.env` file in the root folder:
