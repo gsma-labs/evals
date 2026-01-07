@@ -1,0 +1,38 @@
+# NetworkSlice YAML Scoring Rubric
+
+## Inputs
+- submission: Agent-generated YAML
+- ground_truth: Reference YAML
+- task_context: Original task prompt (contains slice type, application, region)
+
+## Criteria (score 1–5 each)
+
+### Structure
+- S1: YAML parsability (valid=5, minor errors=3, unparseable=1)
+- S2: Root keys present (all 4=5, 2-3=3, ≤1=1)
+- S3: Spec keys present (all 6=5, 4-5=3, ≤3=1)
+- S4: Type correctness (all correct=5, 1-2 errors=3, ≥3 errors=1)
+
+**Root keys**: `apiVersion`, `kind`, `metadata`, `spec`
+**Spec keys**: `sst`, `sd`, `uplink_throughput`, `downlink_throughput`, `max_latency`, `ue_density`
+
+### Ground Truth Alignment
+- G1: `apiVersion` and `kind` match (both=5, one=3, none=1)
+- G2: `sst` and `sd` match (both=5, one=3, none=1)
+- G3: Throughput values match (both=5, one=3, none=1)
+- G4: QoS values match (`max_latency`, `ue_density` both=5, one=3, none=1)
+- G5: Metadata match (`name`, `labels.region` both=5, one=3, none=1)
+
+### Task Context Alignment
+- T1: Slice type matches task (sst corresponds to eMBB=1/URLLC=2/mMTC=3/V2X=4 as requested=5, close=3, wrong=1)
+- T2: Application matches task (`sd` matches requested app=5, partial=3, wrong=1)
+- T3: Region matches task (`labels.region` matches requested datacenter=5, wrong format=3, missing=1)
+
+### Format
+- F1: Throughput units correct (both end with `Mbps`=5, one=3, neither=1)
+- F2: Latency units correct (ends with `ms`=5, alternative notation=3, missing=1)
+- F3: `ue_density` enum valid (exactly `high`/`low`=5, wrong case=3, invalid=1)
+- F4: Name convention (follows `slice-{type}-{app}`=5, partial=3, none=1)
+
+## Scoring
+- final_score = sum(all criteria) × (100 / 80)

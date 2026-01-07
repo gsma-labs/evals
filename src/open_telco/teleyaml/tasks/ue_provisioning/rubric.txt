@@ -1,0 +1,37 @@
+# Subscriber Profile YAML Scoring Rubric
+
+## Inputs
+
+- submission: Agent-generated YAML
+- ground_truth: Reference YAML
+- task_context: Original task prompt
+
+## Criteria (score 1–5 each)
+
+### Structure
+
+- S1: YAML parsability (valid=5, minor errors=3, unparseable=1)
+- S2: Root keys present (all 8=5, 5-7=3, ≤4=1)
+- S3: Nested keys present (all 6=5, 4-5=3, ≤3=1)
+- S4: Type correctness (all correct=5, 1-2 errors=3, ≥3 errors=1)
+
+Root keys: imsi, msisdn, security, subscribed_rau_tau_timer, network_access_mode, subscriber_status, access_restriction_data, slice
+
+Nested keys: security.{k, opc, amf}, slice[0].{sst, sd, default_indicator}
+
+### Ground Truth Alignment
+
+- G1: Identifiers match (both=5, one=3, none=1)
+- G2: Security values match (all 3=5, 1-2=3, none=1)
+- G3: Slice values match (all 3=5, 1-2=3, none=1)
+- G4: Fixed config match (all 4=5, 2-3=3, ≤1=1)
+- G5: Task context alignment (IMSI and sd match task=5, one=3, neither=1)
+
+### Format
+
+- F1: Hex keys are 32 chars (both=5, one=3, neither=1)
+- F2: Numeric strings quoted (all=5, one unquoted=3, multiple=1)
+
+## Scoring
+
+- final_score = sum(all criteria) × (100 / 55)

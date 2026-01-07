@@ -1,0 +1,105 @@
+# Open5GS AMF Configuration Validation Rubric
+
+## Section 1: Syntax & Architecture (15 points)
+
+### S1: YAML Validity (5 points)
+
+| Points | Criteria |
+|--------|----------|
+| 5 | Valid YAML syntax, parseable by standard YAML 1.2 parsers |
+| 4 | Valid but uses deprecated YAML 1.1 features |
+| 3 | Minor formatting issues but structurally valid |
+| 2 | Requires manual correction for parsing |
+| 1 | Invalid/unparseable YAML structure |
+
+### S2: Architecture Compliance (5 points)
+
+| Points | Criteria |
+|--------|----------|
+| 5 | Root key `amf:` present; NRF defined as client (`sbi.client.nrf`) OR omitted (local deployment) |
+| 4 | Correct structure but uses legacy configuration patterns |
+| 3 | Correct structure but unconventional organization |
+| 2 | Minor architectural violations that don't break functionality |
+| 1 | Defines NRF as a server ROOT key inside AMF file (architectural violation) |
+
+### S3: Key Completeness (5 points)
+
+| Points | Criteria |
+|--------|----------|
+| 5 | Contains all essential keys: `sbi`, `ngap`, `guami`, `tai`, `plmn_support` |
+| 4 | Missing one optional key (metrics or relative capacity) |
+| 3 | Missing two optional keys but core functionality intact |
+| 2 | Missing one critical key but can be inferred from defaults |
+| 1 | Missing multiple critical keys required for AMF operation |
+
+---
+
+## Section 2: Network Configuration (15 points)
+
+### N1: Interface Binding (5 points)
+
+| Points | Criteria |
+|--------|----------|
+| 5 | SBI address matches prompt requirement (accepts `127.0.0.5` as valid default); NGAP accepts LIST format for multi-homing SCTP; Ports are valid (1-65535) and contextually appropriate; IP addresses are semantically valid (private ranges for lab, routable for production) |
+| 4 | Correct structure but uses non-standard ports without justification |
+| 3 | Correct format but suboptimal IP ranges (e.g., public IPs in lab context) |
+| 2 | Valid but uses single IP when multi-homing requested |
+| 1 | Hallucinated IPs, invalid ports (out of range), or incorrect format |
+
+### N2: Task Context - PLMN (5 points)
+
+| Points | Criteria |
+|--------|----------|
+| 5 | MCC/MNC strictly match the prompt requirements in all locations (`guami`, `tai`, `plmn_support`) |
+| 4 | Correct in primary locations but inconsistent in secondary locations |
+| 3 | Correct format but uses default when custom requested |
+| 2 | Partially correct (MCC correct but MNC wrong) |
+| 1 | Incorrect PLMN values when prompt specified custom values |
+
+### N3: Network Slicing - S-NSSAI (5 points)
+
+| Points | Criteria |
+|--------|----------|
+| 5 | Slice configurations (SST/SD) match prompt requirements exactly |
+| 5 | (Automatic pass if no slices requested in prompt) |
+| 4 | Correct SST but SD formatting issues |
+| 3 | Partial slice configuration (subset of requested slices) |
+| 2 | Correct slice count but wrong SST/SD values |
+| 1 | Incorrect or missing slices when explicitly requested |
+
+---
+
+## Section 3: Security & Advanced Features (15 points)
+
+### A1: Security Context (5 points)
+
+| Points | Criteria |
+|--------|----------|
+| 5 | Security configuration matches deployment context: **Production/Secure:** Port 443 + TLS keys + AES integrity (NIA2 first) + AES encryption (NEA2 first); **Lab/Default:** Port 7777 + Null encryption acceptable (NEA0 first) |
+| 4 | Secure configuration but uses non-standard cipher order |
+| 3 | Secure but could be optimized (e.g., includes weak ciphers unnecessarily) |
+| 2 | Minimal security (only integrity, no encryption) |
+| 1 | Context mismatch (e.g., null encryption in production prompt) |
+
+### A2: Timer Configuration (5 points)
+
+| Points | Criteria |
+|--------|----------|
+| 5 | Appropriate timer values if specified: T3512 (periodic registration): 54 minutes - 12 hours; T3502 (registration retry): 12 seconds - 2 minutes |
+| 5 | (Automatic pass if no timers requested) |
+| 3 | Timer values outside recommended ranges but functional |
+| 1 | Invalid timer values that would cause operational issues |
+
+### A3: Advanced Features (5 points)
+
+| Points | Criteria |
+|--------|----------|
+| 5 | Correctly implements requested advanced features: emergency service configuration (`emergency_support`), metrics endpoint (`metrics.server`), custom logging (`logger.level`), capacity settings (`relative_capacity`) |
+| 5 | (Automatic pass if no advanced features requested) |
+| 4 | Implements most features but minor configuration issues |
+| 3 | Partial implementation of requested features |
+| 1 | Incorrectly implements or omits explicitly requested features |
+
+---
+
+**Total: 45 points**
