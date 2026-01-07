@@ -1,10 +1,13 @@
+"""Calibration tasks for validating LLM-as-a-judge performance."""
+
 import re
 
 from inspect_ai import Task, task
-from inspect_ai.dataset import FieldSpec, MemoryDataset, Sample, hf_dataset
+from inspect_ai.dataset import MemoryDataset, Sample, hf_dataset, FieldSpec
 from inspect_ai.scorer import Score, Target, mean, scorer
 from inspect_ai.solver import TaskState, generate, system_message
 
+from open_telco.teleyaml.constants import CATEGORY_AMF
 from open_telco.teleyaml.judge.judge import assign_rubrics, get_rubric
 from open_telco.teleyaml.judge.prompts import (
     JUDGE_INSTRUCTIONS,
@@ -29,6 +32,7 @@ def _build_system_prompt() -> str:
 @scorer(metrics=[mean()])
 def mae_scorer():
     """Score by computing absolute error between predicted and ground truth."""
+
     async def score(state: TaskState, target: Target) -> Score:
         response = state.output.completion
         ground_truth = float(target.text)
@@ -71,7 +75,7 @@ def judge_eval() -> Task:
 def judge_calibration() -> Task:
     """Evaluate LLM-as-a-judge on calibration samples with granular scores."""
     calibration_data = get_calibration_samples()
-    rubric = get_rubric("amf_configuration")
+    rubric = get_rubric(CATEGORY_AMF)
 
     samples = [
         Sample(

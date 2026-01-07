@@ -44,15 +44,26 @@ All rubrics normalize scores to 1-100.
 
 Run all tasks:
 ```bash
-uv run teleyaml.py --model <model>
+uv run python -m open_telco.teleyaml.teleyaml --model <model>
 ```
 
 Run individual task:
 ```bash
-uv run inspect eval <task>
+uv run inspect eval open_telco.teleyaml.tasks.amf_configuration:amf_configuration --model <model>
 ```
 
-### Options
+### Task Parameters
+
+All tasks accept the following parameters (can be overridden via `task_with()`):
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `dataset_path` | `otellm/gsma-sample-data` | HuggingFace dataset path |
+| `dataset_name` | `teleyaml` | Dataset configuration name |
+| `split` | `test` | Dataset split |
+| `judge_model` | `openrouter/openai/gpt-oss-120b` | Model for LLM-as-a-judge |
+
+### CLI Options
 
 | Flag | Description |
 |------|-------------|

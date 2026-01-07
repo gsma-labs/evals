@@ -1,69 +1,29 @@
-from textwrap import dedent
-from pathlib import Path
+"""Slice Deployment evaluation task."""
 
-from dotenv import load_dotenv
 from inspect_ai import Task, task
-from inspect_ai.dataset import FieldSpec, hf_dataset
-from inspect_ai.scorer import accuracy, stderr
-from inspect_ai.solver import system_message, generate
 
-from open_telco.teleyaml.judge import judge
-
-load_dotenv()
-
-
-SYSTEM_PROMPT = dedent("""
-You are an expert 5G Core Network Engineer and Configuration Specialist.
-You are assisting a user with {Main Category} by converting requests into
-server-side YAML configurations for {Category}.
-
-<context>
-{Context}
-</context>
-
-Your response must be valid YAML.
-""")
-
-
-def get_rubric() -> str:
-    """Load slice deployment rubric."""
-    path = Path(__file__).parent / "rubric.txt"
-    return path.read_text()
-
-
-def assign_rubric(dataset_samples: list) -> list:
-    """Attach rubric to dataset samples."""
-    rubric = get_rubric()
-    for sample in dataset_samples:
-        sample.metadata["rubric"] = rubric
-    return dataset_samples
+from open_telco.teleyaml.constants import (
+    CATEGORY_SLICE,
+    DEFAULT_DATASET,
+    DEFAULT_DATASET_NAME,
+    DEFAULT_JUDGE_MODEL,
+    DEFAULT_SPLIT,
+)
+from open_telco.teleyaml.tasks.task_factory import create_teleyaml_task
 
 
 @task
-def slice_deployment() -> Task:
-    dataset = hf_dataset(
-        "otellm/gsma-sample-data",
-        name="teleyaml",
-        split="test",
-        sample_fields=FieldSpec(
-            input="Question",
-            target="Answer",
-            metadata=["Main Category", "Category", "Context"],
-        ),
-    )
-
-    filtered_dataset = [
-        sample for sample in dataset
-        if sample.metadata.get("Category") == "Slice Deployment"
-    ]
-
-    judge_models = [
-        "openrouter/openai/gpt-oss-120b",
-    ]
-
-    return Task(
-        dataset=assign_rubric(filtered_dataset),
-        solver=[system_message(SYSTEM_PROMPT), generate()],
-        scorer=judge(model=judge_models),
-        metrics=[accuracy(), stderr()],
+def slice_deployment(
+    dataset_path: str = DEFAULT_DATASET,
+    dataset_name: str = DEFAULT_DATASET_NAME,
+    split: str = DEFAULT_SPLIT,
+    judge_model: str | list[str] | None = DEFAULT_JUDGE_MODEL,
+) -> Task:
+    """Evaluate model on Slice Deployment YAML generation."""
+    return create_teleyaml_task(
+        category=CATEGORY_SLICE,
+        dataset_path=dataset_path,
+        dataset_name=dataset_name,
+        split=split,
+        judge_model=judge_model,
     )

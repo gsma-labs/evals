@@ -1,3 +1,5 @@
+"""Prompt templates for LLM-as-a-judge scoring."""
+
 from textwrap import dedent
 
 
