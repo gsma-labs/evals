@@ -19,7 +19,6 @@ Clone the repository, pin a supported Python version, and install dependencies:
 ```bash
 git clone https://github.com/gsma/open_telco.git
 cd open_telco
-uv python pin 3.11  # Pin to a supported version (3.10-3.13)
 uv sync
 ```
 
