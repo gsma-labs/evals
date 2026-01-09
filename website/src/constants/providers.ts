@@ -55,10 +55,21 @@ export const PROVIDER_LOGOS: Record<string, string> = {
 };
 
 /**
- * Get provider color with fallback
+ * Get provider color with fallback (case-insensitive lookup)
  */
 export function getProviderColor(provider: string): string {
-  return PROVIDER_COLORS[provider] || PROVIDER_COLORS['Other'];
+  // Try exact match first
+  if (PROVIDER_COLORS[provider]) {
+    return PROVIDER_COLORS[provider];
+  }
+
+  // Try case-insensitive lookup
+  const lowerProvider = provider.toLowerCase();
+  const matchedKey = Object.keys(PROVIDER_COLORS).find(
+    key => key.toLowerCase() === lowerProvider
+  );
+
+  return matchedKey ? PROVIDER_COLORS[matchedKey] : PROVIDER_COLORS['Other'];
 }
 
 /**
@@ -74,9 +85,22 @@ export function getProviderLogo(provider: string): string | undefined {
 export const LOGO_BASE_PATH = '/open_telco/img/logos/';
 
 /**
- * Get full logo URL for a provider
+ * Get full logo URL for a provider (case-insensitive lookup)
  */
 export function getProviderLogoUrl(provider: string): string | undefined {
-  const logo = PROVIDER_LOGOS[provider];
+  // Try exact match first
+  let logo = PROVIDER_LOGOS[provider];
+
+  // If no exact match, try case-insensitive lookup
+  if (!logo) {
+    const lowerProvider = provider.toLowerCase();
+    const matchedKey = Object.keys(PROVIDER_LOGOS).find(
+      key => key.toLowerCase() === lowerProvider
+    );
+    if (matchedKey) {
+      logo = PROVIDER_LOGOS[matchedKey];
+    }
+  }
+
   return logo ? `${LOGO_BASE_PATH}${logo}` : undefined;
 }

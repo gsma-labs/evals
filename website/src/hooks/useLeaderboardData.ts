@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import type { LeaderboardEntry } from '../types/leaderboard';
-import { parseJSON } from '../utils/parseJSON';
+import { transformHuggingFaceData } from '../utils/transformHuggingFaceData';
+
+const HUGGINGFACE_API_URL =
+  'https://datasets-server.huggingface.co/rows?dataset=GSMA/leaderboard&config=default&split=train&offset=0&length=100';
 
 interface UseLeaderboardDataResult {
   data: LeaderboardEntry[];
@@ -14,13 +17,13 @@ export function useLeaderboardData(): UseLeaderboardDataResult {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/open_telco/data/leaderboard.json')
+    fetch(HUGGINGFACE_API_URL)
       .then(response => {
-        if (!response.ok) throw new Error('Failed to load leaderboard data');
+        if (!response.ok) throw new Error('Failed to load leaderboard data from HuggingFace');
         return response.json();
       })
       .then(jsonData => {
-        setData(parseJSON(jsonData));
+        setData(transformHuggingFaceData(jsonData));
         setLoading(false);
       })
       .catch(err => {
