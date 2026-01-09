@@ -1,4 +1,4 @@
-"""Main menu screen for Open Telco CLI."""
+"""Provider selection screen."""
 
 from textual.app import ComposeResult
 from textual.binding import Binding
@@ -6,6 +6,8 @@ from textual.containers import Container, Vertical
 from textual.reactive import reactive
 from textual.screen import Screen
 from textual.widgets import Static
+
+from open_telco.cli.config import PROVIDERS, EnvManager
 
 GSMA_RED = "#a61d2d"
 
@@ -59,11 +61,14 @@ class Menu(Vertical):
         return self.items[self.selected_index]
 
 
-class MainMenuScreen(Screen[None]):
-    """Main menu screen with navigation options."""
+class ProviderSelectScreen(Screen[None]):
+    """Screen for selecting AI provider."""
+
+    # Store provider names list for lookup
+    PROVIDER_NAMES = list(PROVIDERS.keys())
 
     DEFAULT_CSS = """
-    MainMenuScreen {
+    ProviderSelectScreen {
         background: #0d1117;
         padding: 2 4;
         layout: vertical;
@@ -107,7 +112,8 @@ class MainMenuScreen(Screen[None]):
     """
 
     BINDINGS = [
-        Binding("q", "quit", "Quit"),
+        Binding("q", "go_back", "Back"),
+        Binding("escape", "go_back", "Back"),
         Binding("enter", "select", "Select"),
         Binding("up", "up", "Up", show=False),
         Binding("down", "down", "Down", show=False),
@@ -115,20 +121,14 @@ class MainMenuScreen(Screen[None]):
         Binding("j", "down", "Down", show=False),
     ]
 
-    MENU_ITEMS = (
-        ("set-model", "set_models"),
-        ("run-evals", "run_evals"),
-        ("preview-leaderboard", "preview_leaderboard"),
-        ("submit", "submit"),
-    )
-
     def compose(self) -> ComposeResult:
-        yield Static("OPEN TELCO", id="header")
+        yield Static("Select Provider", id="header")
+        menu_items = tuple((name, name) for name in PROVIDERS.keys())
         with Container(id="menu-container"):
-            yield Menu(*self.MENU_ITEMS)
+            yield Menu(*menu_items)
         yield Static("", id="spacer")
         yield Static(
-            "[#8b949e]↵[/] select [#30363d]·[/] [#8b949e]q[/] quit",
+            "[#8b949e]↵[/] select [#30363d]·[/] [#8b949e]q[/] back",
             id="footer",
             markup=True,
         )
@@ -140,18 +140,27 @@ class MainMenuScreen(Screen[None]):
         self.query_one(Menu).move_down()
 
     def action_select(self) -> None:
-        label, action = self.query_one(Menu).get_selected()
-        if action == "set_models":
-            from open_telco.cli.screens.set_models import SetModelsCategoryScreen
+        label, provider_name = self.query_one(Menu).get_selected()
 
-            self.app.push_screen(SetModelsCategoryScreen())
-        elif action == "run_evals":
-            self.notify("Run Evals - Coming soon!", title="Info")
-        elif action == "preview_leaderboard":
-            self.notify("Preview Leaderboard - Coming soon!", title="Info")
-        elif action == "submit":
-            self.notify("Submit - Coming soon!", title="Info")
+        # Check if API key already exists
+        env_manager = EnvManager()
+        env_key = PROVIDERS[provider_name]["env_key"]
 
-    def action_quit(self) -> None:
-        """Quit the application."""
-        self.app.exit()
+        if env_manager.has_key(env_key):
+            # Key exists, go directly to model input
+            from open_telco.cli.screens.set_models.model_input import (
+                ModelInputScreen,
+            )
+
+            self.app.push_screen(ModelInputScreen(provider_name, from_api_key_screen=False))
+        else:
+            # Key doesn't exist, ask for it first
+            from open_telco.cli.screens.set_models.api_key_input import (
+                ApiKeyInputScreen,
+            )
+
+            self.app.push_screen(ApiKeyInputScreen(provider_name))
+
+    def action_go_back(self) -> None:
+        """Go back to category menu."""
+        self.app.pop_screen()

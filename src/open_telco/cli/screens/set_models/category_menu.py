@@ -1,4 +1,4 @@
-"""Main menu screen for Open Telco CLI."""
+"""Model category selection screen."""
 
 from textual.app import ComposeResult
 from textual.binding import Binding
@@ -15,12 +15,17 @@ class MenuItem(Static):
 
     highlighted = reactive(False)
 
-    def __init__(self, label: str, action: str) -> None:
+    def __init__(self, label: str, action: str, disabled: bool = False) -> None:
         super().__init__()
         self.label = label
         self.action = action
+        self.disabled = disabled
 
     def render(self) -> str:
+        if self.disabled:
+            if self.highlighted:
+                return f"[{GSMA_RED}]›[/] [#484f58]{self.label}[/]"
+            return f"  [#484f58]{self.label}[/]"
         if self.highlighted:
             return f"[{GSMA_RED}]›[/] [bold #f0f6fc]{self.label}[/]"
         return f"  [#8b949e]{self.label}[/]"
@@ -31,13 +36,13 @@ class Menu(Vertical):
 
     selected_index = reactive(0)
 
-    def __init__(self, *items: tuple[str, str]) -> None:
+    def __init__(self, *items: tuple[str, str, bool]) -> None:
         super().__init__()
         self.items = items
 
     def compose(self) -> ComposeResult:
-        for label, action in self.items:
-            yield MenuItem(label, action)
+        for label, action, disabled in self.items:
+            yield MenuItem(label, action, disabled)
 
     def on_mount(self) -> None:
         self._update_highlight()
@@ -55,15 +60,15 @@ class Menu(Vertical):
     def move_down(self) -> None:
         self.selected_index = (self.selected_index + 1) % len(self.items)
 
-    def get_selected(self) -> tuple[str, str]:
+    def get_selected(self) -> tuple[str, str, bool]:
         return self.items[self.selected_index]
 
 
-class MainMenuScreen(Screen[None]):
-    """Main menu screen with navigation options."""
+class SetModelsCategoryScreen(Screen[None]):
+    """Screen for selecting model category."""
 
     DEFAULT_CSS = """
-    MainMenuScreen {
+    SetModelsCategoryScreen {
         background: #0d1117;
         padding: 2 4;
         layout: vertical;
@@ -107,7 +112,8 @@ class MainMenuScreen(Screen[None]):
     """
 
     BINDINGS = [
-        Binding("q", "quit", "Quit"),
+        Binding("q", "go_back", "Back"),
+        Binding("escape", "go_back", "Back"),
         Binding("enter", "select", "Select"),
         Binding("up", "up", "Up", show=False),
         Binding("down", "down", "Down", show=False),
@@ -116,19 +122,19 @@ class MainMenuScreen(Screen[None]):
     ]
 
     MENU_ITEMS = (
-        ("set-model", "set_models"),
-        ("run-evals", "run_evals"),
-        ("preview-leaderboard", "preview_leaderboard"),
-        ("submit", "submit"),
+        ("Lab APIs", "lab_apis", False),
+        ("Cloud APIs (Coming soon)", "cloud_apis", True),
+        ("Open - Hosted (Coming soon)", "open_hosted", True),
+        ("Open - Local (Coming soon)", "open_local", True),
     )
 
     def compose(self) -> ComposeResult:
-        yield Static("OPEN TELCO", id="header")
+        yield Static("set-model", id="header")
         with Container(id="menu-container"):
             yield Menu(*self.MENU_ITEMS)
         yield Static("", id="spacer")
         yield Static(
-            "[#8b949e]↵[/] select [#30363d]·[/] [#8b949e]q[/] quit",
+            "[#8b949e]↵[/] select [#30363d]·[/] [#8b949e]q[/] back",
             id="footer",
             markup=True,
         )
@@ -140,18 +146,18 @@ class MainMenuScreen(Screen[None]):
         self.query_one(Menu).move_down()
 
     def action_select(self) -> None:
-        label, action = self.query_one(Menu).get_selected()
-        if action == "set_models":
-            from open_telco.cli.screens.set_models import SetModelsCategoryScreen
+        label, action, disabled = self.query_one(Menu).get_selected()
+        if disabled:
+            self.notify("Coming soon!", title="Info")
+            return
 
-            self.app.push_screen(SetModelsCategoryScreen())
-        elif action == "run_evals":
-            self.notify("Run Evals - Coming soon!", title="Info")
-        elif action == "preview_leaderboard":
-            self.notify("Preview Leaderboard - Coming soon!", title="Info")
-        elif action == "submit":
-            self.notify("Submit - Coming soon!", title="Info")
+        if action == "lab_apis":
+            from open_telco.cli.screens.set_models.provider_select import (
+                ProviderSelectScreen,
+            )
 
-    def action_quit(self) -> None:
-        """Quit the application."""
-        self.app.exit()
+            self.app.push_screen(ProviderSelectScreen())
+
+    def action_go_back(self) -> None:
+        """Go back to main menu."""
+        self.app.pop_screen()

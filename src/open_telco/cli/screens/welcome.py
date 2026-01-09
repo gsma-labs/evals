@@ -1,7 +1,7 @@
 """Welcome screen for Open Telco CLI."""
 
 from textual.app import ComposeResult
-from textual.containers import Center, Container, Vertical
+from textual.containers import Container, Vertical
 from textual.screen import Screen
 from textual.widgets import Static
 
@@ -39,7 +39,8 @@ class WelcomeScreen(Screen[None]):
 
     DEFAULT_CSS = """
     WelcomeScreen {
-        align: center middle;
+        background: #0d1117;
+        padding: 2 4;
     }
 
     WelcomeScreen > Container {
@@ -48,33 +49,29 @@ class WelcomeScreen(Screen[None]):
     }
 
     WelcomeScreen .banner {
-        text-align: center;
-        color: $primary;
+        color: #a61d2d;
         margin-bottom: 1;
     }
 
     WelcomeScreen .ascii-art {
-        text-align: center;
-        color: $secondary;
+        color: #a61d2d;
     }
 
     WelcomeScreen .prompt {
-        text-align: center;
         margin-top: 2;
-        color: $text-muted;
+        color: #8b949e;
     }
     """
 
     def compose(self) -> ComposeResult:
         """Compose the welcome screen layout."""
-        with Center():
-            with Container():
-                with Vertical():
-                    yield Static(WELCOME_BANNER, classes="banner")
-                    yield Static(ASCII_OPEN, classes="ascii-art")
-                    yield Static("", classes="spacer")
-                    yield Static(ASCII_TELCO, classes="ascii-art")
-                    yield Static(PROMPT, classes="prompt")
+        with Container():
+            with Vertical():
+                yield Static(WELCOME_BANNER, classes="banner")
+                yield Static(ASCII_OPEN, classes="ascii-art")
+                yield Static("", classes="spacer")
+                yield Static(ASCII_TELCO, classes="ascii-art")
+                yield Static(PROMPT, classes="prompt")
 
     def action_continue(self) -> None:
         """Handle continue action - go to main menu."""

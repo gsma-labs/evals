@@ -12,7 +12,7 @@ class OpenTelcoApp(App[None]):
 
     CSS = """
     Screen {
-        background: $surface;
+        background: #0d1117;
     }
     """
 

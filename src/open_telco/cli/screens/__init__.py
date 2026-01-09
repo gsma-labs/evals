@@ -1,6 +1,7 @@
 """CLI screens package."""
 
 from open_telco.cli.screens.main_menu import MainMenuScreen
+from open_telco.cli.screens.set_models import SetModelsCategoryScreen
 from open_telco.cli.screens.welcome import WelcomeScreen
 
-__all__ = ["MainMenuScreen", "WelcomeScreen"]
+__all__ = ["MainMenuScreen", "SetModelsCategoryScreen", "WelcomeScreen"]
