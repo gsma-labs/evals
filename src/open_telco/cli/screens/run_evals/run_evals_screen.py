@@ -1,22 +1,24 @@
 """Run-evals screen with checklist UI."""
 
+from __future__ import annotations
+
+import subprocess
 from datetime import date
 from enum import Enum
 from pathlib import Path
 
 import pandas as pd
 from inspect_ai.analysis import evals_df
+from textual import work
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Container, Vertical
 from textual.reactive import reactive
 from textual.screen import Screen
+from textual.timer import Timer
 from textual.widgets import Static
-from textual import work
 
 from open_telco.cli.config import EnvManager
-
-GSMA_RED = "#a61d2d"
 
 # All available tasks for full evaluation
 ALL_TASKS = [
@@ -98,7 +100,6 @@ class RunEvalsScreen(Screen[None]):
 
     DEFAULT_CSS = """
     RunEvalsScreen {
-        background: #0d1117;
         padding: 2 4;
         layout: vertical;
     }
@@ -164,7 +165,9 @@ class RunEvalsScreen(Screen[None]):
         self.env_manager = EnvManager()
         self.model = self.env_manager.get("INSPECT_EVAL_MODEL") or ""
         self.tasks = ALL_TASKS
-        self._animation_timer = None
+        self._animation_timer: Timer | None = None
+        self._current_process: subprocess.Popen[str] | None = None
+        self._cancelled: bool = False
 
     def compose(self) -> ComposeResult:
         yield Static("run-evals", id="header")
@@ -193,17 +196,48 @@ class RunEvalsScreen(Screen[None]):
         # Start the step sequence
         self._run_steps()
 
+    def on_unmount(self) -> None:
+        """Clean up when screen is removed."""
+        if self._animation_timer:
+            self._animation_timer.stop()
+            self._animation_timer = None
+        # Kill any running subprocess
+        self._kill_current_process()
+
+    def _kill_current_process(self) -> None:
+        """Terminate and kill any running subprocess."""
+        if self._current_process is not None:
+            try:
+                self._current_process.terminate()
+                self._current_process.wait(timeout=2)
+            except subprocess.TimeoutExpired:
+                self._current_process.kill()
+                self._current_process.wait()
+            except Exception:
+                pass  # Process may have already exited
+            finally:
+                self._current_process = None
+
     def _animate_dots(self) -> None:
         """Animate the cooking... dots for running items."""
+        has_running = False
         for item in self.query(ChecklistItem):
             if item.status == "running":
+                has_running = True
                 item.dot_count = (item.dot_count + 1) % 3
+
+        # Pause timer when nothing is animating to save CPU
+        if not has_running and self._animation_timer:
+            self._animation_timer.pause()
 
     def _set_step_status(self, step_id: str, status: str) -> None:
         """Set the status of a checklist step."""
         for item in self.query(ChecklistItem):
             if item.step_id == step_id:
                 item.status = status
+                # Resume timer when a step starts running
+                if status == "running" and self._animation_timer:
+                    self._animation_timer.resume()
                 break
 
     def _set_step_score(self, step_id: str, score: float) -> None:
@@ -229,35 +263,52 @@ class RunEvalsScreen(Screen[None]):
     @work(exclusive=True, thread=True)
     def _run_steps(self) -> None:
         """Run all preflight steps sequentially."""
-        # Step 1: Mini Open Telco test
-        self.app.call_from_thread(self._set_step_status, "mini_test", "running")
-        self.app.call_from_thread(self._set_stage, Stage.MINI_TEST)
+        try:
+            if self._cancelled:
+                return
 
-        result = self._run_mini_test()
-        if not result["passed"]:
-            self.app.call_from_thread(self._set_step_status, "mini_test", "failed")
-            self.app.call_from_thread(self._show_error, result["error"])
-            return
+            # Step 1: Mini Open Telco test
+            self.app.call_from_thread(self._set_step_status, "mini_test", "running")
+            self.app.call_from_thread(self._set_stage, Stage.MINI_TEST)
 
-        self.app.call_from_thread(self._set_step_status, "mini_test", "passed")
-        if result.get("score") is not None:
-            self.app.call_from_thread(self._set_step_score, "mini_test", result["score"])
+            result = self._run_mini_test()
+            if self._cancelled:
+                return
+            if not result["passed"]:
+                self.app.call_from_thread(self._set_step_status, "mini_test", "failed")
+                self.app.call_from_thread(self._show_error, result["error"])
+                return
 
-        # Step 2: Stress-testing
-        self.app.call_from_thread(self._set_step_status, "stress_test", "running")
-        self.app.call_from_thread(self._set_stage, Stage.STRESS_TEST)
+            self.app.call_from_thread(self._set_step_status, "mini_test", "passed")
+            if result.get("score") is not None:
+                self.app.call_from_thread(self._set_step_score, "mini_test", result["score"])
 
-        result = self._run_stress_test()
-        if not result["passed"]:
-            self.app.call_from_thread(self._set_step_status, "stress_test", "failed")
-            self.app.call_from_thread(self._show_error, result["error"])
-            return
+            if self._cancelled:
+                return
 
-        self.app.call_from_thread(self._set_step_status, "stress_test", "passed")
+            # Step 2: Stress-testing
+            self.app.call_from_thread(self._set_step_status, "stress_test", "running")
+            self.app.call_from_thread(self._set_stage, Stage.STRESS_TEST)
 
-        # Step 3: Ready for full benchmark
-        self.app.call_from_thread(self._set_step_status, "ready", "passed")
-        self.app.call_from_thread(self._show_ready)
+            result = self._run_stress_test()
+            if self._cancelled:
+                return
+            if not result["passed"]:
+                self.app.call_from_thread(self._set_step_status, "stress_test", "failed")
+                self.app.call_from_thread(self._show_error, result["error"])
+                return
+
+            self.app.call_from_thread(self._set_step_status, "stress_test", "passed")
+
+            if self._cancelled:
+                return
+
+            # Step 3: Ready for full benchmark
+            self.app.call_from_thread(self._set_step_status, "ready", "passed")
+            self.app.call_from_thread(self._show_ready)
+        except Exception:
+            # App may have been closed while worker was running
+            pass
 
     def _set_stage(self, stage: Stage) -> None:
         """Set the current stage."""
@@ -265,8 +316,8 @@ class RunEvalsScreen(Screen[None]):
 
     def _run_mini_test(self) -> dict:
         """Run mini Open Telco test via subprocess with --limit 1."""
-        import subprocess
-        from pathlib import Path
+        if self._cancelled:
+            return {"passed": False, "error": "cancelled"}
 
         # Find src/open_telco directory (where tasks are located)
         # Path: cli/screens/run_evals/run_evals_screen.py -> src/open_telco
@@ -287,20 +338,33 @@ class RunEvalsScreen(Screen[None]):
         ]
 
         try:
-            result = subprocess.run(
+            self._current_process = subprocess.Popen(
                 cmd,
-                capture_output=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
                 text=True,
-                timeout=120,
                 cwd=open_telco_dir,
             )
 
-            if result.returncode == 0:
+            try:
+                stdout, stderr = self._current_process.communicate(timeout=120)
+                returncode = self._current_process.returncode
+            except subprocess.TimeoutExpired:
+                self._current_process.kill()
+                self._current_process.wait()
+                return {"passed": False, "error": "Mini test timed out after 120s"}
+            finally:
+                self._current_process = None
+
+            if self._cancelled:
+                return {"passed": False, "error": "cancelled"}
+
+            if returncode == 0:
                 # Parse score from output
-                score = self._parse_score(result.stdout + result.stderr)
+                score = self._parse_score(stdout + stderr)
                 return {"passed": True, "score": score}
             else:
-                error_output = result.stderr or result.stdout or "Eval failed"
+                error_output = stderr or stdout or "Eval failed"
                 # Get last meaningful line for error display
                 error_lines = [
                     line for line in error_output.strip().split("\n") if line.strip()
@@ -308,9 +372,8 @@ class RunEvalsScreen(Screen[None]):
                 error_msg = error_lines[-1] if error_lines else "Eval failed"
                 return {"passed": False, "error": error_msg}
 
-        except subprocess.TimeoutExpired:
-            return {"passed": False, "error": "Mini test timed out after 120s"}
         except Exception as e:
+            self._current_process = None
             return {"passed": False, "error": str(e)}
 
     def _parse_score(self, output: str) -> float | None:
@@ -353,7 +416,8 @@ class RunEvalsScreen(Screen[None]):
     @work(exclusive=True, thread=True)
     def _run_full_eval(self) -> None:
         """Run full evaluation via subprocess in background."""
-        import subprocess
+        if self._cancelled:
+            return
 
         open_telco_dir = self._get_open_telco_dir()
 
@@ -372,28 +436,51 @@ class RunEvalsScreen(Screen[None]):
         ]
 
         try:
-            result = subprocess.run(
+            self._current_process = subprocess.Popen(
                 cmd,
-                capture_output=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
                 text=True,
-                timeout=600,  # 10 minutes for full eval
                 cwd=open_telco_dir,
             )
 
-            if result.returncode == 0:
+            try:
+                stdout, stderr = self._current_process.communicate(timeout=600)
+                returncode = self._current_process.returncode
+            except subprocess.TimeoutExpired:
+                self._current_process.kill()
+                self._current_process.wait()
+                try:
+                    self.app.call_from_thread(
+                        self._show_error, "Evaluation timed out after 10 minutes"
+                    )
+                except Exception:
+                    pass
+                return
+            finally:
+                self._current_process = None
+
+            if self._cancelled:
+                return
+
+            if returncode == 0:
                 self.app.call_from_thread(self._export_and_show_results)
             else:
-                error_output = result.stderr or result.stdout or "Eval failed"
+                error_output = stderr or stdout or "Eval failed"
                 error_lines = [
                     line for line in error_output.strip().split("\n") if line.strip()
                 ]
                 error_msg = error_lines[-1] if error_lines else "Eval failed"
-                self.app.call_from_thread(self._show_error, f"Evaluation failed: {error_msg}")
+                self.app.call_from_thread(
+                    self._show_error, f"Evaluation failed: {error_msg}"
+                )
 
-        except subprocess.TimeoutExpired:
-            self.app.call_from_thread(self._show_error, "Evaluation timed out after 10 minutes")
         except Exception as e:
-            self.app.call_from_thread(self._show_error, f"Evaluation failed: {e}")
+            self._current_process = None
+            try:
+                self.app.call_from_thread(self._show_error, f"Evaluation failed: {e}")
+            except Exception:
+                pass  # App may have been closed
 
     def _export_and_show_results(self) -> None:
         """Export results to parquet and show preview."""
@@ -422,7 +509,10 @@ class RunEvalsScreen(Screen[None]):
             )
 
         except Exception as e:
-            self.app.call_from_thread(self._show_error, f"Export failed: {e}")
+            try:
+                self.app.call_from_thread(self._show_error, f"Export failed: {e}")
+            except Exception:
+                pass  # App may have been closed
 
     def _parse_model_display_name(self, model_str: str) -> str:
         """Parse model string to display format: 'model_name (Provider)'."""
@@ -566,9 +656,9 @@ class RunEvalsScreen(Screen[None]):
         )
 
     def action_cancel(self) -> None:
-        """Cancel and go back."""
-        if self._animation_timer:
-            self._animation_timer.stop()
+        """Cancel and go back, killing any running process."""
+        self._cancelled = True
+        self._kill_current_process()
         self.app.pop_screen()
 
     def action_confirm(self) -> None:
@@ -576,6 +666,5 @@ class RunEvalsScreen(Screen[None]):
         if self.stage == Stage.READY:
             self._start_full_eval()
         elif self.stage == Stage.COMPLETE:
-            if self._animation_timer:
-                self._animation_timer.stop()
+            # Timer cleanup is handled by on_unmount
             self.app.pop_screen()
