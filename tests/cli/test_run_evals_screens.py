@@ -12,6 +12,7 @@ from open_telco.cli.screens.main_menu import MainMenuScreen
 from open_telco.cli.screens.run_evals import RunEvalsScreen
 from open_telco.cli.screens.run_evals.run_evals_screen import (
     ChecklistItem,
+    TaskSelectScreen,
     Stage,
     TASK_TO_COLUMN,
     PROVIDER_NAMES,
@@ -23,7 +24,7 @@ class TestRunEvalsNavigation:
 
     @pytest.mark.asyncio
     async def test_run_evals_navigates_to_screen(self) -> None:
-        """Selecting run-evals should go to RunEvalsScreen."""
+        """Selecting run-evals should go to RunEvalsScreen or TaskSelectScreen."""
         app = OpenTelcoApp()
         async with app.run_test() as pilot:
             # Welcome -> Main Menu
@@ -34,11 +35,12 @@ class TestRunEvalsNavigation:
             await pilot.press("down")
             await pilot.press("enter")
 
-            assert isinstance(pilot.app.screen, RunEvalsScreen)
+            # Could be RunEvalsScreen or TaskSelectScreen (if preflights already passed)
+            assert isinstance(pilot.app.screen, (RunEvalsScreen, TaskSelectScreen))
 
     @pytest.mark.asyncio
     async def test_back_from_run_evals_returns_to_main(self) -> None:
-        """Pressing q on run-evals screen returns to main menu."""
+        """Pressing q from run-evals flow returns to main menu."""
         app = OpenTelcoApp()
         async with app.run_test() as pilot:
             # Navigate to run-evals screen
@@ -46,16 +48,19 @@ class TestRunEvalsNavigation:
             await pilot.press("down")  # Select run-evals
             await pilot.press("enter")  # Go to run-evals
 
-            assert isinstance(pilot.app.screen, RunEvalsScreen)
+            # Could be RunEvalsScreen or TaskSelectScreen
+            assert isinstance(pilot.app.screen, (RunEvalsScreen, TaskSelectScreen))
 
-            # Go back
+            # Go back (may need to press q twice if TaskSelectScreen is pushed)
             await pilot.press("q")
+            if isinstance(pilot.app.screen, RunEvalsScreen):
+                await pilot.press("q")
 
             assert isinstance(pilot.app.screen, MainMenuScreen)
 
     @pytest.mark.asyncio
     async def test_escape_from_run_evals_returns_to_main(self) -> None:
-        """Pressing escape on run-evals screen returns to main menu."""
+        """Pressing escape from run-evals flow returns to main menu."""
         app = OpenTelcoApp()
         async with app.run_test() as pilot:
             # Navigate to run-evals screen
@@ -63,10 +68,13 @@ class TestRunEvalsNavigation:
             await pilot.press("down")
             await pilot.press("enter")
 
-            assert isinstance(pilot.app.screen, RunEvalsScreen)
+            # Could be RunEvalsScreen or TaskSelectScreen
+            assert isinstance(pilot.app.screen, (RunEvalsScreen, TaskSelectScreen))
 
-            # Go back with escape
+            # Go back with escape (may need to press twice if TaskSelectScreen is pushed)
             await pilot.press("escape")
+            if isinstance(pilot.app.screen, RunEvalsScreen):
+                await pilot.press("escape")
 
             assert isinstance(pilot.app.screen, MainMenuScreen)
 
@@ -79,22 +87,31 @@ class TestRunEvalsScreen:
         """Screen should have 3 checklist items."""
         app = OpenTelcoApp()
         async with app.run_test() as pilot:
-            # Navigate to run-evals screen
-            await pilot.press("enter")
-            await pilot.press("down")
-            await pilot.press("enter")
+            # Mock preflight check to return False so we stay on RunEvalsScreen
+            with patch(
+                "open_telco.cli.screens.run_evals.run_evals_screen.RunEvalsScreen._check_preflight_passed",
+                return_value=False,
+            ):
+                # Navigate to run-evals screen
+                await pilot.press("enter")
+                await pilot.press("down")
+                await pilot.press("enter")
 
-            assert isinstance(pilot.app.screen, RunEvalsScreen)
+                # Wait for screen to stabilize
+                await pilot.pause()
 
-            # Check that all checklist items exist
-            items = list(pilot.app.screen.query(ChecklistItem))
-            assert len(items) == 3
+                # Should be on RunEvalsScreen (not TaskSelectScreen since preflights haven't passed)
+                assert isinstance(pilot.app.screen, RunEvalsScreen)
 
-            # Verify step IDs
-            step_ids = [item.step_id for item in items]
-            assert "mini_test" in step_ids
-            assert "stress_test" in step_ids
-            assert "ready" in step_ids
+                # Check that all checklist items exist
+                items = list(pilot.app.screen.query(ChecklistItem))
+                assert len(items) == 3
+
+                # Verify step IDs
+                step_ids = [item.step_id for item in items]
+                assert "mini_test" in step_ids
+                assert "stress_test" in step_ids
+                assert "ready" in step_ids
 
     @pytest.mark.asyncio
     async def test_screen_shows_model_info(self) -> None:
@@ -160,7 +177,8 @@ class TestChecklistItem:
         item.status = "running"
         item.dot_count = 1
         rendered = item.render()
-        assert "[◐]" in rendered
+        # PROGRESS_FRAMES = ["○", "◔", "◑", "◕", "●"], so dot_count=1 gives ◔
+        assert "[◔]" in rendered
         assert "cooking" in rendered
         assert "Test item" in rendered
 
@@ -216,6 +234,107 @@ class TestChecklistItem:
         assert "[✓]" in rendered
         assert "Test item" in rendered
         assert "score" not in rendered
+
+
+class TestTaskChecklistItem:
+    """Test TaskChecklistItem widget for task selection."""
+
+    def test_task_checklist_item_selected_render(self) -> None:
+        """Selected task should render with [X] checkbox."""
+        from open_telco.cli.screens.run_evals.run_evals_screen import TaskChecklistItem
+
+        item = TaskChecklistItem("telelogs/telelogs.py", "telelogs", "task_0")
+        item.selected = True
+        rendered = item.render()
+        assert "[X]" in rendered
+        assert "telelogs" in rendered
+
+    def test_task_checklist_item_unselected_render(self) -> None:
+        """Unselected task should render with [ ] checkbox."""
+        from open_telco.cli.screens.run_evals.run_evals_screen import TaskChecklistItem
+
+        item = TaskChecklistItem("telelogs/telelogs.py", "telelogs", "task_0")
+        item.selected = False
+        rendered = item.render()
+        assert "[ ]" in rendered
+        assert "telelogs" in rendered
+
+    def test_task_checklist_item_toggle(self) -> None:
+        """Toggle should switch selected state."""
+        from open_telco.cli.screens.run_evals.run_evals_screen import TaskChecklistItem
+
+        item = TaskChecklistItem("telelogs/telelogs.py", "telelogs", "task_0")
+        assert item.selected is True  # Default is selected
+
+        item.toggle()
+        assert item.selected is False
+
+        item.toggle()
+        assert item.selected is True
+
+    def test_task_checklist_item_highlighted_render(self) -> None:
+        """Highlighted task should render with bold text."""
+        from open_telco.cli.screens.run_evals.run_evals_screen import TaskChecklistItem
+
+        item = TaskChecklistItem("telelogs/telelogs.py", "telelogs", "task_0")
+        item.highlighted = True
+        rendered = item.render()
+        assert "bold" in rendered
+        assert "telelogs" in rendered
+
+
+class TestTaskSelectScreen:
+    """Test TaskSelectScreen functionality."""
+
+    @pytest.mark.asyncio
+    async def test_task_select_screen_shows_all_tasks(self) -> None:
+        """TaskSelectScreen should show all 4 tasks."""
+        from open_telco.cli.screens.run_evals.run_evals_screen import (
+            TaskSelectScreen,
+            TaskChecklistItem,
+            ALL_TASKS,
+        )
+        from textual.app import App
+
+        class TestApp(App):
+            def on_mount(self) -> None:
+                self.push_screen(TaskSelectScreen("openai/gpt-4o"))
+
+        app = TestApp()
+        async with app.run_test() as pilot:
+            await pilot.pause()
+
+            items = list(pilot.app.screen.query(TaskChecklistItem))
+            assert len(items) == len(ALL_TASKS)
+
+    @pytest.mark.asyncio
+    async def test_task_select_screen_toggle_selection(self) -> None:
+        """Space should toggle task selection."""
+        from open_telco.cli.screens.run_evals.run_evals_screen import (
+            TaskSelectScreen,
+            TaskChecklistItem,
+        )
+        from textual.app import App
+
+        class TestApp(App):
+            def on_mount(self) -> None:
+                self.push_screen(TaskSelectScreen("openai/gpt-4o"))
+
+        app = TestApp()
+        async with app.run_test() as pilot:
+            await pilot.pause()
+
+            items = list(pilot.app.screen.query(TaskChecklistItem))
+            # First item should be selected by default
+            assert items[0].selected is True
+
+            # Toggle with space
+            await pilot.press("space")
+            assert items[0].selected is False
+
+            # Toggle again
+            await pilot.press("space")
+            assert items[0].selected is True
 
 
 class TestScoreParsing:
