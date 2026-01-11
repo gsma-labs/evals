@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import json
+import os
+import signal
 import subprocess
 from datetime import date
 from enum import Enum
@@ -36,6 +39,14 @@ TASK_TO_COLUMN = {
     "three_gpp": "3gpp_tsg",
 }
 
+# Map task paths to display names for selection UI
+TASK_DISPLAY_NAMES = {
+    "telelogs/telelogs.py": "telelogs",
+    "telemath/telemath.py": "telemath",
+    "teleqna/teleqna.py": "teleqna",
+    "three_gpp/three_gpp.py": "3gpp_tsg",
+}
+
 # Map provider prefixes to display names
 PROVIDER_NAMES = {
     "openai": "Openai",
@@ -68,8 +79,11 @@ class Stage(Enum):
 class ChecklistItem(Static):
     """A checklist item with animated progress indicator."""
 
+    # Progress circle animation frames: empty → quarter → half → three-quarter → full
+    PROGRESS_FRAMES = ["○", "◔", "◑", "◕", "●"]
+
     status = reactive("pending")  # pending, running, passed, failed
-    dot_count = reactive(0)  # For "cooking." animation: 0, 1, 2
+    dot_count = reactive(0)  # For animation cycle: 0-4 (circle frames)
     score: reactive[float | None] = reactive(None)  # Optional score to display
 
     def __init__(self, label: str, step_id: str) -> None:
@@ -85,9 +99,10 @@ class ChecklistItem(Static):
         if self.status == "pending":
             return f"  [#484f58][ ][/] [#8b949e]{self.label}[/]"
         elif self.status == "running":
-            dots = "." * (self.dot_count + 1)
-            padding = " " * (3 - self.dot_count - 1)
-            return f"  [#f0883e][◐][/] [#f0f6fc]{self.label}[/]  [#f0883e]cooking{dots}{padding}[/]"
+            frame = self.PROGRESS_FRAMES[self.dot_count % 5]
+            dots = "." * ((self.dot_count % 3) + 1)
+            padding = " " * (2 - (self.dot_count % 3))
+            return f"  [#f0883e][{frame}][/] [#f0f6fc]{self.label}[/]  [#f0883e]cooking{dots}{padding}[/]"
         elif self.status == "passed":
             return f"  [#3fb950][✓][/] [#f0f6fc]{self.label}[/]{score_text}"
         elif self.status == "failed":
@@ -95,19 +110,173 @@ class ChecklistItem(Static):
         return f"  [#484f58][ ][/] [#8b949e]{self.label}[/]"
 
 
-class RunEvalsScreen(Screen[None]):
-    """Screen for running evaluations with 3-step checklist."""
+class TaskChecklistItem(Static):
+    """A selectable task checklist item with [X] checkbox in GSMA_RED."""
+
+    selected = reactive(True)  # Default all selected
+    highlighted = reactive(False)
+
+    def __init__(self, task_name: str, display_name: str, item_id: str) -> None:
+        super().__init__(id=item_id)
+        self.task_name = task_name  # e.g., "telelogs/telelogs.py"
+        self.display_name = display_name  # e.g., "telelogs"
+
+    def render(self) -> str:
+        # Use GSMA_RED (#a61d2d) for the [X] checkbox
+        checkbox = "[#a61d2d][X][/]" if self.selected else "[#484f58][ ][/]"
+        if self.highlighted:
+            return f"  {checkbox} [bold #f0f6fc]{self.display_name}[/]"
+        return f"  {checkbox} [#8b949e]{self.display_name}[/]"
+
+    def toggle(self) -> None:
+        self.selected = not self.selected
+
+
+class TaskSelectScreen(Screen[list[str] | None]):
+    """Screen for selecting which tasks to run."""
 
     DEFAULT_CSS = """
-    RunEvalsScreen {
-        padding: 2 4;
+    TaskSelectScreen {
+        padding: 0 4;
         layout: vertical;
     }
 
     #header {
         color: #a61d2d;
         text-style: bold;
-        padding: 1 0 2 0;
+        padding: 0 0 2 0;
+        height: auto;
+    }
+
+    #model-info {
+        color: #8b949e;
+        padding: 0 2 1 2;
+        height: auto;
+    }
+
+    #task-header {
+        color: #8b949e;
+        padding: 1 2 0 2;
+        height: auto;
+    }
+
+    #task-list {
+        height: auto;
+        padding: 0 2;
+    }
+
+    TaskChecklistItem {
+        height: 1;
+        padding: 0;
+        background: transparent;
+    }
+
+    #spacer {
+        height: 1fr;
+    }
+
+    #footer {
+        dock: bottom;
+        height: 1;
+        color: #484f58;
+    }
+    """
+
+    BINDINGS = [
+        Binding("q", "cancel", "Cancel/Back"),
+        Binding("escape", "cancel", "Cancel/Back"),
+        Binding("enter", "confirm", "Confirm", show=False),
+        Binding("space", "toggle_task", "Toggle Task", show=False),
+        Binding("up", "move_up", "Move Up", show=False),
+        Binding("down", "move_down", "Move Down", show=False),
+        Binding("k", "move_up", "Move Up", show=False),
+        Binding("j", "move_down", "Move Down", show=False),
+    ]
+
+    def __init__(self, model: str) -> None:
+        super().__init__()
+        self.model = model
+        self._selected_index: int = 0
+
+    def compose(self) -> ComposeResult:
+        yield Static("run-evals", id="header")
+        yield Static(
+            f"model: [#f0f6fc]{self.model}[/]", id="model-info", markup=True
+        )
+        yield Static("[#8b949e]select tasks to run:[/]", id="task-header", markup=True)
+        with Vertical(id="task-list"):
+            for i, task in enumerate(ALL_TASKS):
+                display_name = TASK_DISPLAY_NAMES.get(task, task)
+                item = TaskChecklistItem(task, display_name, f"task_{i}")
+                if i == 0:
+                    item.highlighted = True
+                yield item
+        yield Static("", id="spacer")
+        yield Static(
+            "[#8b949e]space[/] toggle [#30363d]|[/] "
+            "[#8b949e]enter[/] run-selected [#30363d]|[/] "
+            "[#8b949e]q[/] cancel",
+            id="footer",
+            markup=True,
+        )
+
+    def _get_task_items(self) -> list[TaskChecklistItem]:
+        """Get all task checklist items."""
+        return list(self.query(TaskChecklistItem))
+
+    def _update_highlight(self) -> None:
+        """Update which task is highlighted."""
+        items = self._get_task_items()
+        for i, item in enumerate(items):
+            item.highlighted = i == self._selected_index
+
+    def action_move_up(self) -> None:
+        """Move task selection up."""
+        items = self._get_task_items()
+        if items and self._selected_index > 0:
+            self._selected_index -= 1
+            self._update_highlight()
+
+    def action_move_down(self) -> None:
+        """Move task selection down."""
+        items = self._get_task_items()
+        if items and self._selected_index < len(items) - 1:
+            self._selected_index += 1
+            self._update_highlight()
+
+    def action_toggle_task(self) -> None:
+        """Toggle selection of current task."""
+        items = self._get_task_items()
+        if items and 0 <= self._selected_index < len(items):
+            items[self._selected_index].toggle()
+
+    def action_confirm(self) -> None:
+        """Confirm selection and return selected tasks."""
+        items = self._get_task_items()
+        selected = [item.task_name for item in items if item.selected]
+        if not selected:
+            self.notify("select at least one task", title="warning")
+            return
+        self.dismiss(selected)
+
+    def action_cancel(self) -> None:
+        """Cancel and return None."""
+        self.dismiss(None)
+
+
+class RunEvalsScreen(Screen[None]):
+    """Screen for running evaluations with 3-step checklist."""
+
+    DEFAULT_CSS = """
+    RunEvalsScreen {
+        padding: 0 4;
+        layout: vertical;
+    }
+
+    #header {
+        color: #a61d2d;
+        text-style: bold;
+        padding: 0 0 2 0;
         height: auto;
     }
 
@@ -141,6 +310,12 @@ class RunEvalsScreen(Screen[None]):
         height: auto;
     }
 
+    #viewer-url {
+        color: #58a6ff;
+        padding: 1 2;
+        height: auto;
+    }
+
     #spacer {
         height: 1fr;
     }
@@ -167,6 +342,7 @@ class RunEvalsScreen(Screen[None]):
         self.tasks = ALL_TASKS
         self._animation_timer: Timer | None = None
         self._current_process: subprocess.Popen[str] | None = None
+        self._viewer_process: subprocess.Popen[str] | None = None
         self._cancelled: bool = False
 
     def compose(self) -> ComposeResult:
@@ -181,13 +357,14 @@ class RunEvalsScreen(Screen[None]):
                 yield ChecklistItem("stress-testing", "stress_test")
                 yield ChecklistItem("go", "ready")
         yield Static("", id="error-message", markup=True)
+        yield Static("", id="viewer-url", markup=True)
         yield Static("", id="spacer")
         yield Static("[#8b949e]q[/] cancel", id="footer", markup=True)
 
     def on_mount(self) -> None:
         """Start the preflight checks."""
         # Start animation timer
-        self._animation_timer = self.set_interval(0.4, self._animate_dots)
+        self._animation_timer = self.set_interval(0.6, self._animate_dots)
 
         if not self.model:
             self._show_error("no-model-configured. use set-model first.")
@@ -203,20 +380,119 @@ class RunEvalsScreen(Screen[None]):
             self._animation_timer = None
         # Kill any running subprocess
         self._kill_current_process()
+        # Stop the viewer subprocess
+        self._stop_viewer()
 
     def _kill_current_process(self) -> None:
-        """Terminate and kill any running subprocess."""
+        """Terminate and kill any running subprocess and its process group."""
         if self._current_process is not None:
             try:
-                self._current_process.terminate()
+                # Try to kill the entire process group first
+                try:
+                    pgid = os.getpgid(self._current_process.pid)
+                    os.killpg(pgid, signal.SIGTERM)
+                except (ProcessLookupError, OSError):
+                    # Process group doesn't exist or already dead, try direct terminate
+                    self._current_process.terminate()
+
                 self._current_process.wait(timeout=2)
             except subprocess.TimeoutExpired:
-                self._current_process.kill()
+                # Process didn't respond to SIGTERM, escalate to SIGKILL
+                try:
+                    pgid = os.getpgid(self._current_process.pid)
+                    os.killpg(pgid, signal.SIGKILL)
+                except (ProcessLookupError, OSError):
+                    self._current_process.kill()
                 self._current_process.wait()
             except Exception:
                 pass  # Process may have already exited
             finally:
                 self._current_process = None
+
+    def _start_viewer(self) -> None:
+        """Start inspect view subprocess for live monitoring."""
+        import time
+
+        if self._viewer_process is not None:
+            return  # Already running
+
+        open_telco_dir = self._get_open_telco_dir()
+
+        # Ensure log directory exists
+        log_dir = open_telco_dir / "logs" / "leaderboard"
+        log_dir.mkdir(parents=True, exist_ok=True)
+
+        cmd = [
+            "uv",
+            "run",
+            "inspect",
+            "view",
+            "start",
+            "--log-dir",
+            "logs/leaderboard",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "7575",
+        ]
+
+        try:
+            self._viewer_process = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                cwd=open_telco_dir,
+                start_new_session=True,
+            )
+
+            # Brief delay to check if process started successfully
+            time.sleep(0.3)
+
+            # Check if process exited immediately (indicates failure)
+            if self._viewer_process.poll() is not None:
+                # Process already exited - read error
+                _, stderr = self._viewer_process.communicate()
+                error_msg = stderr.strip().split("\n")[-1] if stderr else "Unknown error"
+                self._viewer_process = None
+                self.query_one("#viewer-url", Static).update(
+                    f"[#f85149]viewer failed: {error_msg}[/]"
+                )
+                return
+
+            # Update UI with viewer URL
+            self.query_one("#viewer-url", Static).update(
+                "[#58a6ff]view live at:[/] [#f0f6fc]http://127.0.0.1:7575[/]"
+            )
+        except Exception as e:
+            self._viewer_process = None
+            self.query_one("#viewer-url", Static).update(
+                f"[#f85149]viewer failed: {e}[/]"
+            )
+
+    def _stop_viewer(self) -> None:
+        """Stop the inspect view subprocess."""
+        if self._viewer_process is not None:
+            try:
+                try:
+                    pgid = os.getpgid(self._viewer_process.pid)
+                    os.killpg(pgid, signal.SIGTERM)
+                except (ProcessLookupError, OSError):
+                    self._viewer_process.terminate()
+
+                try:
+                    self._viewer_process.wait(timeout=2)
+                except subprocess.TimeoutExpired:
+                    try:
+                        pgid = os.getpgid(self._viewer_process.pid)
+                        os.killpg(pgid, signal.SIGKILL)
+                    except (ProcessLookupError, OSError):
+                        self._viewer_process.kill()
+                    self._viewer_process.wait()
+            except (ProcessLookupError, OSError):
+                pass
+            finally:
+                self._viewer_process = None
 
     def _animate_dots(self) -> None:
         """Animate the cooking... dots for running items."""
@@ -224,7 +500,7 @@ class RunEvalsScreen(Screen[None]):
         for item in self.query(ChecklistItem):
             if item.status == "running":
                 has_running = True
-                item.dot_count = (item.dot_count + 1) % 3
+                item.dot_count = (item.dot_count + 1) % 5
 
         # Pause timer when nothing is animating to save CPU
         if not has_running and self._animation_timer:
@@ -254,17 +530,81 @@ class RunEvalsScreen(Screen[None]):
         self.query_one("#footer", Static).update("[#8b949e]q[/] back")
 
     def _show_ready(self) -> None:
-        """Show ready state - all checks passed."""
+        """Show ready state - push task selection screen."""
         self.stage = Stage.READY
-        self.query_one("#footer", Static).update(
-            "[#8b949e]enter[/] run-full-eval [#30363d]|[/] [#8b949e]q[/] cancel"
-        )
+        self.app.push_screen(TaskSelectScreen(self.model), self._on_task_selection)
+
+    def _on_task_selection(self, selected: list[str] | None) -> None:
+        """Handle task selection result from TaskSelectScreen."""
+        if selected is None:
+            # User cancelled - go back to main menu
+            self.app.pop_screen()
+            return
+        self.tasks = selected
+        self._start_full_eval()
+
+    def _check_preflight_passed(self) -> bool:
+        """Check if model has already passed mini-open-telco preflights.
+
+        Scans logs/preflight/*.json for files where:
+        - eval.model matches current INSPECT_EVAL_MODEL
+        - status == "success"
+        - All 4 tasks have passing logs
+
+        Returns:
+            True if all 4 task preflights passed for this model
+        """
+        open_telco_dir = self._get_open_telco_dir()
+        preflight_dir = open_telco_dir / "logs" / "preflight"
+
+        if not preflight_dir.exists():
+            return False
+
+        # Required tasks to find
+        required_tasks = {"telelogs", "telemath", "teleqna", "three_gpp"}
+        found_tasks: set[str] = set()
+
+        for json_file in preflight_dir.glob("*.json"):
+            try:
+                with open(json_file, "r") as f:
+                    data = json.load(f)
+
+                # Check if this log matches our model and status is success
+                if data.get("status") != "success":
+                    continue
+
+                eval_info = data.get("eval", {})
+                log_model = eval_info.get("model", "")
+
+                if log_model != self.model:
+                    continue
+
+                # Extract task name from task field
+                task_name = eval_info.get("task", "")
+                if task_name in required_tasks:
+                    found_tasks.add(task_name)
+
+            except (json.JSONDecodeError, OSError):
+                continue
+
+        return found_tasks == required_tasks
 
     @work(exclusive=True, thread=True)
     def _run_steps(self) -> None:
         """Run all preflight steps sequentially."""
         try:
             if self._cancelled:
+                return
+
+            # Check if preflights already passed for this model
+            preflight_passed = self._check_preflight_passed()
+
+            if preflight_passed:
+                # Skip mini-test and stress-test, mark them as passed
+                self.app.call_from_thread(self._set_step_status, "mini_test", "passed")
+                self.app.call_from_thread(self._set_step_status, "stress_test", "passed")
+                self.app.call_from_thread(self._set_step_status, "ready", "passed")
+                self.app.call_from_thread(self._show_ready)
                 return
 
             # Step 1: Mini Open Telco test
@@ -335,6 +675,8 @@ class RunEvalsScreen(Screen[None]):
             "1",
             "--log-dir",
             "logs/preflight",
+            "--log-format",
+            "json",
         ]
 
         try:
@@ -344,6 +686,7 @@ class RunEvalsScreen(Screen[None]):
                 stderr=subprocess.PIPE,
                 text=True,
                 cwd=open_telco_dir,
+                start_new_session=True,  # Create new process group for clean termination
             )
 
             try:
@@ -403,6 +746,15 @@ class RunEvalsScreen(Screen[None]):
     def _start_full_eval(self) -> None:
         """Start the full evaluation."""
         self.stage = Stage.RUNNING_EVAL
+
+        # Ensure log directory exists for viewer
+        open_telco_dir = self._get_open_telco_dir()
+        log_dir = open_telco_dir / "logs" / "leaderboard"
+        log_dir.mkdir(parents=True, exist_ok=True)
+
+        # Start viewer immediately so URL is visible
+        self._start_viewer()
+
         self.query_one("#error-message", Static).update(
             "[#8b949e]running-full-evaluation...[/]"
         )
@@ -429,10 +781,10 @@ class RunEvalsScreen(Screen[None]):
             *self.tasks,
             "--model",
             self.model,
-            "--limit",
-            "1",
             "--log-dir",
             "logs/leaderboard",
+            "--log-format",
+            "json",
         ]
 
         try:
@@ -442,17 +794,18 @@ class RunEvalsScreen(Screen[None]):
                 stderr=subprocess.PIPE,
                 text=True,
                 cwd=open_telco_dir,
+                start_new_session=True,  # Create new process group for clean termination
             )
 
             try:
-                stdout, stderr = self._current_process.communicate(timeout=600)
+                stdout, stderr = self._current_process.communicate(timeout=3600)
                 returncode = self._current_process.returncode
             except subprocess.TimeoutExpired:
                 self._current_process.kill()
                 self._current_process.wait()
                 try:
                     self.app.call_from_thread(
-                        self._show_error, "Evaluation timed out after 10 minutes"
+                        self._show_error, "Evaluation timed out after 1 hour"
                     )
                 except Exception:
                     pass
@@ -571,14 +924,28 @@ class RunEvalsScreen(Screen[None]):
 
                 score = eval_row.get("score_headline_value")
                 stderr = eval_row.get("score_headline_stderr")
-                n_samples = eval_row.get("samples_completed", eval_row.get("samples", 0))
 
-                if score is not None:
+                # Get n_samples from dataset_sample_ids (the actual samples evaluated)
+                # dataset_sample_ids is stored as a JSON string like "[1, 2, 3, ...]"
+                dataset_sample_ids = eval_row.get("dataset_sample_ids", "[]")
+                if isinstance(dataset_sample_ids, str):
+                    import json
+                    try:
+                        sample_ids = json.loads(dataset_sample_ids)
+                        n_samples = len(sample_ids) if isinstance(sample_ids, list) else 0
+                    except (json.JSONDecodeError, TypeError):
+                        n_samples = 0
+                elif hasattr(dataset_sample_ids, "__len__"):
+                    n_samples = len(dataset_sample_ids)
+                else:
+                    n_samples = eval_row.get("completed_samples", eval_row.get("total_samples", 0))
+
+                if pd.notna(score):
                     score_val = float(score) * 100 if float(score) <= 1.0 else float(score)
                     stderr_val = (
-                        float(stderr) * 100 if stderr and float(stderr) <= 1.0 else (float(stderr) if stderr else 0.0)
+                        float(stderr) * 100 if pd.notna(stderr) and float(stderr) <= 1.0 else (float(stderr) if pd.notna(stderr) else 0.0)
                     )
-                    n_samples_val = float(n_samples) if n_samples else 0.0
+                    n_samples_val = float(n_samples) if pd.notna(n_samples) else 0.0
                     row[column_name] = [score_val, stderr_val, n_samples_val]
 
             results.append(row)
@@ -663,8 +1030,6 @@ class RunEvalsScreen(Screen[None]):
 
     def action_confirm(self) -> None:
         """Handle enter key based on current stage."""
-        if self.stage == Stage.READY:
-            self._start_full_eval()
-        elif self.stage == Stage.COMPLETE:
+        if self.stage == Stage.COMPLETE:
             # Timer cleanup is handled by on_unmount
             self.app.pop_screen()
