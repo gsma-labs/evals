@@ -12,49 +12,80 @@ import pytest
 
 from open_telco.cli.app import OpenTelcoApp
 from open_telco.cli.config.env_manager import PROVIDERS, EnvManager
-from open_telco.cli.screens.set_models import ModelInputScreen
 from open_telco.cli.types import Result
 
 
 class TestModelStorage:
     """Test that model name is saved correctly via EnvManager.set()."""
 
-    async def test_model_name_saved_via_env_manager(
+    async def test_env_manager_set_called_once_on_model_submit(
         self,
         tmp_path: Path,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
-        """Entering a model name should call EnvManager.set() with correct args."""
-        # Setup: Create .env with OpenAI API key
+        """Submitting a model should call EnvManager.set() exactly once."""
         temp_env = tmp_path / ".env"
         temp_env.write_text('OPENAI_API_KEY="test-key"\n')
         monkeypatch.chdir(tmp_path)
 
-        # Create mock for EnvManager.set()
         mock_set = MagicMock(return_value=Result.ok(True))
-
         app = OpenTelcoApp()
 
         with patch.object(EnvManager, "set", mock_set):
             async with app.run_test() as pilot:
-                # Navigate: Welcome -> MainMenu -> SetModelsCategory -> ProviderSelect
                 await pilot.press("enter")  # Welcome -> MainMenu
                 await pilot.press("enter")  # MainMenu -> SetModelsCategory
                 await pilot.press("enter")  # SetModelsCategory -> ProviderSelect
-
-                # OpenAI is first provider (index 0), select it
                 await pilot.press("enter")  # ProviderSelect -> ModelInputScreen
+                await pilot.press("enter")  # Submit pre-filled model
 
-                assert isinstance(pilot.app.screen, ModelInputScreen)
-
-                # The input has example model pre-filled, submit it
-                await pilot.press("enter")
-
-                # Verify EnvManager.set() was called with the example model
                 mock_set.assert_called_once()
-                call_args = mock_set.call_args[0]
-                assert call_args[0] == "INSPECT_EVAL_MODEL"
-                assert call_args[1] == PROVIDERS["OpenAI"]["example_model"]
+
+    async def test_env_manager_set_uses_correct_env_key(
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """EnvManager.set() should use INSPECT_EVAL_MODEL as the env key."""
+        temp_env = tmp_path / ".env"
+        temp_env.write_text('OPENAI_API_KEY="test-key"\n')
+        monkeypatch.chdir(tmp_path)
+
+        mock_set = MagicMock(return_value=Result.ok(True))
+        app = OpenTelcoApp()
+
+        with patch.object(EnvManager, "set", mock_set):
+            async with app.run_test() as pilot:
+                await pilot.press("enter")  # Welcome -> MainMenu
+                await pilot.press("enter")  # MainMenu -> SetModelsCategory
+                await pilot.press("enter")  # SetModelsCategory -> ProviderSelect
+                await pilot.press("enter")  # ProviderSelect -> ModelInputScreen
+                await pilot.press("enter")  # Submit pre-filled model
+
+                assert mock_set.call_args[0][0] == "INSPECT_EVAL_MODEL"
+
+    async def test_env_manager_set_saves_example_model_value(
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """EnvManager.set() should save the pre-filled example model value."""
+        temp_env = tmp_path / ".env"
+        temp_env.write_text('OPENAI_API_KEY="test-key"\n')
+        monkeypatch.chdir(tmp_path)
+
+        mock_set = MagicMock(return_value=Result.ok(True))
+        app = OpenTelcoApp()
+
+        with patch.object(EnvManager, "set", mock_set):
+            async with app.run_test() as pilot:
+                await pilot.press("enter")  # Welcome -> MainMenu
+                await pilot.press("enter")  # MainMenu -> SetModelsCategory
+                await pilot.press("enter")  # SetModelsCategory -> ProviderSelect
+                await pilot.press("enter")  # ProviderSelect -> ModelInputScreen
+                await pilot.press("enter")  # Submit pre-filled model
+
+                assert mock_set.call_args[0][1] == PROVIDERS["OpenAI"]["example_model"]
 
     async def test_custom_model_name_saved(
         self,
