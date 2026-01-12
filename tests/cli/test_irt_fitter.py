@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from open_telco.cli.services.irt_fitter import (
     BENCHMARKS,
     IRTParameters,
@@ -26,18 +28,48 @@ class TestSigmoid:
         """Large negative values should approach 0."""
         assert sigmoid(-10) < 0.01
 
-    def test_sigmoid_numerical_stability(self) -> None:
+    @pytest.mark.parametrize(
+        ("value", "check_lower_inclusive"),
+        [
+            pytest.param(-1000, True, id="extreme_negative_returns_valid_probability"),
+            pytest.param(1000, False, id="extreme_positive_returns_valid_probability"),
+        ],
+    )
+    def test_sigmoid_numerical_stability(
+        self, value: float, check_lower_inclusive: bool
+    ) -> None:
         """Should not overflow for extreme values."""
-        # Should not raise or return inf/nan
-        result_neg = sigmoid(-1000)
-        result_pos = sigmoid(1000)
-
-        assert 0 <= result_neg < 1
-        assert 0 < result_pos <= 1
+        result = sigmoid(value)
+        if check_lower_inclusive:
+            assert 0 <= result < 1
+        else:
+            assert 0 < result <= 1
 
 
 class TestIRTFitting:
     """Test IRT parameter fitting."""
+
+    @pytest.fixture
+    def missing_scores_params(self) -> IRTParameters:
+        """Fixture for testing missing scores handling."""
+        entries = [
+            LeaderboardEntry(model="A", teleqna=90, telelogs=None),
+            LeaderboardEntry(model="B", teleqna=None, telelogs=80),
+        ]
+        return fit_irt_parameters(entries)
+
+    @pytest.fixture
+    def single_model_params(self) -> IRTParameters:
+        """Fixture for testing single model edge case."""
+        entries = [
+            LeaderboardEntry(model="A", teleqna=75, telelogs=65, telemath=70, tsg=60),
+        ]
+        return fit_irt_parameters(entries)
+
+    @pytest.fixture
+    def empty_entries_params(self) -> IRTParameters:
+        """Fixture for testing empty entries handling."""
+        return fit_irt_parameters([])
 
     def test_fit_with_clear_capability_difference(self) -> None:
         """If Model A scores higher than Model B everywhere, A should have higher capability."""
@@ -62,35 +94,41 @@ class TestIRTFitting:
         # telelogs is harder (lower scores) -> higher difficulty
         assert params.difficulty["telelogs"] > params.difficulty["teleqna"]
 
-    def test_fit_handles_missing_scores(self) -> None:
-        """Should handle entries with missing benchmark scores."""
-        entries = [
-            LeaderboardEntry(model="A", teleqna=90, telelogs=None),
-            LeaderboardEntry(model="B", teleqna=None, telelogs=80),
-        ]
-        params = fit_irt_parameters(entries)
+    def test_fit_handles_missing_scores_capability_count(
+        self, missing_scores_params: IRTParameters
+    ) -> None:
+        """Should include all models in capability dict despite missing scores."""
+        assert len(missing_scores_params.capability) == 2
 
-        assert len(params.capability) == 2
-        assert len(params.difficulty) == len(BENCHMARKS)
+    def test_fit_handles_missing_scores_difficulty_count(
+        self, missing_scores_params: IRTParameters
+    ) -> None:
+        """Should include all benchmarks in difficulty dict despite missing scores."""
+        assert len(missing_scores_params.difficulty) == len(BENCHMARKS)
 
-    def test_fit_with_single_model(self) -> None:
-        """Should handle edge case of single model."""
-        entries = [
-            LeaderboardEntry(model="A", teleqna=75, telelogs=65, telemath=70, tsg=60),
-        ]
-        params = fit_irt_parameters(entries)
+    def test_fit_with_single_model_has_capability(
+        self, single_model_params: IRTParameters
+    ) -> None:
+        """Single model should have capability parameter."""
+        assert "A" in single_model_params.capability
 
-        # Should return valid parameters (heavily regularized)
-        assert "A" in params.capability
-        assert all(b in params.difficulty for b in BENCHMARKS)
+    def test_fit_with_single_model_has_all_benchmarks(
+        self, single_model_params: IRTParameters
+    ) -> None:
+        """Single model fit should include all benchmarks in difficulty."""
+        assert all(b in single_model_params.difficulty for b in BENCHMARKS)
 
-    def test_fit_empty_entries(self) -> None:
-        """Should handle empty entry list gracefully."""
-        params = fit_irt_parameters([])
+    def test_fit_empty_entries_zero_models(
+        self, empty_entries_params: IRTParameters
+    ) -> None:
+        """Empty entries should return zero models."""
+        assert empty_entries_params.n_models == 0
 
-        # Should return defaults
-        assert params.n_models == 0
-        assert params.fit_residual == float("inf")
+    def test_fit_empty_entries_infinite_residual(
+        self, empty_entries_params: IRTParameters
+    ) -> None:
+        """Empty entries should return infinite fit residual."""
+        assert empty_entries_params.fit_residual == float("inf")
 
     def test_fit_all_same_scores(self) -> None:
         """When all models score same, capabilities should be similar."""
@@ -118,9 +156,10 @@ class TestIRTFitting:
 class TestIRTWithRealisticData:
     """Tests simulating real leaderboard data."""
 
-    def test_eight_models_four_benchmarks(self) -> None:
-        """Test with realistic sparse data (8 models, 4 benchmarks)."""
-        entries = [
+    @pytest.fixture
+    def eight_models_entries(self) -> list[LeaderboardEntry]:
+        """Fixture providing 8 realistic model entries."""
+        return [
             LeaderboardEntry(
                 model="gpt-4o", teleqna=85.0, telelogs=72.0, telemath=68.0, tsg=65.0
             ),
@@ -147,32 +186,72 @@ class TestIRTWithRealisticData:
             ),
         ]
 
-        params = fit_irt_parameters(entries)
+    @pytest.fixture
+    def eight_models_params(
+        self, eight_models_entries: list[LeaderboardEntry]
+    ) -> IRTParameters:
+        """Fixture for IRT parameters fitted to 8 models."""
+        return fit_irt_parameters(eight_models_entries)
 
-        # Verify ordering of capabilities matches general score ordering
-        caps = [params.capability[e.model] for e in entries]
-        assert caps == sorted(caps, reverse=True), (
-            "Capabilities should rank-order with scores"
-        )
-
-        # teleqna should be easiest (highest avg score)
-        assert params.difficulty["teleqna"] < params.difficulty["telelogs"]
-
-    def test_irt_parameters_structure(self) -> None:
-        """Verify IRTParameters has expected structure."""
+    @pytest.fixture
+    def structure_test_params(self) -> IRTParameters:
+        """Fixture for testing IRTParameters structure."""
         entries = [
             LeaderboardEntry(model="A", teleqna=80, telelogs=60),
             LeaderboardEntry(model="B", teleqna=70, telelogs=50),
         ]
-        params = fit_irt_parameters(entries)
+        return fit_irt_parameters(entries)
 
-        assert isinstance(params, IRTParameters)
-        assert isinstance(params.difficulty, dict)
-        assert isinstance(params.slope, dict)
-        assert isinstance(params.capability, dict)
-        assert isinstance(params.fit_residual, float)
-        assert params.n_models == 2
-        assert params.n_benchmarks == len(BENCHMARKS)
+    def test_eight_models_four_benchmarks_capability_ordering(
+        self,
+        eight_models_entries: list[LeaderboardEntry],
+        eight_models_params: IRTParameters,
+    ) -> None:
+        """Capabilities should rank-order with scores."""
+        caps = [eight_models_params.capability[e.model] for e in eight_models_entries]
+        assert caps == sorted(caps, reverse=True), (
+            "Capabilities should rank-order with scores"
+        )
+
+    def test_eight_models_four_benchmarks_difficulty_ordering(
+        self, eight_models_params: IRTParameters
+    ) -> None:
+        """Teleqna (highest avg score) should be easiest benchmark."""
+        assert (
+            eight_models_params.difficulty["teleqna"]
+            < eight_models_params.difficulty["telelogs"]
+        )
+
+    @pytest.mark.parametrize(
+        ("attr", "expected_type"),
+        [
+            pytest.param("params", IRTParameters, id="returns_irt_parameters"),
+            pytest.param("difficulty", dict, id="difficulty_is_dict"),
+            pytest.param("slope", dict, id="slope_is_dict"),
+            pytest.param("capability", dict, id="capability_is_dict"),
+            pytest.param("fit_residual", float, id="fit_residual_is_float"),
+        ],
+    )
+    def test_irt_parameters_type(
+        self, structure_test_params: IRTParameters, attr: str, expected_type: type
+    ) -> None:
+        """Verify IRTParameters attributes have expected types."""
+        if attr == "params":
+            assert isinstance(structure_test_params, expected_type)
+        else:
+            assert isinstance(getattr(structure_test_params, attr), expected_type)
+
+    def test_irt_parameters_model_count(
+        self, structure_test_params: IRTParameters
+    ) -> None:
+        """Verify n_models equals number of fitted models."""
+        assert structure_test_params.n_models == 2
+
+    def test_irt_parameters_benchmark_count(
+        self, structure_test_params: IRTParameters
+    ) -> None:
+        """Verify n_benchmarks equals total benchmark count."""
+        assert structure_test_params.n_benchmarks == len(BENCHMARKS)
 
     def test_slopes_are_positive(self) -> None:
         """All fitted slopes should be positive."""
