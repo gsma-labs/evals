@@ -93,33 +93,73 @@ class TestModelSpecificVarianceReduction:
 class TestFindOptimalK:
     """Test optimal K calculation based on consistency."""
 
-    def test_perfect_consistency_returns_k1(self) -> None:
-        """If model is consistent across all epochs, K=1 is sufficient."""
+    def test_perfect_consistency_optimal_k_is_1(self) -> None:
+        """If model is consistent across all epochs, optimal K=1."""
         task_consistency = {
             "telelogs": [True, True, True, True, True],
             "telemath": [True, True, True, True, True],
             "teleqna": [True, True, True, True, True],
             "three_gpp": [True, True, True, True, True],
         }
-        optimal_k, reduction, observed = find_optimal_k(task_consistency)
+        optimal_k, _, _ = find_optimal_k(task_consistency)
         assert optimal_k == 1
+
+    def test_perfect_consistency_reduction_is_zero(self) -> None:
+        """If model is consistent, variance reduction is 0%."""
+        task_consistency = {
+            "telelogs": [True, True, True, True, True],
+            "telemath": [True, True, True, True, True],
+            "teleqna": [True, True, True, True, True],
+            "three_gpp": [True, True, True, True, True],
+        }
+        _, reduction, _ = find_optimal_k(task_consistency)
         assert reduction == 0.0
+
+    def test_perfect_consistency_observed_variance_is_zero(self) -> None:
+        """If model is consistent, observed variance is 0."""
+        task_consistency = {
+            "telelogs": [True, True, True, True, True],
+            "telemath": [True, True, True, True, True],
+            "teleqna": [True, True, True, True, True],
+            "three_gpp": [True, True, True, True, True],
+        }
+        _, _, observed = find_optimal_k(task_consistency)
         assert observed == 0.0
 
-    def test_all_false_consistency_returns_k1(self) -> None:
-        """If model is consistently wrong, K=1 is still sufficient (no variance)."""
+    def test_all_false_consistency_optimal_k_is_1(self) -> None:
+        """If model is consistently wrong, K=1 is still sufficient."""
         task_consistency = {
             "telelogs": [False, False, False, False, False],
             "telemath": [False, False, False, False, False],
             "teleqna": [False, False, False, False, False],
             "three_gpp": [False, False, False, False, False],
         }
-        optimal_k, reduction, observed = find_optimal_k(task_consistency)
+        optimal_k, _, _ = find_optimal_k(task_consistency)
         assert optimal_k == 1
+
+    def test_all_false_consistency_reduction_is_zero(self) -> None:
+        """If model is consistently wrong, variance reduction is 0%."""
+        task_consistency = {
+            "telelogs": [False, False, False, False, False],
+            "telemath": [False, False, False, False, False],
+            "teleqna": [False, False, False, False, False],
+            "three_gpp": [False, False, False, False, False],
+        }
+        _, reduction, _ = find_optimal_k(task_consistency)
         assert reduction == 0.0
+
+    def test_all_false_consistency_observed_variance_is_zero(self) -> None:
+        """If model is consistently wrong, observed variance is 0."""
+        task_consistency = {
+            "telelogs": [False, False, False, False, False],
+            "telemath": [False, False, False, False, False],
+            "teleqna": [False, False, False, False, False],
+            "three_gpp": [False, False, False, False, False],
+        }
+        _, _, observed = find_optimal_k(task_consistency)
         assert observed == 0.0
 
-    def test_inconsistent_results_returns_higher_k(self) -> None:
+    def test_inconsistent_results_optimal_k_is_at_least_2(self) -> None:
         """If model shows variance, higher K should be recommended."""
         task_consistency = {
             "telelogs": [True, False, True, False, True],  # Inconsistent
@@ -127,12 +167,30 @@ class TestFindOptimalK:
             "teleqna": [True, True, True, True, True],
             "three_gpp": [True, True, True, True, True],
         }
-        optimal_k, reduction, observed = find_optimal_k(
-            task_consistency, target_reduction=50.0
-        )
+        optimal_k, _, _ = find_optimal_k(task_consistency, target_reduction=50.0)
         assert optimal_k >= 2
+
+    def test_inconsistent_results_reduction_is_positive(self) -> None:
+        """If model shows variance, reduction should be positive."""
+        task_consistency = {
+            "telelogs": [True, False, True, False, True],  # Inconsistent
+            "telemath": [True, True, True, True, True],
+            "teleqna": [True, True, True, True, True],
+            "three_gpp": [True, True, True, True, True],
+        }
+        _, reduction, _ = find_optimal_k(task_consistency, target_reduction=50.0)
         assert reduction > 0
-        assert observed == 0.25  # 1 out of 4 tasks is inconsistent
+
+    def test_inconsistent_results_observed_variance_is_quarter(self) -> None:
+        """If 1 out of 4 tasks is inconsistent, observed variance is 0.25."""
+        task_consistency = {
+            "telelogs": [True, False, True, False, True],  # Inconsistent
+            "telemath": [True, True, True, True, True],
+            "teleqna": [True, True, True, True, True],
+            "three_gpp": [True, True, True, True, True],
+        }
+        _, _, observed = find_optimal_k(task_consistency, target_reduction=50.0)
+        assert observed == 0.25
 
     def test_target_reduction_affects_k(self) -> None:
         """Higher target reduction should result in higher K."""
@@ -148,11 +206,19 @@ class TestFindOptimalK:
 
         assert k_high >= k_low
 
-    def test_empty_consistency_returns_k1(self) -> None:
+    def test_empty_consistency_optimal_k_is_1(self) -> None:
         """Empty consistency dict should return K=1 (safe default)."""
-        optimal_k, reduction, observed = find_optimal_k({})
+        optimal_k, _, _ = find_optimal_k({})
         assert optimal_k == 1
+
+    def test_empty_consistency_reduction_is_zero(self) -> None:
+        """Empty consistency dict should have 0% variance reduction."""
+        _, reduction, _ = find_optimal_k({})
         assert reduction == 0.0
+
+    def test_empty_consistency_observed_variance_is_zero(self) -> None:
+        """Empty consistency dict should have 0 observed variance."""
+        _, _, observed = find_optimal_k({})
         assert observed == 0.0
 
     def test_max_k_cap(self) -> None:
@@ -221,30 +287,53 @@ class TestObservedVariance:
 class TestFindKResult:
     """Test FindKResult dataclass."""
 
-    def test_default_values(self) -> None:
-        """Test default values are set correctly."""
-        result = FindKResult(optimal_k=3, variance_reduction_pct=44.0)
-        assert result.optimal_k == 3
-        assert result.variance_reduction_pct == 44.0
-        assert result.task_consistency == {}
-        assert result.observed_variance == 0.0
-        assert result.error is None
+    @pytest.fixture
+    def default_result(self) -> FindKResult:
+        """Create a result with only required fields."""
+        return FindKResult(optimal_k=3, variance_reduction_pct=44.0)
 
-    def test_with_all_fields(self) -> None:
-        """Test creating result with all fields."""
-        task_consistency = {"telelogs": [True, True, False]}
-        result = FindKResult(
+    @pytest.fixture
+    def full_result(self) -> FindKResult:
+        """Create a result with all fields populated."""
+        return FindKResult(
             optimal_k=2,
             variance_reduction_pct=33.33,
-            task_consistency=task_consistency,
+            task_consistency={"telelogs": [True, True, False]},
             observed_variance=0.25,
             error="Test error",
         )
-        assert result.optimal_k == 2
-        assert result.variance_reduction_pct == 33.33
-        assert result.task_consistency == task_consistency
-        assert result.observed_variance == 0.25
-        assert result.error == "Test error"
+
+    @pytest.mark.parametrize(
+        ("field", "expected"),
+        [
+            ("optimal_k", 3),
+            ("variance_reduction_pct", 44.0),
+            ("task_consistency", {}),
+            ("observed_variance", 0.0),
+            ("error", None),
+        ],
+    )
+    def test_default_values(
+        self, default_result: FindKResult, field: str, expected: object
+    ) -> None:
+        """Test default values are set correctly."""
+        assert getattr(default_result, field) == expected
+
+    @pytest.mark.parametrize(
+        ("field", "expected"),
+        [
+            ("optimal_k", 2),
+            ("variance_reduction_pct", 33.33),
+            ("task_consistency", {"telelogs": [True, True, False]}),
+            ("observed_variance", 0.25),
+            ("error", "Test error"),
+        ],
+    )
+    def test_with_all_fields(
+        self, full_result: FindKResult, field: str, expected: object
+    ) -> None:
+        """Test creating result with all fields."""
+        assert getattr(full_result, field) == expected
 
 
 class TestKSelectionScreen:
@@ -403,6 +492,280 @@ class TestRunEvalsWithEpochs:
         assert "self._selected_k" in source
 
 
+# Test data for synthetic K optimization tests
+# Each tuple: (name, synthetic_data, expected_inconsistency, target_reduction, expected_k)
+SYNTHETIC_K_TEST_CASES = [
+    # User's exact example from requirements:
+    # "blabla" → C, C, I, C (3/4) - varies
+    # "sld" → C, C, I, I (2/4) - varies
+    # "sdkdkd" → C,C,C,C (4/4) - consistent
+    pytest.param(
+        "user_example",
+        {
+            "blabla": [True, True, False, True],
+            "sld": [True, True, False, False],
+            "sdkdkd": [True, True, True, True],
+        },
+        2 / 3,  # 2 out of 3 questions vary
+        50.0,
+        5,  # Cannot achieve 50% with 66.7% inconsistency, returns max_k
+        id="user_example_3questions_4epochs",
+    ),
+    # All consistent → K=1 (no benefit from more epochs)
+    pytest.param(
+        "all_consistent",
+        {
+            "q1": [True, True, True, True],
+            "q2": [False, False, False, False],
+            "q3": [True, True, True, True],
+        },
+        0.0,
+        50.0,
+        1,
+        id="all_consistent_returns_k1",
+    ),
+    # 100% inconsistent → K=4 achieves exactly 50%
+    pytest.param(
+        "all_inconsistent",
+        {
+            "q1": [True, False, True, False],
+            "q2": [False, True, False, True],
+        },
+        1.0,
+        50.0,
+        4,
+        id="100pct_inconsistent_k4_achieves_50pct",
+    ),
+    # 50% inconsistent → max achievable is 26.67%, returns K=5
+    pytest.param(
+        "half_inconsistent",
+        {
+            "q1": [True, False, True, False],  # varies
+            "q2": [True, True, True, True],  # consistent
+        },
+        0.5,
+        50.0,
+        5,  # Cannot achieve 50% with 50% inconsistency
+        id="50pct_inconsistent_returns_max_k",
+    ),
+    # Single question that varies
+    pytest.param(
+        "single_question_varies",
+        {"q1": [True, False, True, False]},
+        1.0,
+        50.0,
+        4,
+        id="single_varying_question_k4",
+    ),
+    # Low target (10%) with 100% inconsistency → K=2 (33.33% > 10%)
+    pytest.param(
+        "low_target",
+        {"q1": [True, False, True, False]},
+        1.0,
+        10.0,
+        2,
+        id="low_target_10pct_returns_k2",
+    ),
+    # Target exactly at K=2 threshold (33.33%)
+    pytest.param(
+        "exact_k2_threshold",
+        {"q1": [True, False, True, False]},
+        1.0,
+        33.33,
+        2,
+        id="exact_threshold_33pct_returns_k2",
+    ),
+    # Target exactly at K=3 threshold (44.44%)
+    pytest.param(
+        "exact_k3_threshold",
+        {"q1": [True, False, True, False]},
+        1.0,
+        44.0,
+        3,
+        id="threshold_44pct_returns_k3",
+    ),
+    # Target exactly at K=4 threshold (50%)
+    pytest.param(
+        "exact_k4_threshold",
+        {"q1": [True, False, True, False]},
+        1.0,
+        50.0,
+        4,
+        id="threshold_50pct_returns_k4",
+    ),
+    # 25% inconsistency (1 of 4 questions varies)
+    pytest.param(
+        "quarter_inconsistent",
+        {
+            "q1": [True, False, True, False],  # varies
+            "q2": [True, True, True, True],
+            "q3": [False, False, False, False],
+            "q4": [True, True, True, True],
+        },
+        0.25,
+        50.0,
+        5,  # Max achievable is ~13.33%, cannot reach 50%
+        id="25pct_inconsistent_returns_max_k",
+    ),
+    # 75% inconsistency (3 of 4 questions vary)
+    pytest.param(
+        "three_quarter_inconsistent",
+        {
+            "q1": [True, False, True, False],
+            "q2": [False, True, False, True],
+            "q3": [True, True, False, False],
+            "q4": [True, True, True, True],  # consistent
+        },
+        0.75,
+        50.0,
+        5,  # Max achievable at K=5 is 53.33% × 0.75 = 40%
+        id="75pct_inconsistent_returns_max_k",
+    ),
+    # 3/3 vary → inc=1.0 → K=4 (50% reduction achievable)
+    pytest.param(
+        "lucky_guesser",
+        {
+            "q1": [True, False, False, False, False],
+            "q2": [True, False, False, False, False],
+            "q3": [True, False, False, False, False],
+        },
+        1.0,
+        50.0,
+        4,
+        id="lucky_guesser",
+    ),
+    # 2/3 vary → inc=0.667 → K=5 (max 35.56%)
+    pytest.param(
+        "slow_learner",
+        {
+            "q1": [False, False, True, True, True],
+            "q2": [False, False, False, True, True],
+            "q3": [True, True, True, True, True],
+        },
+        2 / 3,
+        50.0,
+        5,
+        id="slow_learner",
+    ),
+    # 2/6 vary → inc=0.333 → K=5 (max 17.78%)
+    pytest.param(
+        "overconfident_model",
+        {
+            "q1": [True, True, True, True, True],
+            "q2": [True, True, True, True, True],
+            "q3": [True, True, True, True, True],
+            "q4": [True, True, True, True, True],
+            "q5": [True, False, True, False, True],
+            "q6": [False, True, False, True, False],
+        },
+        2 / 6,
+        50.0,
+        5,
+        id="overconfident_model",
+    ),
+    # 4/4 vary → inc=1.0 → K=4 (50% reduction achievable)
+    pytest.param(
+        "coin_flipper",
+        {
+            "q1": [True, False, True, False, True],
+            "q2": [False, True, False, True, False],
+            "q3": [True, True, False, False, True],
+            "q4": [False, False, True, True, False],
+        },
+        1.0,
+        50.0,
+        4,
+        id="coin_flipper",
+    ),
+    # 2/5 vary → inc=0.4 → K=5 (max 21.33%)
+    pytest.param(
+        "specialist",
+        {
+            "q1": [True, True, True, True, True],
+            "q2": [True, True, True, True, True],
+            "q3": [True, True, True, True, True],
+            "q4": [True, False, False, True, False],
+            "q5": [False, True, False, False, True],
+        },
+        2 / 5,
+        50.0,
+        5,
+        id="specialist",
+    ),
+    # 3/3 vary → inc=1.0 → K=4 (50% reduction achievable)
+    pytest.param(
+        "fatigue_model",
+        {
+            "q1": [True, True, True, False, False],
+            "q2": [True, True, False, False, False],
+            "q3": [True, True, True, True, False],
+        },
+        1.0,
+        50.0,
+        4,
+        id="fatigue_model",
+    ),
+    # 5/10 vary → inc=0.5 → K=5 (max 26.67%)
+    pytest.param(
+        "binary_split",
+        {
+            "q1": [True, True, True, True, True],
+            "q2": [False, False, False, False, False],
+            "q3": [True, True, True, True, True],
+            "q4": [False, False, False, False, False],
+            "q5": [True, True, True, True, True],
+            "q6": [True, False, True, False, True],
+            "q7": [False, True, False, True, False],
+            "q8": [True, True, False, False, True],
+            "q9": [False, False, True, True, False],
+            "q10": [True, False, False, True, False],
+        },
+        0.5,
+        50.0,
+        5,
+        id="binary_split",
+    ),
+    # 1/4 vary → inc=0.25 → K=5 (max 13.33%)
+    pytest.param(
+        "one_off_error",
+        {
+            "q1": [True, True, True, True, False],
+            "q2": [True, True, True, True, True],
+            "q3": [True, True, True, True, True],
+            "q4": [False, False, False, False, False],
+        },
+        0.25,
+        50.0,
+        5,
+        id="one_off_error",
+    ),
+    # 2/3 vary → inc=0.667 → K=5 (max 35.56%)
+    pytest.param(
+        "temperature_sensitive",
+        {
+            "q1": [True, True, False, True, True],
+            "q2": [False, False, True, False, False],
+            "q3": [True, True, True, True, True],
+        },
+        2 / 3,
+        50.0,
+        5,
+        id="temperature_sensitive",
+    ),
+    # 1/1 vary → inc=1.0 → K=4 (50% reduction achievable)
+    pytest.param(
+        "edge_case_champion",
+        {
+            "q1": [True, True, True, True, False],
+        },
+        1.0,
+        50.0,
+        4,
+        id="edge_case_champion",
+    ),
+]
+
+
 class TestFindKSyntheticData:
     """End-to-end tests with synthetic data verifying optimal K calculation.
 
@@ -458,309 +821,61 @@ class TestFindKSyntheticData:
 
     @pytest.mark.parametrize(
         "name,synthetic_data,expected_inconsistency,target_reduction,expected_k",
-        [
-            # User's exact example from requirements:
-            # "blabla" → C, C, I, C (3/4) - varies
-            # "sld" → C, C, I, I (2/4) - varies
-            # "sdkdkd" → C,C,C,C (4/4) - consistent
-            pytest.param(
-                "user_example",
-                {
-                    "blabla": [True, True, False, True],
-                    "sld": [True, True, False, False],
-                    "sdkdkd": [True, True, True, True],
-                },
-                2 / 3,  # 2 out of 3 questions vary
-                50.0,
-                5,  # Cannot achieve 50% with 66.7% inconsistency, returns max_k
-                id="user_example_3questions_4epochs",
-            ),
-            # All consistent → K=1 (no benefit from more epochs)
-            pytest.param(
-                "all_consistent",
-                {
-                    "q1": [True, True, True, True],
-                    "q2": [False, False, False, False],
-                    "q3": [True, True, True, True],
-                },
-                0.0,
-                50.0,
-                1,
-                id="all_consistent_returns_k1",
-            ),
-            # 100% inconsistent → K=4 achieves exactly 50%
-            pytest.param(
-                "all_inconsistent",
-                {
-                    "q1": [True, False, True, False],
-                    "q2": [False, True, False, True],
-                },
-                1.0,
-                50.0,
-                4,
-                id="100pct_inconsistent_k4_achieves_50pct",
-            ),
-            # 50% inconsistent → max achievable is 26.67%, returns K=5
-            pytest.param(
-                "half_inconsistent",
-                {
-                    "q1": [True, False, True, False],  # varies
-                    "q2": [True, True, True, True],  # consistent
-                },
-                0.5,
-                50.0,
-                5,  # Cannot achieve 50% with 50% inconsistency
-                id="50pct_inconsistent_returns_max_k",
-            ),
-            # Single question that varies
-            pytest.param(
-                "single_question_varies",
-                {"q1": [True, False, True, False]},
-                1.0,
-                50.0,
-                4,
-                id="single_varying_question_k4",
-            ),
-            # Low target (10%) with 100% inconsistency → K=2 (33.33% > 10%)
-            pytest.param(
-                "low_target",
-                {"q1": [True, False, True, False]},
-                1.0,
-                10.0,
-                2,
-                id="low_target_10pct_returns_k2",
-            ),
-            # Target exactly at K=2 threshold (33.33%)
-            pytest.param(
-                "exact_k2_threshold",
-                {"q1": [True, False, True, False]},
-                1.0,
-                33.33,
-                2,
-                id="exact_threshold_33pct_returns_k2",
-            ),
-            # Target exactly at K=3 threshold (44.44%)
-            pytest.param(
-                "exact_k3_threshold",
-                {"q1": [True, False, True, False]},
-                1.0,
-                44.0,
-                3,
-                id="threshold_44pct_returns_k3",
-            ),
-            # Target exactly at K=4 threshold (50%)
-            pytest.param(
-                "exact_k4_threshold",
-                {"q1": [True, False, True, False]},
-                1.0,
-                50.0,
-                4,
-                id="threshold_50pct_returns_k4",
-            ),
-            # 25% inconsistency (1 of 4 questions varies)
-            pytest.param(
-                "quarter_inconsistent",
-                {
-                    "q1": [True, False, True, False],  # varies
-                    "q2": [True, True, True, True],
-                    "q3": [False, False, False, False],
-                    "q4": [True, True, True, True],
-                },
-                0.25,
-                50.0,
-                5,  # Max achievable is ~13.33%, cannot reach 50%
-                id="25pct_inconsistent_returns_max_k",
-            ),
-            # 75% inconsistency (3 of 4 questions vary)
-            pytest.param(
-                "three_quarter_inconsistent",
-                {
-                    "q1": [True, False, True, False],
-                    "q2": [False, True, False, True],
-                    "q3": [True, True, False, False],
-                    "q4": [True, True, True, True],  # consistent
-                },
-                0.75,
-                50.0,
-                5,  # Max achievable at K=5 is 53.33% × 0.75 = 40%
-                id="75pct_inconsistent_returns_max_k",
-            ),
-            # 3/3 vary → inc=1.0 → K=4 (50% reduction achievable)
-            pytest.param(
-                "lucky_guesser",
-                {
-                    "q1": [True, False, False, False, False],
-                    "q2": [True, False, False, False, False],
-                    "q3": [True, False, False, False, False],
-                },
-                1.0,
-                50.0,
-                4,
-                id="lucky_guesser",
-            ),
-            # 2/3 vary → inc=0.667 → K=5 (max 35.56%)
-            pytest.param(
-                "slow_learner",
-                {
-                    "q1": [False, False, True, True, True],
-                    "q2": [False, False, False, True, True],
-                    "q3": [True, True, True, True, True],
-                },
-                2 / 3,
-                50.0,
-                5,
-                id="slow_learner",
-            ),
-            # 2/6 vary → inc=0.333 → K=5 (max 17.78%)
-            pytest.param(
-                "overconfident_model",
-                {
-                    "q1": [True, True, True, True, True],
-                    "q2": [True, True, True, True, True],
-                    "q3": [True, True, True, True, True],
-                    "q4": [True, True, True, True, True],
-                    "q5": [True, False, True, False, True],
-                    "q6": [False, True, False, True, False],
-                },
-                2 / 6,
-                50.0,
-                5,
-                id="overconfident_model",
-            ),
-            # 4/4 vary → inc=1.0 → K=4 (50% reduction achievable)
-            pytest.param(
-                "coin_flipper",
-                {
-                    "q1": [True, False, True, False, True],
-                    "q2": [False, True, False, True, False],
-                    "q3": [True, True, False, False, True],
-                    "q4": [False, False, True, True, False],
-                },
-                1.0,
-                50.0,
-                4,
-                id="coin_flipper",
-            ),
-            # 2/5 vary → inc=0.4 → K=5 (max 21.33%)
-            pytest.param(
-                "specialist",
-                {
-                    "q1": [True, True, True, True, True],
-                    "q2": [True, True, True, True, True],
-                    "q3": [True, True, True, True, True],
-                    "q4": [True, False, False, True, False],
-                    "q5": [False, True, False, False, True],
-                },
-                2 / 5,
-                50.0,
-                5,
-                id="specialist",
-            ),
-            # 3/3 vary → inc=1.0 → K=4 (50% reduction achievable)
-            pytest.param(
-                "fatigue_model",
-                {
-                    "q1": [True, True, True, False, False],
-                    "q2": [True, True, False, False, False],
-                    "q3": [True, True, True, True, False],
-                },
-                1.0,
-                50.0,
-                4,
-                id="fatigue_model",
-            ),
-            # 5/10 vary → inc=0.5 → K=5 (max 26.67%)
-            pytest.param(
-                "binary_split",
-                {
-                    "q1": [True, True, True, True, True],
-                    "q2": [False, False, False, False, False],
-                    "q3": [True, True, True, True, True],
-                    "q4": [False, False, False, False, False],
-                    "q5": [True, True, True, True, True],
-                    "q6": [True, False, True, False, True],
-                    "q7": [False, True, False, True, False],
-                    "q8": [True, True, False, False, True],
-                    "q9": [False, False, True, True, False],
-                    "q10": [True, False, False, True, False],
-                },
-                0.5,
-                50.0,
-                5,
-                id="binary_split",
-            ),
-            # 1/4 vary → inc=0.25 → K=5 (max 13.33%)
-            pytest.param(
-                "one_off_error",
-                {
-                    "q1": [True, True, True, True, False],
-                    "q2": [True, True, True, True, True],
-                    "q3": [True, True, True, True, True],
-                    "q4": [False, False, False, False, False],
-                },
-                0.25,
-                50.0,
-                5,
-                id="one_off_error",
-            ),
-            # 2/3 vary → inc=0.667 → K=5 (max 35.56%)
-            pytest.param(
-                "temperature_sensitive",
-                {
-                    "q1": [True, True, False, True, True],
-                    "q2": [False, False, True, False, False],
-                    "q3": [True, True, True, True, True],
-                },
-                2 / 3,
-                50.0,
-                5,
-                id="temperature_sensitive",
-            ),
-            # 1/1 vary → inc=1.0 → K=4 (50% reduction achievable)
-            pytest.param(
-                "edge_case_champion",
-                {
-                    "q1": [True, True, True, True, False],
-                },
-                1.0,
-                50.0,
-                4,
-                id="edge_case_champion",
-            ),
-        ],
+        SYNTHETIC_K_TEST_CASES,
     )
-    def test_find_optimal_k_synthetic_data(
+    def test_synthetic_data_observed_inconsistency(
         self,
-        name: str,  # noqa: ARG002 - used for test identification in parametrize
+        name: str,  # noqa: ARG002
         synthetic_data: dict[str, list[bool]],
         expected_inconsistency: float,
         target_reduction: float,
-        expected_k: int,
+        expected_k: int,  # noqa: ARG002
     ) -> None:
-        """Verify find_optimal_k returns correct K for synthetic datasets.
-
-        This test:
-        1. Verifies observed_inconsistency matches expected value
-        2. Verifies optimal_k matches the mathematically expected K
-        3. Uses exact formula calculations as ground truth
-        """
-        # Run the implementation
-        optimal_k, achieved_reduction, observed_inconsistency = find_optimal_k(
+        """Verify observed_inconsistency matches expected value."""
+        _, _, observed_inconsistency = find_optimal_k(
             synthetic_data, target_reduction=target_reduction
         )
-
-        # Verify observed inconsistency is calculated correctly
         assert abs(observed_inconsistency - expected_inconsistency) < 0.0001, (
             f"Inconsistency mismatch: got {observed_inconsistency}, "
             f"expected {expected_inconsistency}"
         )
 
-        # Verify optimal K matches expected
+    @pytest.mark.parametrize(
+        "name,synthetic_data,expected_inconsistency,target_reduction,expected_k",
+        SYNTHETIC_K_TEST_CASES,
+    )
+    def test_synthetic_data_optimal_k(
+        self,
+        name: str,  # noqa: ARG002
+        synthetic_data: dict[str, list[bool]],
+        expected_inconsistency: float,  # noqa: ARG002
+        target_reduction: float,
+        expected_k: int,
+    ) -> None:
+        """Verify optimal_k matches the mathematically expected K."""
+        optimal_k, _, _ = find_optimal_k(
+            synthetic_data, target_reduction=target_reduction
+        )
         assert optimal_k == expected_k, (
             f"Optimal K mismatch: got {optimal_k}, expected {expected_k}"
         )
 
-        # Verify achieved reduction matches ground truth formula
+    @pytest.mark.parametrize(
+        "name,synthetic_data,expected_inconsistency,target_reduction,expected_k",
+        SYNTHETIC_K_TEST_CASES,
+    )
+    def test_synthetic_data_achieved_reduction(
+        self,
+        name: str,  # noqa: ARG002
+        synthetic_data: dict[str, list[bool]],
+        expected_inconsistency: float,  # noqa: ARG002
+        target_reduction: float,
+        expected_k: int,  # noqa: ARG002
+    ) -> None:
+        """Verify achieved_reduction matches ground truth formula."""
+        optimal_k, achieved_reduction, observed_inconsistency = find_optimal_k(
+            synthetic_data, target_reduction=target_reduction
+        )
         expected_reduction = self.calculate_ground_truth_reduction(
             optimal_k, observed_inconsistency
         )
@@ -919,7 +1034,16 @@ class TestParseEpochResults:
         log_file = log_dir / f"log_{index:03d}.json"
         log_file.write_text(json.dumps(log_data))
 
-    def test_parses_single_task_multiple_epochs(self, tmp_path: Path) -> None:
+    @pytest.mark.parametrize(
+        ("check", "expected"),
+        [
+            ("contains_task", True),
+            ("task_results", [True, False, True, False, True]),
+        ],
+    )
+    def test_parses_single_task_multiple_epochs(
+        self, tmp_path: Path, check: str, expected: object
+    ) -> None:
         """Parse 5 epochs of a single task with varying results."""
         # task1: [1.0, 0.0, 1.0, 0.0, 1.0] → [True, False, True, False, True]
         accuracies = [1.0, 0.0, 1.0, 0.0, 1.0]
@@ -928,10 +1052,21 @@ class TestParseEpochResults:
 
         result = _parse_epoch_results(tmp_path, "test-model")
 
-        assert "task1" in result
-        assert result["task1"] == [True, False, True, False, True]
+        if check == "contains_task":
+            assert ("task1" in result) == expected
+        else:
+            assert result["task1"] == expected
 
-    def test_parses_multiple_tasks(self, tmp_path: Path) -> None:
+    @pytest.mark.parametrize(
+        ("task", "expected"),
+        [
+            ("task1", [True, True, True]),
+            ("task2", [True, False, True]),
+        ],
+    )
+    def test_parses_multiple_tasks(
+        self, tmp_path: Path, task: str, expected: list[bool]
+    ) -> None:
         """Parse multiple tasks with different consistency patterns."""
         # task1: consistent [1.0, 1.0, 1.0] → [True, True, True]
         # task2: varies [1.0, 0.0, 1.0] → [True, False, True]
@@ -945,20 +1080,26 @@ class TestParseEpochResults:
 
         result = _parse_epoch_results(tmp_path, "test-model")
 
-        assert result["task1"] == [True, True, True]
-        assert result["task2"] == [True, False, True]
+        assert result[task] == expected
 
-    def test_filters_by_model(self, tmp_path: Path) -> None:
+    @pytest.mark.parametrize(
+        ("model", "expected"),
+        [
+            ("model-a", [True, True]),
+            ("model-b", [False]),
+        ],
+    )
+    def test_filters_by_model(
+        self, tmp_path: Path, model: str, expected: list[bool]
+    ) -> None:
         """Only parse logs matching the requested model."""
         self._create_log_file(tmp_path, "model-a", "task1", 1.0, 0)
         self._create_log_file(tmp_path, "model-b", "task1", 0.0, 1)
         self._create_log_file(tmp_path, "model-a", "task1", 1.0, 2)
 
-        result_a = _parse_epoch_results(tmp_path, "model-a")
-        result_b = _parse_epoch_results(tmp_path, "model-b")
+        result = _parse_epoch_results(tmp_path, model)
 
-        assert result_a["task1"] == [True, True]
-        assert result_b["task1"] == [False]
+        assert result["task1"] == expected
 
     def test_empty_directory_returns_empty_dict(self, tmp_path: Path) -> None:
         """Empty log directory returns empty dict."""
@@ -1023,16 +1164,22 @@ class TestParseEpochResults:
         result = _parse_epoch_results(tmp_path, "test-model")
         assert result["task1"] == [False]
 
-    def test_accuracy_positive_is_correct(self, tmp_path: Path) -> None:
+    @pytest.mark.parametrize(
+        ("task", "accuracy"),
+        [
+            ("task1", 0.001),
+            ("task2", 0.5),
+            ("task3", 1.0),
+        ],
+    )
+    def test_accuracy_positive_is_correct(
+        self, tmp_path: Path, task: str, accuracy: float
+    ) -> None:
         """Any positive accuracy is considered correct."""
-        self._create_log_file(tmp_path, "test-model", "task1", 0.001, 0)
-        self._create_log_file(tmp_path, "test-model", "task2", 0.5, 1)
-        self._create_log_file(tmp_path, "test-model", "task3", 1.0, 2)
+        self._create_log_file(tmp_path, "test-model", task, accuracy, 0)
 
         result = _parse_epoch_results(tmp_path, "test-model")
-        assert result["task1"] == [True]
-        assert result["task2"] == [True]
-        assert result["task3"] == [True]
+        assert result[task] == [True]
 
     def test_e2e_json_to_optimal_k(self, tmp_path: Path) -> None:
         """Full pipeline: JSON logs → parse → find_optimal_k."""
