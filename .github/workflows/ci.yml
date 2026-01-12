@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, 2-cli-interface-pytests-v2]
+    branches: [main]
   pull_request:
-    branches: [main, 2-cli-interface-pytests-v2]
+    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
