@@ -11,10 +11,12 @@ from open_telco.cli.app import OpenTelcoApp
 from open_telco.cli.screens.main_menu import MainMenuScreen
 from open_telco.cli.screens.run_evals import RunEvalsScreen
 from open_telco.cli.screens.run_evals.run_evals_screen import (
+    ALL_TASKS,
     PROVIDER_NAMES,
     TASK_TO_COLUMN,
     ChecklistItem,
     Stage,
+    TaskChecklistItem,
     TaskSelectScreen,
 )
 
@@ -83,36 +85,51 @@ class TestRunEvalsScreen:
     """Test RunEvalsScreen functionality."""
 
     @pytest.mark.asyncio
-    async def test_screen_has_checklist_items(self) -> None:
-        """Screen should have 4 checklist items (including find-k)."""
+    async def test_screen_has_four_checklist_items(self) -> None:
+        """Screen should have exactly 4 checklist items."""
         app = OpenTelcoApp()
         async with app.run_test() as pilot:
-            # Mock preflight check to return False so we stay on RunEvalsScreen
             with patch(
                 "open_telco.cli.screens.run_evals.run_evals_screen.RunEvalsScreen._check_preflight_passed",
                 return_value=False,
             ):
-                # Navigate to run-evals screen
                 await pilot.press("enter")
                 await pilot.press("down")
                 await pilot.press("enter")
-
-                # Wait for screen to stabilize
                 await pilot.pause()
 
-                # Should be on RunEvalsScreen (not TaskSelectScreen since preflights haven't passed)
                 assert isinstance(pilot.app.screen, RunEvalsScreen)
-
-                # Check that all checklist items exist
                 items = list(pilot.app.screen.query(ChecklistItem))
                 assert len(items) == 4
 
-                # Verify step IDs
-                step_ids = [item.step_id for item in items]
-                assert "mini_test" in step_ids
-                assert "find_k" in step_ids
-                assert "stress_test" in step_ids
-                assert "ready" in step_ids
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "expected_step_id",
+        [
+            pytest.param("mini_test", id="mini_test"),
+            pytest.param("find_k", id="find_k"),
+            pytest.param("stress_test", id="stress_test"),
+            pytest.param("ready", id="ready"),
+        ],
+    )
+    async def test_screen_has_checklist_step_id(self, expected_step_id: str) -> None:
+        """Screen should include expected step ID in checklist items."""
+        app = OpenTelcoApp()
+        async with app.run_test() as pilot:
+            with patch(
+                "open_telco.cli.screens.run_evals.run_evals_screen.RunEvalsScreen._check_preflight_passed",
+                return_value=False,
+            ):
+                await pilot.press("enter")
+                await pilot.press("down")
+                await pilot.press("enter")
+                await pilot.pause()
+
+                assert isinstance(pilot.app.screen, RunEvalsScreen)
+                step_ids = [
+                    item.step_id for item in pilot.app.screen.query(ChecklistItem)
+                ]
+                assert expected_step_id in step_ids
 
     @pytest.mark.asyncio
     async def test_screen_shows_model_info(self) -> None:
@@ -164,106 +181,151 @@ class TestRunEvalsScreen:
 class TestChecklistItem:
     """Test ChecklistItem widget."""
 
-    def test_checklist_item_pending_render(self) -> None:
-        """Pending status should render with empty checkbox."""
+    def test_checklist_item_pending_render_shows_empty_checkbox(self) -> None:
+        """Pending status should render with [ ] checkbox."""
         item = ChecklistItem("Test item", "test")
         item.status = "pending"
-        rendered = item.render()
-        assert "[ ]" in rendered
-        assert "Test item" in rendered
+        assert "[ ]" in item.render()
 
-    def test_checklist_item_running_render(self) -> None:
-        """Running status should render with spinner and cooking text."""
+    def test_checklist_item_pending_render_shows_label(self) -> None:
+        """Pending status should include item label."""
+        item = ChecklistItem("Test item", "test")
+        item.status = "pending"
+        assert "Test item" in item.render()
+
+    def test_checklist_item_running_render_shows_spinner(self) -> None:
+        """Running status should show progress spinner frame."""
         item = ChecklistItem("Test item", "test")
         item.status = "running"
         item.dot_count = 1
-        rendered = item.render()
         # PROGRESS_FRAMES = ["○", "◔", "◑", "◕", "●"], so dot_count=1 gives ◔
-        assert "[◔]" in rendered
-        assert "cooking" in rendered
-        assert "Test item" in rendered
+        assert "[◔]" in item.render()
 
-    def test_checklist_item_passed_render(self) -> None:
-        """Passed status should render with checkmark."""
+    def test_checklist_item_running_render_shows_cooking_text(self) -> None:
+        """Running status should show 'cooking' progress text."""
+        item = ChecklistItem("Test item", "test")
+        item.status = "running"
+        item.dot_count = 1
+        assert "cooking" in item.render()
+
+    def test_checklist_item_running_render_shows_label(self) -> None:
+        """Running status should include item label."""
+        item = ChecklistItem("Test item", "test")
+        item.status = "running"
+        item.dot_count = 1
+        assert "Test item" in item.render()
+
+    def test_checklist_item_passed_render_shows_checkmark(self) -> None:
+        """Passed status should render with [✓] checkmark."""
         item = ChecklistItem("Test item", "test")
         item.status = "passed"
-        rendered = item.render()
-        assert "[✓]" in rendered
-        assert "Test item" in rendered
+        assert "[✓]" in item.render()
 
-    def test_checklist_item_failed_render(self) -> None:
-        """Failed status should render with X mark."""
+    def test_checklist_item_passed_render_shows_label(self) -> None:
+        """Passed status should include item label."""
+        item = ChecklistItem("Test item", "test")
+        item.status = "passed"
+        assert "Test item" in item.render()
+
+    def test_checklist_item_failed_render_shows_x_mark(self) -> None:
+        """Failed status should render with [✗] X mark."""
         item = ChecklistItem("Test item", "test")
         item.status = "failed"
-        rendered = item.render()
-        assert "[✗]" in rendered
-        assert "Test item" in rendered
+        assert "[✗]" in item.render()
 
-    def test_dot_animation_cycles(self) -> None:
-        """Dot count should affect rendering."""
+    def test_checklist_item_failed_render_shows_label(self) -> None:
+        """Failed status should include item label."""
+        item = ChecklistItem("Test item", "test")
+        item.status = "failed"
+        assert "Test item" in item.render()
+
+    @pytest.mark.parametrize(
+        ("dot_count", "expected_suffix"),
+        [
+            pytest.param(0, "cooking.", id="zero_dots"),
+            pytest.param(1, "cooking..", id="one_dot"),
+            pytest.param(2, "cooking...", id="two_dots"),
+        ],
+    )
+    def test_dot_animation_cycles(self, dot_count: int, expected_suffix: str) -> None:
+        """Running status should show correct dot animation based on dot_count."""
         item = ChecklistItem("Test item", "test")
         item.status = "running"
+        item.dot_count = dot_count
+        assert expected_suffix in item.render()
 
-        item.dot_count = 0
-        render0 = item.render()
-        assert "cooking." in render0
-
-        item.dot_count = 1
-        render1 = item.render()
-        assert "cooking.." in render1
-
-        item.dot_count = 2
-        render2 = item.render()
-        assert "cooking..." in render2
-
-    def test_passed_with_score_render(self) -> None:
-        """Passed status with score should show score."""
+    def test_passed_with_score_render_shows_checkmark(self) -> None:
+        """Passed with score should show checkmark."""
         item = ChecklistItem("Test item", "test")
         item.status = "passed"
         item.score = 0.85
-        rendered = item.render()
-        assert "[✓]" in rendered
-        assert "Test item" in rendered
-        assert "score: 0.85" in rendered
+        assert "[✓]" in item.render()
 
-    def test_passed_without_score_no_score_text(self) -> None:
-        """Passed status without score should not show score text."""
+    def test_passed_with_score_render_shows_label(self) -> None:
+        """Passed with score should show label."""
+        item = ChecklistItem("Test item", "test")
+        item.status = "passed"
+        item.score = 0.85
+        assert "Test item" in item.render()
+
+    def test_passed_with_score_render_shows_score_value(self) -> None:
+        """Passed with score should display score value."""
+        item = ChecklistItem("Test item", "test")
+        item.status = "passed"
+        item.score = 0.85
+        assert "score: 0.85" in item.render()
+
+    def test_passed_without_score_render_shows_checkmark(self) -> None:
+        """Passed without score should show checkmark."""
         item = ChecklistItem("Test item", "test")
         item.status = "passed"
         item.score = None
-        rendered = item.render()
-        assert "[✓]" in rendered
-        assert "Test item" in rendered
-        assert "score" not in rendered
+        assert "[✓]" in item.render()
+
+    def test_passed_without_score_render_shows_label(self) -> None:
+        """Passed without score should show label."""
+        item = ChecklistItem("Test item", "test")
+        item.status = "passed"
+        item.score = None
+        assert "Test item" in item.render()
+
+    def test_passed_without_score_render_excludes_score_text(self) -> None:
+        """Passed without score should not display score text."""
+        item = ChecklistItem("Test item", "test")
+        item.status = "passed"
+        item.score = None
+        assert "score" not in item.render()
 
 
 class TestTaskChecklistItem:
     """Test TaskChecklistItem widget for task selection."""
 
-    def test_task_checklist_item_selected_render(self) -> None:
-        """Selected task should render with [X] checkbox."""
-        from open_telco.cli.screens.run_evals.run_evals_screen import TaskChecklistItem
-
+    def test_task_checklist_item_selected_render_shows_filled_circle(self) -> None:
+        """Selected task should render with ● filled circle."""
         item = TaskChecklistItem("telelogs/telelogs.py", "telelogs", "task_0")
         item.selected = True
-        rendered = item.render()
-        assert "●" in rendered
-        assert "telelogs" in rendered
+        assert "●" in item.render()
 
-    def test_task_checklist_item_unselected_render(self) -> None:
-        """Unselected task should render with ○ checkbox."""
-        from open_telco.cli.screens.run_evals.run_evals_screen import TaskChecklistItem
+    def test_task_checklist_item_selected_render_shows_label(self) -> None:
+        """Selected task should show task label."""
+        item = TaskChecklistItem("telelogs/telelogs.py", "telelogs", "task_0")
+        item.selected = True
+        assert "telelogs" in item.render()
 
+    def test_task_checklist_item_unselected_render_shows_empty_circle(self) -> None:
+        """Unselected task should render with ○ empty circle."""
         item = TaskChecklistItem("telelogs/telelogs.py", "telelogs", "task_0")
         item.selected = False
-        rendered = item.render()
-        assert "○" in rendered
-        assert "telelogs" in rendered
+        assert "○" in item.render()
+
+    def test_task_checklist_item_unselected_render_shows_label(self) -> None:
+        """Unselected task should show task label."""
+        item = TaskChecklistItem("telelogs/telelogs.py", "telelogs", "task_0")
+        item.selected = False
+        assert "telelogs" in item.render()
 
     def test_task_checklist_item_toggle(self) -> None:
         """Toggle should switch selected state."""
-        from open_telco.cli.screens.run_evals.run_evals_screen import TaskChecklistItem
-
         item = TaskChecklistItem("telelogs/telelogs.py", "telelogs", "task_0")
         assert item.selected is True  # Default is selected
 
@@ -273,15 +335,17 @@ class TestTaskChecklistItem:
         item.toggle()
         assert item.selected is True
 
-    def test_task_checklist_item_highlighted_render(self) -> None:
+    def test_task_checklist_item_highlighted_render_shows_bold(self) -> None:
         """Highlighted task should render with bold text."""
-        from open_telco.cli.screens.run_evals.run_evals_screen import TaskChecklistItem
-
         item = TaskChecklistItem("telelogs/telelogs.py", "telelogs", "task_0")
         item.highlighted = True
-        rendered = item.render()
-        assert "bold" in rendered
-        assert "telelogs" in rendered
+        assert "bold" in item.render()
+
+    def test_task_checklist_item_highlighted_render_shows_label(self) -> None:
+        """Highlighted task should show task label."""
+        item = TaskChecklistItem("telelogs/telelogs.py", "telelogs", "task_0")
+        item.highlighted = True
+        assert "telelogs" in item.render()
 
 
 class TestTaskSelectScreen:
@@ -293,7 +357,6 @@ class TestTaskSelectScreen:
         from textual.app import App
 
         from open_telco.cli.screens.run_evals.run_evals_screen import (
-            ALL_TASKS,
             TaskChecklistItem,
             TaskSelectScreen,
         )
@@ -381,35 +444,34 @@ class TestScoreParsing:
 class TestTaskPaths:
     """Test that task paths are valid and resolvable."""
 
-    def test_all_task_paths_exist(self) -> None:
-        """All task paths in ALL_TASKS should exist relative to src/open_telco."""
-        from pathlib import Path
-
-        from open_telco.cli.screens.run_evals.run_evals_screen import ALL_TASKS
-
-        # Get src/open_telco directory (same logic as in run_evals_screen.py)
-        # This test file is at tests/cli/test_run_evals_screens.py
-        # We need to find src/open_telco from here
+    @pytest.mark.parametrize(
+        "task_path",
+        [
+            pytest.param("telelogs/telelogs.py", id="telelogs"),
+            pytest.param("telemath/telemath.py", id="telemath"),
+            pytest.param("teleqna/teleqna.py", id="teleqna"),
+            pytest.param("three_gpp/three_gpp.py", id="three_gpp"),
+        ],
+    )
+    def test_task_path_exists(self, task_path: str) -> None:
+        """Task path should exist as a file in src/open_telco."""
         project_root = Path(__file__).parent.parent.parent
-        open_telco_dir = project_root / "src" / "open_telco"
+        full_path = project_root / "src" / "open_telco" / task_path
+        assert full_path.exists(), f"Task path does not exist: {full_path}"
+        assert full_path.is_file(), f"Task path is not a file: {full_path}"
 
-        assert open_telco_dir.exists(), f"src/open_telco not found at {open_telco_dir}"
-
-        for task_path in ALL_TASKS:
-            full_path = open_telco_dir / task_path
-            assert full_path.exists(), (
-                f"task path '{task_path}' does not exist. Expected at: {full_path}"
-            )
-            assert full_path.is_file(), f"task path '{task_path}' is not a file"
-
-    def test_task_paths_are_python_files(self) -> None:
-        """All task paths should be .py files."""
-        from open_telco.cli.screens.run_evals.run_evals_screen import ALL_TASKS
-
-        for task_path in ALL_TASKS:
-            assert task_path.endswith(".py"), (
-                f"task path '{task_path}' should end with .py"
-            )
+    @pytest.mark.parametrize(
+        "task_path",
+        [
+            pytest.param("telelogs/telelogs.py", id="telelogs"),
+            pytest.param("telemath/telemath.py", id="telemath"),
+            pytest.param("teleqna/teleqna.py", id="teleqna"),
+            pytest.param("three_gpp/three_gpp.py", id="three_gpp"),
+        ],
+    )
+    def test_task_path_is_python_file(self, task_path: str) -> None:
+        """Task path should be a .py file."""
+        assert task_path.endswith(".py"), f"Task path '{task_path}' should end with .py"
 
     def test_open_telco_dir_calculation_is_correct(self) -> None:
         """Verify the path calculation in _run_mini_test finds correct directory."""
@@ -497,8 +559,22 @@ class TestResultsPreviewFormatting:
         result = screen._format_results_preview(df)
         assert result == "No results to display"
 
-    def test_format_complete_results(self) -> None:
-        """Should format all benchmark scores."""
+    @pytest.mark.parametrize(
+        "expected_content",
+        [
+            pytest.param("model: gpt-5.2 (Openai)", id="model_name"),
+            pytest.param("teleqna", id="teleqna_benchmark"),
+            pytest.param("83.60", id="teleqna_score"),
+            pytest.param("± 1.17", id="teleqna_ci"),
+            pytest.param("telelogs", id="telelogs_benchmark"),
+            pytest.param("telemath", id="telemath_benchmark"),
+            pytest.param("3gpp_tsg", id="3gpp_benchmark"),
+        ],
+    )
+    def test_format_complete_results_includes_field(
+        self, expected_content: str
+    ) -> None:
+        """Results preview should include expected field."""
         screen = RunEvalsScreen()
         screen.model = "test"
 
@@ -515,15 +591,7 @@ class TestResultsPreviewFormatting:
             ]
         )
 
-        result = screen._format_results_preview(df)
-
-        assert "model: gpt-5.2 (Openai)" in result
-        assert "teleqna" in result
-        assert "83.60" in result
-        assert "± 1.17" in result
-        assert "telelogs" in result
-        assert "telemath" in result
-        assert "3gpp_tsg" in result
+        assert expected_content in screen._format_results_preview(df)
 
     def test_format_partial_results(self) -> None:
         """Should show -- for missing benchmarks."""
@@ -595,8 +663,6 @@ class TestTaskToColumnMapping:
 
     def test_all_tasks_have_mappings(self) -> None:
         """All tasks in ALL_TASKS should have column mappings."""
-        from open_telco.cli.screens.run_evals.run_evals_screen import ALL_TASKS
-
         for task_path in ALL_TASKS:
             # Extract task name from path (e.g., "teleqna/teleqna.py" -> "teleqna")
             task_name = task_path.split("/")[0]
