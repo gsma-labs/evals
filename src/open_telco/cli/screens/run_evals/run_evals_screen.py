@@ -762,9 +762,11 @@ class EvalRunningScreen(Screen[None]):
     def action_confirm(self) -> None:
         if not self._completed:
             return
-        # Pop EvalRunningScreen and RunEvalsScreen to return to main menu
-        self.app.pop_screen()
-        self.app.pop_screen()
+        # Return to main menu using switch_screen to avoid race conditions
+        # from multiple pop_screen() calls
+        from open_telco.cli.screens.main_menu import MainMenuScreen
+
+        self.app.switch_screen(MainMenuScreen())
 
 
 class KSelectionScreen(Screen[int | None]):
