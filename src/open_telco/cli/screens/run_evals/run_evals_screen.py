@@ -11,6 +11,7 @@ from enum import Enum
 from pathlib import Path
 
 import pandas as pd
+from inspect_ai.analysis import evals_df
 from textual import work
 from textual.app import ComposeResult
 from textual.binding import Binding
@@ -620,8 +621,6 @@ class EvalRunningScreen(Screen[None]):
     def _export_to_leaderboard_parquet(
         self, log_dir: str, output_path: str
     ) -> pd.DataFrame:
-        from inspect_ai.analysis import evals_df
-
         df = evals_df(log_dir, quiet=True)
 
         if df.empty:
@@ -1564,8 +1563,6 @@ class RunEvalsScreen(Screen[None]):
     def _export_to_leaderboard_parquet(
         self, log_dir: str, output_path: str
     ) -> pd.DataFrame:
-        from inspect_ai.analysis import evals_df
-
         df = evals_df(log_dir, quiet=True)
 
         if df.empty:
