@@ -192,7 +192,7 @@ class PreviewLeaderboardScreen(BaseScreen):
         try:
             from inspect_ai.analysis import evals_df
 
-            df = evals_df(str(log_dir))
+            df = evals_df(str(log_dir), quiet=True)
         except Exception:
             return []
 

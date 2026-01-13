@@ -128,7 +128,7 @@ def _generate_parquet_from_logs(
     """
     from inspect_ai.analysis import evals_df
 
-    df = evals_df(str(log_dir))
+    df = evals_df(str(log_dir), quiet=True)
 
     if df.empty:
         raise ValueError(f"Model not found: no eval logs in {log_dir}")

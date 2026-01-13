@@ -622,7 +622,7 @@ class EvalRunningScreen(Screen[None]):
     ) -> pd.DataFrame:
         from inspect_ai.analysis import evals_df
 
-        df = evals_df(log_dir)
+        df = evals_df(log_dir, quiet=True)
 
         if df.empty:
             raise ValueError(f"No eval logs found in {log_dir}")
@@ -1566,7 +1566,7 @@ class RunEvalsScreen(Screen[None]):
     ) -> pd.DataFrame:
         from inspect_ai.analysis import evals_df
 
-        df = evals_df(log_dir)
+        df = evals_df(log_dir, quiet=True)
 
         if df.empty:
             raise ValueError(f"No eval logs found in {log_dir}")
