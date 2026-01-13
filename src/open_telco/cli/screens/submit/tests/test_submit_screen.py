@@ -750,7 +750,7 @@ class TestSubmitIntegration:
             mock_instance = MagicMock()
             mock_instance.create_submission_pr.return_value = PRResult(
                 success=True,
-                pr_url="https://github.com/gsma-research/ot_leaderboard/pull/123",
+                pr_url="https://github.com/otelcos/ot_leaderboard/pull/123",
             )
             mock_github.return_value = mock_instance
 
@@ -830,7 +830,7 @@ class TestSubmitIntegration:
             mock_instance = MagicMock()
             mock_instance.create_submission_pr.return_value = PRResult(
                 success=True,
-                pr_url="https://github.com/gsma-research/ot_leaderboard/pull/123",
+                pr_url="https://github.com/otelcos/ot_leaderboard/pull/123",
             )
             mock_github.return_value = mock_instance
 

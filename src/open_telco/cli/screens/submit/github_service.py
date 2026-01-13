@@ -24,7 +24,7 @@ class PRResult:
 class GitHubService:
     """Service for interacting with GitHub API."""
 
-    REPO_OWNER = "gsma-research"
+    REPO_OWNER = "otelcos"
     REPO_NAME = "ot_leaderboard"
     API_BASE = "https://api.github.com"
 

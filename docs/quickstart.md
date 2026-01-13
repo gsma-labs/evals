@@ -9,7 +9,7 @@ Get from zero to your first evaluation result in 5 minutes.
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Clone and setup
-git clone https://github.com/gsma-research/open_telco.git
+git clone https://github.com/otelcos/open_telco.git
 cd open_telco
 uv sync
 ```

@@ -125,6 +125,6 @@ uv run inspect eval src/open_telco/teleqna/teleqna.py \
 
 ## Getting Help
 
-- **GitHub Issues**: [github.com/gsma-research/open_telco/issues](https://github.com/gsma-research/open_telco/issues)
+- **GitHub Issues**: [github.com/otelcos/open_telco/issues](https://github.com/otelcos/open_telco/issues)
 - **Inspect AI Docs**: [inspect.aisi.org.uk](https://inspect.aisi.org.uk/)
 - **Contact**: [emolero@gsma.com](mailto:emolero@gsma.com)

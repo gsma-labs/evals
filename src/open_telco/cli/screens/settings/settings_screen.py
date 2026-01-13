@@ -229,16 +229,14 @@ class SettingsScreen(BaseScreen):
     ) -> Result[bool, str]:
         """Validate access to the leaderboard repo."""
         response_result = self._try_github_request(
-            "https://api.github.com/repos/gsma-research/ot_leaderboard", headers
+            "https://api.github.com/repos/otelcos/ot_leaderboard", headers
         )
         if not response_result.success:
             return Result.err(response_result.error or "Request failed")
 
         response = response_result.value
         if response.status_code == 404:
-            return Result.err(
-                f"user {user}: cannot access gsma-research/ot_leaderboard"
-            )
+            return Result.err(f"user {user}: cannot access otelcos/ot_leaderboard")
         if response.status_code != 200:
             return Result.err(f"repo check failed ({response.status_code})")
 

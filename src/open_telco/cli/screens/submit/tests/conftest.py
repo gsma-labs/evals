@@ -65,7 +65,7 @@ def mock_direct_access_responses() -> MagicMock:
     pr_response = MagicMock()
     pr_response.status_code = 201
     pr_response.json.return_value = {
-        "html_url": "https://github.com/gsma-research/ot_leaderboard/pull/123"
+        "html_url": "https://github.com/otelcos/ot_leaderboard/pull/123"
     }
 
     # Get default branch
@@ -140,7 +140,7 @@ def mock_fork_fallback_responses() -> MagicMock:
     pr_response = MagicMock()
     pr_response.status_code = 201
     pr_response.json.return_value = {
-        "html_url": "https://github.com/gsma-research/ot_leaderboard/pull/456"
+        "html_url": "https://github.com/otelcos/ot_leaderboard/pull/456"
     }
 
     # Get repo info
@@ -213,7 +213,7 @@ def mock_existing_pr_responses() -> MagicMock:
     search_response = MagicMock()
     search_response.status_code = 200
     search_response.json.return_value = [
-        {"html_url": "https://github.com/gsma-research/ot_leaderboard/pull/99"}
+        {"html_url": "https://github.com/otelcos/ot_leaderboard/pull/99"}
     ]
 
     mock.get.side_effect = [repo_response, search_response]

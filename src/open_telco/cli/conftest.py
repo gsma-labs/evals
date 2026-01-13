@@ -163,7 +163,7 @@ def sample_pr_result() -> "PRResult":
 
     return PRResult(
         success=True,
-        pr_url="https://github.com/gsma-research/ot_leaderboard/pull/123",
+        pr_url="https://github.com/otelcos/ot_leaderboard/pull/123",
     )
 
 
@@ -235,7 +235,7 @@ def mock_github_service() -> MagicMock:
 
     mock.create_submission_pr.return_value = PRResult(
         success=True,
-        pr_url="https://github.com/gsma-research/ot_leaderboard/pull/123",
+        pr_url="https://github.com/otelcos/ot_leaderboard/pull/123",
     )
 
     return mock

@@ -15,6 +15,6 @@ jobs:
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.OT_HUB_DISPATCH_TOKEN }}
-          repository: gsma-research/ot_hub
+          repository: otelcos/ot_hub
           event-type: docs-updated
           client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
