@@ -171,12 +171,13 @@ class TestGitHubErrorHandling403:
         """403 error should return success=False."""
         assert error_403_pr_result.success is False
 
-    def test_403_error_contains_rate_limit(
+    def test_403_error_contains_forbidden_or_permission(
         self,
         error_403_pr_result: "PRResult",
     ) -> None:
-        """403 error message should mention rate limit."""
-        assert "rate limit" in error_403_pr_result.error.lower()
+        """403 error message should mention forbidden or permission."""
+        error_lower = error_403_pr_result.error.lower()
+        assert "forbidden" in error_lower or "permission" in error_lower
 
 
 class TestGitHubErrorHandling404:

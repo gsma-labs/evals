@@ -52,6 +52,11 @@ def mock_direct_access_responses() -> MagicMock:
     """Mock responses for direct access PR creation (no fork needed)."""
     mock = MagicMock()
 
+    # Mock authenticated user response
+    user_response = MagicMock()
+    user_response.status_code = 200
+    user_response.json.return_value = {"login": "testuser"}
+
     # Mock successful branch creation (direct access)
     branch_response = MagicMock()
     branch_response.status_code = 201
@@ -81,7 +86,7 @@ def mock_direct_access_responses() -> MagicMock:
     ref_response.status_code = 200
     ref_response.json.return_value = {"object": {"sha": "abc123"}}
 
-    mock.get.side_effect = [repo_response, ref_response]
+    mock.get.side_effect = [user_response, repo_response, ref_response]
     mock.post.side_effect = [branch_response, file_response, file_response, pr_response]
 
     return mock
@@ -115,17 +120,18 @@ def mock_fork_fallback_responses() -> MagicMock:
     """Mock responses for fork fallback PR creation (403 on direct, success via fork)."""
     mock = MagicMock()
 
-    # First try direct access - fails with 403
-    branch_fail = MagicMock()
-    branch_fail.status_code = 403
-    branch_fail.raise_for_status.side_effect = requests.HTTPError()
+    # Mock authenticated user response
+    user_response = MagicMock()
+    user_response.status_code = 200
+    user_response.json.return_value = {"login": "testuser"}
 
     # Fork creation succeeds
     fork_response = MagicMock()
     fork_response.status_code = 202
     fork_response.json.return_value = {
-        "full_name": "user/ot_leaderboard",
+        "full_name": "testuser/ot_leaderboard",
         "default_branch": "main",
+        "owner": {"login": "testuser"},
     }
 
     # Branch creation on fork succeeds
@@ -143,7 +149,7 @@ def mock_fork_fallback_responses() -> MagicMock:
         "html_url": "https://github.com/otelcos/ot_leaderboard/pull/456"
     }
 
-    # Get repo info
+    # Get repo info - no push permission, triggers fork workflow
     repo_response = MagicMock()
     repo_response.status_code = 200
     repo_response.json.return_value = {
@@ -156,7 +162,7 @@ def mock_fork_fallback_responses() -> MagicMock:
     ref_response.status_code = 200
     ref_response.json.return_value = {"object": {"sha": "abc123"}}
 
-    mock.get.side_effect = [repo_response, ref_response, ref_response]
+    mock.get.side_effect = [user_response, repo_response, ref_response, ref_response]
     mock.post.side_effect = [
         fork_response,
         branch_success,
@@ -196,6 +202,11 @@ def mock_existing_pr_responses() -> MagicMock:
     """Mock responses when PR already exists."""
     mock = MagicMock()
 
+    # Mock authenticated user response
+    user_response = MagicMock()
+    user_response.status_code = 200
+    user_response.json.return_value = {"login": "testuser"}
+
     # Get repo info
     repo_response = MagicMock()
     repo_response.status_code = 200
@@ -203,6 +214,11 @@ def mock_existing_pr_responses() -> MagicMock:
         "default_branch": "main",
         "permissions": {"push": True},
     }
+
+    # Get ref (for base SHA)
+    ref_response = MagicMock()
+    ref_response.status_code = 200
+    ref_response.json.return_value = {"object": {"sha": "abc123"}}
 
     # Branch already exists (422)
     branch_exists = MagicMock()
@@ -216,7 +232,7 @@ def mock_existing_pr_responses() -> MagicMock:
         {"html_url": "https://github.com/otelcos/ot_leaderboard/pull/99"}
     ]
 
-    mock.get.side_effect = [repo_response, search_response]
+    mock.get.side_effect = [user_response, repo_response, ref_response, search_response]
     mock.post.side_effect = [branch_exists]
 
     return mock
