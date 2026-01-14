@@ -139,6 +139,9 @@ class TestRunEvalsScreen:
                 return_value=False,
             ),
             patch(
+                "open_telco.cli.screens.run_evals.run_evals_screen.RunEvalsScreen._run_steps",
+            ),
+            patch(
                 "open_telco.cli.screens.run_evals.run_evals_screen.EnvManager"
             ) as mock_env,
         ):
@@ -152,6 +155,7 @@ class TestRunEvalsScreen:
                 await pilot.press("enter")
                 await pilot.press("down")
                 await pilot.press("enter")
+                await pilot.pause()
 
                 assert isinstance(pilot.app.screen, RunEvalsScreen)
 
@@ -163,6 +167,9 @@ class TestRunEvalsScreen:
             patch(
                 "open_telco.cli.screens.run_evals.run_evals_screen.RunEvalsScreen._check_preflight_passed",
                 return_value=False,
+            ),
+            patch(
+                "open_telco.cli.screens.run_evals.run_evals_screen.RunEvalsScreen._run_steps",
             ),
             patch(
                 "open_telco.cli.screens.run_evals.run_evals_screen.EnvManager"
