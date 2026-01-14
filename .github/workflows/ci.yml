@@ -79,3 +79,7 @@ jobs:
 
       - name: Run tests
         run: uv run pytest src/ -v --tb=short
+        env:
+          TERM: xterm-256color
+          COLUMNS: "120"
+          LINES: "30"
