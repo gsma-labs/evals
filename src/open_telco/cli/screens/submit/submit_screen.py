@@ -233,9 +233,7 @@ class SubmitScreen(BaseScreen):
             all_entries_copy, _irt_params = calculate_all_tci(all_entries.copy())
             # Only use calculated TCI for local models (not in HuggingFace yet)
             tci_lookup = {
-                e.model: e.tci
-                for e in all_entries_copy
-                if e.model in local_model_names
+                e.model: e.tci for e in all_entries_copy if e.model in local_model_names
             }
         else:
             # Fallback: HuggingFace doesn't have TCI yet, calculate for all

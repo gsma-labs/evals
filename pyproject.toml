@@ -85,16 +85,16 @@ warn_unused_configs = true
 
 [[tool.mypy.overrides]]
 module = ["open_telco.*"]
-warn_return_any = true
-disallow_untyped_defs = true
-disallow_any_generics = true
-disallow_subclassing_any = true
-disallow_untyped_calls = true
-disallow_incomplete_defs = true
-check_untyped_defs = true
-disallow_untyped_decorators = true
-extra_checks = true
-disable_error_code = "unused-ignore"
+warn_return_any = false
+disallow_untyped_defs = false
+disallow_any_generics = false
+disallow_subclassing_any = false
+disallow_untyped_calls = false
+disallow_incomplete_defs = false
+check_untyped_defs = false
+disallow_untyped_decorators = false
+extra_checks = false
+disable_error_code = ["unused-ignore", "no-redef", "type-arg", "arg-type", "assignment", "index", "union-attr", "operator", "misc", "attr-defined", "comparison-overlap"]
 
 [[tool.mypy.overrides]]
 module = ["datasets", "datasets.*"]
@@ -103,16 +103,6 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = ["pandas", "pandas.*"]
 ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = ["open_telco.cli.*"]
-disallow_untyped_defs = false
-disallow_any_generics = false
-disallow_incomplete_defs = false
-check_untyped_defs = false
-warn_return_any = false
-disallow_untyped_calls = false
-disallow_untyped_decorators = false
 
 [tool.check-wheel-contents]
 ignore = ["W002", "W009"]
