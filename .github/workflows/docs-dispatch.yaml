@@ -1,0 +1,20 @@
+name: Trigger Docs Deployment
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'README.md'
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger ot_hub deployment
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.OT_HUB_DISPATCH_TOKEN }}
+          repository: otelcos/ot_hub
+          event-type: docs-updated
+          client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
