@@ -9,7 +9,6 @@ from datetime import date
 from pathlib import Path
 
 import pandas as pd
-from inspect_ai.analysis import evals_df
 
 from evals.cli.types import Result
 
@@ -127,6 +126,9 @@ def _generate_parquet_from_logs(
     Returns:
         Parquet file content as bytes
     """
+    # Import lazily to avoid terminal interference (see PR #14)
+    from inspect_ai.analysis import evals_df
+
     df = evals_df(str(log_dir), quiet=True)
 
     if df.empty:

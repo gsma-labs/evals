@@ -14,20 +14,8 @@ __all__ = [
 
 def __getattr__(name: str):
     """Lazy import benchmark modules."""
-    if name == "telelogs":
-        from evals import telelogs as mod
+    if name in __all__:
+        import importlib
 
-        return mod
-    if name == "telemath":
-        from evals import telemath as mod
-
-        return mod
-    if name == "teleqna":
-        from evals import teleqna as mod
-
-        return mod
-    if name == "three_gpp":
-        from evals import three_gpp as mod
-
-        return mod
+        return importlib.import_module(f".{name}", __name__)
     raise AttributeError(f"module 'evals' has no attribute {name!r}")
