@@ -41,7 +41,7 @@ def communicate_with_timeout(
         return stdout, stderr, False
     except subprocess.TimeoutExpired:
         process.kill()
-        process.wait()
+        process.communicate()  # Drain pipes to avoid potential deadlock
         return "", "", True
 
 

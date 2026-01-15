@@ -6,7 +6,6 @@ from enum import Enum
 from pathlib import Path
 
 import pandas as pd
-from inspect_ai.analysis import evals_df
 from textual import work
 from textual.app import ComposeResult
 from textual.binding import Binding
@@ -264,6 +263,9 @@ class SubmitScreen(BaseScreen):
             Tuple of (LeaderboardEntry list, models_data dict for building final model list)
         """
         try:
+            # Import lazily to avoid terminal interference (see PR #14)
+            from inspect_ai.analysis import evals_df
+
             df = evals_df(str(log_dir), quiet=True)
         except Exception:
             return [], {}
