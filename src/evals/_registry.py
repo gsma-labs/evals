@@ -5,9 +5,9 @@ from evals.teletables.teletables import teletables
 from evals.three_gpp.three_gpp import three_gpp
 
 __all__ = [
-    "teleqna",
-    "telemath",
     "telelogs",
+    "telemath",
+    "teleqna",
     "teletables",
     "three_gpp",
 ]

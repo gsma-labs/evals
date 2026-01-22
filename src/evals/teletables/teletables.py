@@ -1,3 +1,5 @@
+import hashlib
+
 from inspect_ai import Task, task
 from inspect_ai.dataset import Sample, hf_dataset
 from inspect_ai.scorer import choice
@@ -9,8 +11,13 @@ DEFAULT_SPLIT = "test"
 
 
 def record_to_sample(record: dict) -> Sample:
-    """Convert dataset record to Sample with subject metadata."""
+    """Convert dataset record to Sample for multiple choice evaluation."""
+    # Create stable ID from table_id and question hash
+    question_hash = hashlib.md5(record["question"].encode()).hexdigest()[:6]
+    sample_id = f"{record['table_id']}_{question_hash}"
+
     return Sample(
+        id=sample_id,
         input=record["question"],
         choices=record["choices"],
         target=chr(65 + record["answer"]),
