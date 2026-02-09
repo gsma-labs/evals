@@ -3,6 +3,8 @@ from inspect_ai.dataset import Sample, hf_dataset
 from inspect_ai.scorer import choice
 from inspect_ai.solver import multiple_choice
 
+from evals._utils import resolve_dataset
+
 DEFAULT_SUBJECT = "full"
 DEFAULT_DATASET = "GSMA/open_telco"
 DEFAULT_DATASET_NAME = "teleqna"
@@ -24,12 +26,14 @@ def teleqna(
     subject: str = DEFAULT_SUBJECT,
     dataset_path: str = DEFAULT_DATASET,
     split: str = DEFAULT_SPLIT,
+    full: bool = False,
 ) -> Task:
+    ds_path, ds_split = resolve_dataset(full, dataset_path, DEFAULT_DATASET, split)
     dataset = hf_dataset(
-        dataset_path,
+        ds_path,
         name=DEFAULT_DATASET_NAME,
         sample_fields=record_to_sample,
-        split=split,
+        split=ds_split,
     )
     if subject != DEFAULT_SUBJECT:
         dataset = dataset.filter(

@@ -39,6 +39,53 @@ uv run inspect eval src/evals/telelogs/telelogs.py --model openai/gpt-4o -T 4
 uv run inspect view
 ```
 
+## Full Benchmarks
+
+By default, evaluations run on **small samples** from `GSMA/open_telco` (100 samples each, 1000 for TeleQnA). To run on the **full benchmark datasets** from `GSMA/ot-full-benchmarks`, use the `full` parameter.
+
+### Single Evaluation
+
+Pass `-T full=true` to switch to full benchmarks:
+
+```bash
+# Full TeleQnA (~10,000 samples)
+uv run inspect eval src/evals/teleqna/teleqna.py --model openai/gpt-4o -T full=true
+
+# Full TeleMath (~500 samples)
+uv run inspect eval src/evals/telemath/telemath.py --model openai/gpt-4o -T full=true
+
+# Combine with --limit for a quick smoke test on the full dataset
+uv run inspect eval src/evals/teleqna/teleqna.py --model openai/gpt-4o -T full=true --limit 5
+```
+
+### Eval Set (Python Script)
+
+Use the `--full` flag with `run_evals.py`:
+
+```bash
+uv run python src/evals/run_evals.py --full
+```
+
+### Eval Set (Command Line)
+
+Pass `-T full=true` to `inspect eval-set`:
+
+```bash
+uv run inspect eval-set src/evals/teleqna/teleqna.py src/evals/telemath/telemath.py \
+   --model openai/gpt-4o -T full=true \
+   --log-dir logs/full-benchmark-run
+```
+
+| Dataset | Small samples | Full samples |
+|---------|--------------|--------------|
+| TeleQnA | 1,000 | ~10,000 |
+| TeleTables | 100 | ~500 |
+| TeleMath | 100 | ~500 |
+| TeleLogs | 100 | TBD |
+| 3GPP TSG | 100 | 100 |
+
+---
+
 ## Running Eval Sets
 
 For running multiple evaluations across multiple models, use `eval_set`. This is the recommended approach for benchmarking.
@@ -69,6 +116,7 @@ success, logs = eval_set(
       "openai/gpt-4o",
       "anthropic/claude-sonnet-4-20250514"
    ],
+   task_args={"full": True},  # Use full benchmarks (omit for small samples)
    log_dir="logs/benchmark-run-1",
    limit=None,  # Remove to run all samples
    epochs=1,
@@ -78,7 +126,11 @@ success, logs = eval_set(
 Run it with:
 
 ```bash
+# Small samples (default)
 uv run python src/evals/run_evals.py
+
+# Full benchmarks
+uv run python src/evals/run_evals.py --full
 ```
 
 ### Key Parameters

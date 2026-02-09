@@ -15,6 +15,8 @@ from inspect_ai.scorer import (
 )
 from inspect_ai.solver import TaskState, generate, system_message
 
+from evals._utils import resolve_dataset
+
 DEFAULT_DATASET = "GSMA/open_telco"
 DEFAULT_DATASET_NAME = "telemath"
 DEFAULT_SPLIT = "test"
@@ -72,13 +74,15 @@ def telemath_scorer():
 def telemath(
     dataset_path: str = DEFAULT_DATASET,
     split: str = DEFAULT_SPLIT,
+    full: bool = False,
 ) -> Task:
+    ds_path, ds_split = resolve_dataset(full, dataset_path, DEFAULT_DATASET, split)
     return Task(
         dataset=hf_dataset(
-            dataset_path,
+            ds_path,
             name=DEFAULT_DATASET_NAME,
             sample_fields=FieldSpec(input="question", target="answer"),
-            split=split,
+            split=ds_split,
         ),
         solver=[system_message(SYSTEM_PROMPT), generate()],
         scorer=telemath_scorer(),

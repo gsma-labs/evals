@@ -14,6 +14,7 @@ from inspect_ai.scorer import (
 )
 from inspect_ai.solver import TaskState, generate
 
+from evals._utils import resolve_dataset
 from evals.telelogs.utils import maj_at_k
 
 DEFAULT_EVAL_TYPE: Literal["soft", "hard"] = "soft"
@@ -67,13 +68,15 @@ def telelogs(
     eval_type: Literal["soft", "hard"] = DEFAULT_EVAL_TYPE,
     dataset_path: str = DEFAULT_DATASET,
     split: str = DEFAULT_SPLIT,
+    full: bool = False,
 ) -> Task:
+    ds_path, ds_split = resolve_dataset(full, dataset_path, DEFAULT_DATASET, split)
     return Task(
         dataset=hf_dataset(
-            dataset_path,
+            ds_path,
             name=DEFAULT_DATASET_NAME,
             sample_fields=FieldSpec(input="question", target="answer"),
-            split=split,
+            split=ds_split,
         ),
         solver=generate(),
         scorer=telelogs_scorer(eval_type=eval_type),
