@@ -5,7 +5,9 @@ from inspect_ai.dataset import Sample, hf_dataset
 from inspect_ai.scorer import choice
 from inspect_ai.solver import multiple_choice
 
-DEFAULT_DATASET = "GSMA/open_telco"
+from evals._utils import resolve_dataset
+
+DEFAULT_DATASET = "GSMA/ot_sample_data"
 DEFAULT_DATASET_NAME = "teletables"
 DEFAULT_SPLIT = "test"
 
@@ -28,12 +30,14 @@ def record_to_sample(record: dict) -> Sample:
 def teletables(
     dataset_path: str = DEFAULT_DATASET,
     split: str = DEFAULT_SPLIT,
+    full: bool = False,
 ) -> Task:
+    ds_path, ds_split = resolve_dataset(full, dataset_path, DEFAULT_DATASET, split)
     dataset = hf_dataset(
-        dataset_path,
+        ds_path,
         name=DEFAULT_DATASET_NAME,
         sample_fields=record_to_sample,
-        split=split,
+        split=ds_split,
     )
     return Task(
         dataset=dataset,
