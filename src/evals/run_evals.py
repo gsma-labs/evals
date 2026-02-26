@@ -24,6 +24,7 @@ if __name__ == "__main__":
             "three_gpp/three_gpp.py",
             "teleqna/teleqna.py",
             "telemath/telemath.py",
+            "teletables/teletables.py",
             "oranbench/oranbench.py",
             "srsranbench/srsranbench.py",
         ],  # set how many tasks you want to run
