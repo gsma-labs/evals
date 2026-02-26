@@ -1,6 +1,6 @@
 """Shared utilities for eval task functions."""
 
-FULL_DATASET = "GSMA/ot-full-benchmarks"
+FULL_DATASET = "GSMA/ot-full"
 
 
 def resolve_dataset(
