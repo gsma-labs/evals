@@ -14,7 +14,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--full",
         action="store_true",
-        help="Use full benchmarks (GSMA/ot-full-benchmarks) instead of small samples.",
+        help="Use full benchmarks (GSMA/ot-full) instead of small samples.",
     )
     args = parser.parse_args()
 

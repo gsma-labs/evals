@@ -41,7 +41,7 @@ uv run inspect view
 
 ## Full Benchmarks
 
-By default, evaluations run on **small samples** from `GSMA/ot_sample_data` (100–150 samples each, 1,000 for TeleQnA). To run on the **full benchmark datasets** from `GSMA/ot-full-benchmarks`, use the `full` parameter.
+By default, evaluations run on **small samples** from `GSMA/ot-lite` (100–150 samples each, 1,000 for TeleQnA). To run on the **full benchmark datasets** from `GSMA/ot-full`, use the `full` parameter.
 
 ### Single Evaluation
 
