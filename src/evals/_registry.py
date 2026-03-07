@@ -1,4 +1,5 @@
 from evals.oranbench.oranbench import oranbench
+from evals.sixg_bench.sixg_bench import sixg_bench
 from evals.srsranbench.srsranbench import srsranbench
 from evals.telelogs.telelogs import telelogs
 from evals.telemath.telemath import telemath
@@ -8,6 +9,7 @@ from evals.three_gpp.three_gpp import three_gpp
 
 __all__ = [
     "oranbench",
+    "sixg_bench",
     "srsranbench",
     "telelogs",
     "telemath",

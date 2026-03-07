@@ -6,6 +6,7 @@ Use: from evals.telelogs import telelogs
 
 __all__ = [
     "oranbench",
+    "sixg_bench",
     "srsranbench",
     "telelogs",
     "telemath",
