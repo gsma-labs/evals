@@ -65,4 +65,3 @@ Each record contains:
 
 - [Paper](https://arxiv.org/abs/2602.08675)
 - [Source](https://github.com/maferrag/6G-Bench)
-- [Open Telco Full Dataset](https://huggingface.co/datasets/GSMA/ot-full)

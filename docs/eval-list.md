@@ -97,7 +97,7 @@ uv run inspect eval src/evals/sixg_bench/sixg_bench.py --model <model>
 uv run inspect eval src/evals/sixg_bench/sixg_bench.py --model <model> -T task_id=T1
 ```
 
-[Paper](https://arxiv.org/abs/2602.08675) | [Dataset](https://huggingface.co/datasets/GSMA/ot-full)
+[Paper](https://arxiv.org/abs/2602.08675) | [Source](https://github.com/maferrag/6G-Bench)
 
 ### 3GPP TSG
 
