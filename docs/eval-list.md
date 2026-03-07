@@ -86,14 +86,11 @@ Evaluates the capability of LLMs to generate standard-compliant YAML configurati
 
 ### 6G-Bench
 
-**[6G-Bench](../src/evals/sixg_bench/)**: AI-native 6G network reasoning benchmark
-
-3,722 multiple-choice questions across 30 tasks aligned with 6G standardization bodies including 3GPP, IETF, ETSI, ITU-T, and the O-RAN Alliance. The benchmark focuses on telecom reasoning under realistic network and standards constraints.
+**[6G-Bench](../src/evals/sixg_bench/sixg_bench.py)**: AI-native 6G network reasoning benchmark
 
 ```bash
 uv run inspect eval src/evals/sixg_bench/sixg_bench.py --model <model>
 
-# Filter to a specific task family
 uv run inspect eval src/evals/sixg_bench/sixg_bench.py --model <model> -T task_id=T1
 ```
 

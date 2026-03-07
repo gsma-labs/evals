@@ -82,7 +82,6 @@ uv run inspect eval-set src/evals/teleqna/teleqna.py src/evals/telemath/telemath
 | TeleTables | 100 | 500 |
 | TeleMath | 100 | 500 |
 | TeleLogs | 100 | 500 |
-| 6G-Bench | 150 | 3,722 |
 | 3GPP TSG | 100 | 2,000 |
 | ORANBench | 150 | 1,500 |
 | srsRANBench | 150 | 1,502 |
