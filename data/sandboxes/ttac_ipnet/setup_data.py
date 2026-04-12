@@ -1,6 +1,7 @@
 """Download TTAC IP Network data from HuggingFace. Run once."""
 
 import os
+import shutil
 import zipfile
 from pathlib import Path
 
@@ -38,14 +39,16 @@ def main():
     with zipfile.ZipFile(zip_path, "r") as zf:
         zf.extractall(DATA_DIR)
 
-    # Download question limits config
-    hf_hub_download(
+    # Download question limits config (to flat path for Docker COPY; space
+    # in "Track B/" breaks Dockerfile COPY syntax).
+    config_src = hf_hub_download(
         repo_id=REPO_ID,
         filename="Track B/question_limits_config.json",
         repo_type="dataset",
         local_dir=DATA_DIR,
         token=token,
     )
+    shutil.copy(config_src, DATA_DIR / "question_limits_config.json")
 
     print(f"Data downloaded and extracted to {DATA_DIR}")
 
