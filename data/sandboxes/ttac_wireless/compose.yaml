@@ -12,7 +12,7 @@ services:
     build: .
     init: true
     environment:
-      - DATA_SOURCE=/app/data
+      - DATA_SOURCE=data/Track A/data/Phase_1
       - DATA_SPLIT=train
     volumes:
       - ./data:/app/data:ro
