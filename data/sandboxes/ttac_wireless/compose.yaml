@@ -1,0 +1,29 @@
+services:
+  default:
+    image: python:3.13-slim
+    init: true
+    command: tail -f /dev/null
+    depends_on:
+      server:
+        condition: service_healthy
+    networks: [ttac]
+
+  server:
+    build: .
+    init: true
+    environment:
+      - DATA_SOURCE=/app/data
+      - DATA_SPLIT=train
+    volumes:
+      - ./data:/app/data:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7860/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    networks: [ttac]
+
+networks:
+  ttac:
+    internal: true

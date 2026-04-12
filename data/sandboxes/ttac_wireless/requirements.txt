@@ -1,0 +1,6 @@
+fastapi>=0.115.0
+uvicorn>=0.34.0
+pandas>=2.2.0
+numpy>=1.26.0
+pydantic>=2.10.0
+python-dateutil>=2.9.0
