@@ -13,6 +13,8 @@ __all__ = [
     "teleqna",
     "teletables",
     "three_gpp",
+    "ttac_ipnet",
+    "ttac_wireless",
 ]
 
 

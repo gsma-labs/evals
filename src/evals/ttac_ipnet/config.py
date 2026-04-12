@@ -2,7 +2,6 @@
 
 from pathlib import Path
 
-
 # --- Paths ---
 SANDBOX_DIR = Path(__file__).resolve().parents[3] / "data" / "sandboxes" / "ttac_ipnet"
 COMPOSE_FILE = str(SANDBOX_DIR / "compose.yaml")

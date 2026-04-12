@@ -1,4 +1,4 @@
-"""TTAC Wireless scorer. IoU over answer code sets extracted from \\boxed{}."""
+r"""TTAC Wireless scorer. IoU over answer code sets extracted from \\boxed{}."""
 
 import re
 
@@ -17,7 +17,7 @@ from evals.ttac_wireless.config import ANSWER_PATTERN, ANSWER_SEPARATOR
 
 
 def extract_codes(text: str) -> set[str] | None:
-    """Pull answer codes from \\boxed{C3|C5} notation. Returns None if no match."""
+    r"""Pull answer codes from \\boxed{C3|C5} notation. Returns None if no match."""
     match = re.search(ANSWER_PATTERN, text)
     if not match:
         return None

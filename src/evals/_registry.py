@@ -6,6 +6,8 @@ from evals.telemath.telemath import telemath
 from evals.teleqna.teleqna import teleqna
 from evals.teletables.teletables import teletables
 from evals.three_gpp.three_gpp import three_gpp
+from evals.ttac_ipnet.task import ttac_ipnet
+from evals.ttac_wireless.task import ttac_wireless
 
 __all__ = [
     "oranbench",
@@ -16,4 +18,6 @@ __all__ = [
     "teleqna",
     "teletables",
     "three_gpp",
+    "ttac_ipnet",
+    "ttac_wireless",
 ]
