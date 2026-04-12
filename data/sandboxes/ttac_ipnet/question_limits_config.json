@@ -1,0 +1,178 @@
+{
+  "question_2": {
+    "no_permission": {
+      "display lldp neighbor brief": [
+        "Gamma-Axis-02"
+      ]
+    }
+  },
+  "question_4": {
+    "no_permission": {
+      "display lldp neighbor brief": [
+        "Beta-Portal-01",
+        "Beta-Axis-02",
+        "Beta-Axis-01",
+        "Beta-Aegis-01",
+        "Beta-Aegis-02",
+        "Beta-Node-01",
+        "Beta-Node-02",
+        "Beta-Node-03",
+        "Beta-Node-04",
+        "Beta-Portal-02"
+      ]
+    }
+  },
+  "question_5": {
+    "no_permission": {
+      "display lldp neighbor brief": [
+        "Delta-Portal-01",
+        "Delta-Portal-02",
+        "Delta-Axis-01",
+        "Delta-Axis-02",
+        "Delta-Aegis-01",
+        "Delta-Aegis-02",
+        "Delta-Link-01",
+        "Delta-Link-02",
+        "Delta-Link-03",
+        "Delta-Link-04"
+      ]
+    }
+  },
+  "question_6": {
+    "no_permission": {
+      "display lldp neighbor brief": [
+        "Delta-Portal-01",
+        "Delta-Portal-02",
+        "Delta-Axis-02",
+        "Delta-Aegis-01",
+        "Delta-Aegis-02",
+        "Delta-Link-01",
+        "Delta-Link-02",
+        "Delta-Link-03",
+        "Delta-Link-04",
+        "Delta-Axis-01"
+      ]
+    }
+  },
+  "question_11": {
+    "no_permission": {
+      "display ip routing-table": [
+        "Beta-Axis-02"
+      ]
+    }
+  },
+  "question_12": {
+    "no_permission": {
+      "display ip routing-table": [
+        "Gamma-Portal-02"
+      ]
+    }
+  },
+  "question_13": {
+    "no_permission": {
+      "display ip routing-table": [
+        "Beta-Node-04"
+      ]
+    }
+  },
+  "question_14": {
+    "no_permission": {
+      "display ip routing-table": [
+        "Gamma-Node-02"
+      ]
+    }
+  },
+  "question_15": {
+    "no_permission": {
+      "display ip routing-table": [
+        "Delta-Axis-02",
+        "Delta-Node-02"
+      ]
+    }
+  },
+  "question_19": {
+    "no_permission": {
+      "display arp": [
+        "Beta-Portal-02"
+      ]
+    }
+  },
+  "question_20": {
+    "no_permission": {
+      "display arp": [
+        "Beta-Portal-02"
+      ]
+    }
+  },
+  "question_22": {
+    "no_permission": {
+      "display arp": [
+        "Gamma-Portal-02"
+      ]
+    }
+  },
+  "question_30": {
+    "no_permission": {
+      "display arp": [
+        "Atlas-Prime-01"
+      ],
+      "display lldp neighbor brief": [
+        "Atlas-Prime-01"
+      ],
+      "display interface description": [
+        "Atlas-Prime-01"
+      ],
+      "display current-configuration": [
+        "Atlas-Prime-01"
+      ]
+    }
+  },
+  "question_31": {
+    "no_permission": {
+      "display arp": [
+        "Janus-Prime-01"
+      ],
+      "display lldp neighbor brief": [
+        "Janus-Prime-01"
+      ],
+      "display interface description": [
+        "Janus-Prime-01"
+      ],
+      "display current-configuration": [
+        "Janus-Prime-01"
+      ]
+    }
+  },
+  "question_32": {
+    "no_permission": {
+      "display arp": [
+        "Aegis-Prime-01"
+      ],
+      "display lldp neighbor brief": [
+        "Aegis-Prime-01"
+      ],
+      "display interface description": [
+        "Aegis-Prime-01"
+      ],
+      "display current-configuration": [
+        "Aegis-Prime-01"
+      ]
+    }
+  },
+  "question_33": {
+    "no_permission": {
+      "display arp": [
+        "Janus-Node-02"
+      ],
+      "display lldp neighbor brief": [
+        "Janus-Node-02"
+      ],
+      "display interface description": [
+        "Janus-Node-02"
+      ],
+      "display current-configuration": [
+        "Janus-Node-02"
+      ]
+    }
+  }
+}
