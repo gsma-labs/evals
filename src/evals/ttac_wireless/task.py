@@ -14,26 +14,20 @@ from evals.ttac_wireless.config import (
 )
 from evals.ttac_wireless.samples import load_dataset
 from evals.ttac_wireless.scorer import official_scorer
-from evals.ttac_wireless.tools import all_tools, filter_allowed
+from evals.ttac_wireless.tools import all_tools
 
 
 @solver
 def prepare_scenario() -> Solver:
-    """Set scenario_id + tag in store; inject tag-routed system prompt; set tools."""
+    """Set scenario_id + tag in store; inject tag-routed system prompt."""
 
     async def solve(state: TaskState, generate):
         tag = state.metadata.get("tag", "multiple-answer")
-        allowed = state.metadata.get("allowed_tools", ["all"])
-
         store().set("scenario_id", state.metadata["scenario_id"])
-
         prompt = (
             SYSTEM_PROMPT_SINGLE if tag == "single-answer" else SYSTEM_PROMPT_MULTIPLE
         )
         state.messages = [ChatMessageSystem(content=prompt), *state.messages]
-
-        tools = filter_allowed(allowed)
-        state.tools = tools if tools else all_tools()
         return state
 
     return solve
@@ -46,7 +40,7 @@ def ttac_wireless(full: bool = False) -> Task:
 
     return Task(
         dataset=dataset,
-        solver=[prepare_scenario(), react()],
+        solver=[prepare_scenario(), react(tools=all_tools())],
         scorer=official_scorer(),
         sandbox=("docker", COMPOSE_FILE),
         message_limit=MESSAGE_LIMIT,
