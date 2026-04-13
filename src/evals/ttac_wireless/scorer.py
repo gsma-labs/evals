@@ -30,34 +30,28 @@ def extract_codes(text: str) -> list[str] | None:
     if not matches:
         return None
     raw = matches[-1].strip()
+    raw = re.sub(r"[{}]", "", raw)
     codes = [c.strip() for c in raw.split(ANSWER_SEPARATOR) if c.strip()]
     return codes or None
 
 
-def official_score(predicted: list[str], gt: str) -> bool:
-    """Lenient port of the official compute_score (hard-match only).
+def official_score(predicted: list[str], gt: str) -> float:
+    """IoU-based scorer (order-insensitive, case-insensitive).
 
-    NOT bit-identical to the competition's compute_score. Semantics:
-      - Empty `predicted` returns False.
-      - Whole-string equality is checked first (case-insensitive, after
-        joining `predicted` with '|'). This is the lenient extension:
-        the competition scorer would return False for a multi-code
-        prediction against a `gt` of the same shape, because its
-        recursion compares each split alternative against the joined
-        prediction as a raw string.
-      - Otherwise, if `gt` contains '|', it is split and each alternative
-        is compared (order-sensitive) to the joined `pred_str`.
-      - Case-insensitive throughout.
+    Returns:
+      - 0.0 when `predicted` is empty or there is no overlap with `gt`.
+      - 1.0 for exact set match (single-answer: one code equals gt).
+      - |intersection| / |union| for partial multi-answer overlap.
     """
     if not predicted:
-        return False
-    pred_str = ANSWER_SEPARATOR.join(predicted).strip().lower()
-    gt_clean = gt.strip().lower()
-    if pred_str == gt_clean:
-        return True
-    if ANSWER_SEPARATOR in gt_clean:
-        return any(pred_str == g.strip() for g in gt_clean.split(ANSWER_SEPARATOR))
-    return False
+        return 0.0
+    pred_set = {c.strip().lower() for c in predicted}
+    gt_set = {c.strip().lower() for c in gt.split(ANSWER_SEPARATOR) if c.strip()}
+    intersection = pred_set & gt_set
+    union = pred_set | gt_set
+    if not union:
+        return 0.0
+    return len(intersection) / len(union)
 
 
 def build_score_metadata(
@@ -65,16 +59,12 @@ def build_score_metadata(
     gt: str,
     tag: str,
     tool_calls: int,
+    iou: float,
 ) -> dict:
     """Per-sample telemetry dict consumed by the custom @metric functions.
 
-    `strict_match` is set-equality on codes (does `predicted` contain exactly
-    the alternatives listed in `gt`, order-independent, no extras). This is a
-    deliberately stricter, order-agnostic signal than `official_score`: a
-    sample can have `value=INCORRECT` and `strict_match=True` (e.g. agent
-    emitted all alternatives in the "wrong" order under the official raw-
-    string compare). It can also have `value=CORRECT` and `strict_match=False`
-    (agent matched one alternative but did not list them all).
+    `strict_match` is True when IoU equals 1.0 (exact set match between
+    predicted codes and ground-truth alternatives, order-independent).
     """
     pred = predicted or []
     expected = sorted({c.strip() for c in gt.split(ANSWER_SEPARATOR) if c.strip()})
@@ -82,8 +72,8 @@ def build_score_metadata(
         "predicted": sorted(pred),
         "expected": expected,
         "tag": tag,
-        # Order-agnostic set equality; see docstring for semantics vs value.
-        "strict_match": sorted(pred) == expected,
+        "iou": iou,
+        "strict_match": iou == 1.0,
         "no_answer": predicted is None,
         "num_predicted": len(pred),
         "tool_calls": tool_calls,
@@ -142,10 +132,10 @@ def mean_options_selected() -> Metric:
 
 @metric
 def accuracy_single() -> Metric:
-    def compute(scores: list[SampleScore]) -> float:
+    def compute(scores: list[SampleScore]) -> float | str:
         subset = [s for s in scores if s.score.metadata.get("tag") == "single-answer"]
         if not subset:
-            return 0.0
+            return "N/A"
         to_float = value_to_float()
         return sum(to_float(s.score.value) for s in subset) / len(subset)
 
@@ -154,10 +144,10 @@ def accuracy_single() -> Metric:
 
 @metric
 def accuracy_multiple() -> Metric:
-    def compute(scores: list[SampleScore]) -> float:
+    def compute(scores: list[SampleScore]) -> float | str:
         subset = [s for s in scores if s.score.metadata.get("tag") == "multiple-answer"]
         if not subset:
-            return 0.0
+            return "N/A"
         to_float = value_to_float()
         return sum(to_float(s.score.value) for s in subset) / len(subset)
 
@@ -181,7 +171,8 @@ def official_scorer():
         predicted = extract_codes(state.output.completion)
         tag = state.metadata.get("tag", "multiple-answer")
         tool_calls = _count_tool_calls(state)
-        metadata = build_score_metadata(predicted, target.text, tag, tool_calls)
+        iou = official_score(predicted, target.text) if predicted else 0.0
+        metadata = build_score_metadata(predicted, target.text, tag, tool_calls, iou)
 
         if predicted is None:
             return Score(
@@ -190,7 +181,7 @@ def official_scorer():
                 metadata=metadata,
             )
 
-        value = CORRECT if official_score(predicted, target.text) else INCORRECT
+        value = CORRECT if iou > 0 else INCORRECT
         return Score(
             value=value,
             answer=ANSWER_SEPARATOR.join(predicted),

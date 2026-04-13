@@ -74,6 +74,21 @@ def test_record_to_sample_normalises_string_allowed_tools_to_list():
     assert sample.metadata["allowed_tools"] == ["all"]
 
 
+def test_record_to_sample_faithful_skips_preamble():
+    sample = record_to_sample(MOCK_RECORD, faithful=True)
+    assert "drive testing across 5 BSs" not in sample.input
+    assert "network_type=5G" not in sample.input
+    assert "Diagnose the throughput issue." in sample.input
+    assert "C1: Weak coverage" in sample.input
+
+
+def test_record_to_sample_faithful_false_includes_preamble():
+    sample = record_to_sample(MOCK_RECORD, faithful=False)
+    assert "drive testing across 5 BSs" in sample.input
+    assert "network_type=5G" in sample.input
+    assert "Diagnose the throughput issue." in sample.input
+
+
 def test_record_to_sample_input_has_context_preamble():
     sample = record_to_sample(MOCK_RECORD)
     assert "drive testing across 5 BSs" in sample.input

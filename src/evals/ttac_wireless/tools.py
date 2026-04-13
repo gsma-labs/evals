@@ -20,7 +20,7 @@ async def _get(path: str) -> str:
     if "?" in path:
         base, query = path.split("?", 1)
         path = f"{base}?{urlencode(parse_qsl(query, keep_blank_values=True))}"
-    result = await sandbox().exec(["curl", "-s", "-H", _header(), _url(path)])
+    result = await sandbox().exec(["curl", "-sSf", "-H", _header(), _url(path)])
     if not result.success:
         return f"Error: {result.stderr or result.stdout or 'curl failed'}"
     return result.stdout

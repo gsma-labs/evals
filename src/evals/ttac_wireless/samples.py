@@ -23,7 +23,7 @@ def _build_context_preamble(context: dict | None) -> str:
     return "\n".join(parts)
 
 
-def record_to_sample(record: dict) -> Sample:
+def record_to_sample(record: dict, *, faithful: bool = False) -> Sample:
     """Convert one scenario record into an Inspect Sample."""
     scenario_id = record["scenario_id"]
     task = record["task"]
@@ -31,9 +31,13 @@ def record_to_sample(record: dict) -> Sample:
     description = task["description"]
     options = task["options"]
     options_text = "\n".join(f"{opt['id']}: {opt['label']}" for opt in options)
-    preamble = _build_context_preamble(record.get("context"))
     body = f"{description}\n\nOptions:\n{options_text}"
-    question = f"{preamble}\n\n{body}" if preamble else body
+
+    if faithful:
+        question = body
+    else:
+        preamble = _build_context_preamble(record.get("context"))
+        question = f"{preamble}\n\n{body}" if preamble else body
 
     allowed = task.get("allowed_tools", ["all"])
     if isinstance(allowed, str):
@@ -53,14 +57,14 @@ def record_to_sample(record: dict) -> Sample:
     )
 
 
-def load_dataset(full: bool = False) -> list[Sample]:
+def load_dataset(full: bool = False, *, faithful: bool = False) -> list[Sample]:
     """Load labeled scenarios from the local data directory."""
     data_file = SANDBOX_DIR / "data" / "Track A" / "data" / "Phase_1" / "train.json"
 
     with open(data_file, encoding="utf-8") as f:
         raw = json.load(f)
 
-    all_samples = [record_to_sample(r) for r in raw]
+    all_samples = [record_to_sample(r, faithful=faithful) for r in raw]
 
     if full:
         return all_samples

@@ -19,10 +19,16 @@ SERVER_PORT = 7860
 
 # --- Agent ---
 MESSAGE_LIMIT = 30
+MAX_TOOL_CALLS = 10
+
+FINAL_NUDGE = (
+    "You have exhausted your tool-call budget. Do NOT call any more tools. "
+    "Respond ONLY with your final answer on a single line using the \\boxed{} format."
+)
 
 _BUDGET_GUIDANCE = (
     "You have a strict conversation budget of ~30 messages. "
-    "Plan before investigating; use at most 8 tool calls, then STOP and synthesize. "
+    "Plan before investigating; use at most 10 tool calls, then STOP and synthesize. "
     "You MUST end with your final answer on its own line using the \\boxed{} format below, "
     "even if you are uncertain. An unboxed answer scores zero."
 )
@@ -42,5 +48,5 @@ SYSTEM_PROMPT_MULTIPLE = (
 )
 
 # --- Scoring ---
-ANSWER_PATTERN = r"\\boxed\{([^}]+)\}"
+ANSWER_PATTERN = r"\\boxed\{((?:[^{}]|\{[^{}]*\})*)\}"
 ANSWER_SEPARATOR = "|"

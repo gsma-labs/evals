@@ -42,30 +42,47 @@ def test_extract_codes_whitespace_in_codes():
     assert extract_codes(r"\boxed{ C3 | C5 }") == ["C3", "C5"]
 
 
+def test_extract_codes_nested_braces():
+    assert extract_codes(r"\boxed{{C3}}") == ["C3"]
+
+
+def test_extract_codes_nested_braces_multi():
+    assert extract_codes(r"\boxed{{C3|C5}}") == ["C3", "C5"]
+
+
 # --- official_score ---
 
 
 def test_official_score_single_match_case_insensitive():
-    assert official_score(["c3"], "C3") is True
+    assert official_score(["c3"], "C3") == 1.0
 
 
 def test_official_score_single_miss():
-    assert official_score(["C3"], "C5") is False
+    assert official_score(["C3"], "C5") == 0.0
 
 
-def test_official_score_multi_gt_matches_any_single():
-    assert official_score(["C8"], "C2|C8|C11|C16") is True
-    assert official_score(["C99"], "C2|C8|C11|C16") is False
+def test_official_score_multi_exact_set():
+    assert official_score(["C3", "C5"], "C3|C5") == 1.0
 
 
-def test_official_score_multi_pred_vs_single_gt_is_raw_compare():
-    assert official_score(["C3", "C5"], "C3|C5") is True
-    assert official_score(["C3"], "C3|C5") is True
-    assert official_score(["C5", "C3"], "C3|C5") is False
+def test_official_score_multi_reversed_order():
+    assert official_score(["C5", "C3"], "C3|C5") == 1.0
 
 
-def test_official_score_empty_pred_is_false():
-    assert official_score([], "C3") is False
+def test_official_score_partial_overlap():
+    assert official_score(["C3"], "C3|C5") == 0.5
+
+
+def test_official_score_superset():
+    assert official_score(["C3", "C5", "C8"], "C3|C5") == 2 / 3
+
+
+def test_official_score_no_overlap():
+    assert official_score(["C99"], "C2|C8|C11|C16") == 0.0
+
+
+def test_official_score_empty_pred():
+    assert official_score([], "C3") == 0.0
 
 
 # --- build_score_metadata ---
@@ -73,36 +90,40 @@ def test_official_score_empty_pred_is_false():
 
 def test_metadata_strict_match_true_when_sets_equal():
     meta = build_score_metadata(
-        predicted=["C3", "C5"], gt="C3|C5", tag="multiple-answer", tool_calls=4
+        predicted=["C3", "C5"], gt="C3|C5", tag="multiple-answer", tool_calls=4, iou=1.0
     )
     assert meta["strict_match"] is True
+    assert meta["iou"] == 1.0
 
 
 def test_metadata_strict_match_false_when_missing_code():
     meta = build_score_metadata(
-        predicted=["C3"], gt="C3|C5", tag="multiple-answer", tool_calls=4
+        predicted=["C3"], gt="C3|C5", tag="multiple-answer", tool_calls=4, iou=0.5
     )
     assert meta["strict_match"] is False
+    assert meta["iou"] == 0.5
 
 
 def test_metadata_no_answer_flag():
     meta = build_score_metadata(
-        predicted=None, gt="C3", tag="single-answer", tool_calls=0
+        predicted=None, gt="C3", tag="single-answer", tool_calls=0, iou=0.0
     )
     assert meta["no_answer"] is True
     assert meta["num_predicted"] == 0
     assert meta["predicted"] == []
+    assert meta["iou"] == 0.0
 
 
 def test_metadata_num_predicted_and_sorted_lists():
     meta = build_score_metadata(
-        predicted=["C5", "C3"], gt="C3|C5", tag="multiple-answer", tool_calls=7
+        predicted=["C5", "C3"], gt="C3|C5", tag="multiple-answer", tool_calls=7, iou=1.0
     )
     assert meta["num_predicted"] == 2
     assert meta["predicted"] == ["C3", "C5"]
     assert meta["expected"] == ["C3", "C5"]
     assert meta["tool_calls"] == 7
     assert meta["tag"] == "multiple-answer"
+    assert meta["iou"] == 1.0
 
 
 # --- custom metrics ---
@@ -162,6 +183,11 @@ def test_accuracy_multiple_filters_by_tag():
     assert accuracy_multiple()(scores) == 1.0
 
 
-def test_accuracy_single_returns_zero_when_no_samples_match():
+def test_accuracy_single_returns_na_when_no_samples_match():
     scores = [_make(CORRECT, tag="multiple-answer")]
-    assert accuracy_single()(scores) == 0.0
+    assert accuracy_single()(scores) == "N/A"
+
+
+def test_accuracy_multiple_returns_na_when_no_samples_match():
+    scores = [_make(CORRECT, tag="single-answer")]
+    assert accuracy_multiple()(scores) == "N/A"
