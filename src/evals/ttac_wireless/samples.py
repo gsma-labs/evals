@@ -22,6 +22,8 @@ def record_to_sample(record: dict) -> Sample:
     allowed = task.get("allowed_tools", ["all"])
     if isinstance(allowed, str):
         allowed = [allowed]
+    else:
+        allowed = list(allowed)
 
     return Sample(
         id=scenario_id,

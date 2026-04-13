@@ -1,5 +1,7 @@
 """Tests for ttac_wireless sample loading."""
 
+import copy
+
 from evals.ttac_wireless.samples import record_to_sample
 
 MOCK_RECORD = {
@@ -58,7 +60,14 @@ def test_record_to_sample_metadata_carries_allowed_tools():
 
 
 def test_record_to_sample_metadata_defaults_allowed_tools_when_missing():
-    record = {**MOCK_RECORD, "task": {**MOCK_RECORD["task"]}}
+    record = copy.deepcopy(MOCK_RECORD)
     del record["task"]["allowed_tools"]
+    sample = record_to_sample(record)
+    assert sample.metadata["allowed_tools"] == ["all"]
+
+
+def test_record_to_sample_normalises_string_allowed_tools_to_list():
+    record = copy.deepcopy(MOCK_RECORD)
+    record["task"]["allowed_tools"] = "all"
     sample = record_to_sample(record)
     assert sample.metadata["allowed_tools"] == ["all"]
