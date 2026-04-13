@@ -3,7 +3,9 @@
 from pathlib import Path
 
 # --- Paths ---
-SANDBOX_DIR = Path(__file__).resolve().parents[3] / "data" / "sandboxes" / "ttac_wireless"
+SANDBOX_DIR = (
+    Path(__file__).resolve().parents[3] / "data" / "sandboxes" / "ttac_wireless"
+)
 COMPOSE_FILE = str(SANDBOX_DIR / "compose.yaml")
 
 # --- Dataset ---
@@ -17,11 +19,17 @@ SERVER_PORT = 7860
 
 # --- Agent ---
 MESSAGE_LIMIT = 30
-SYSTEM_PROMPT = (
+
+SYSTEM_PROMPT_SINGLE = (
     "You are a 5G wireless network troubleshooting expert. "
     "Use the available tools to diagnose the root cause of degraded user throughput. "
-    "When you have identified the root cause, output your final answer as "
-    "\\boxed{C3} for a single answer or \\boxed{C3|C5} for multiple answers."
+    "Choose exactly one option. Output your final answer as \\boxed{Cn}."
+)
+
+SYSTEM_PROMPT_MULTIPLE = (
+    "You are a 5G wireless network troubleshooting expert. "
+    "Use the available tools to diagnose the root cause of degraded user throughput. "
+    "Choose two to four options. Output your final answer as \\boxed{Ca|Cb|Cc}."
 )
 
 # --- Scoring ---
