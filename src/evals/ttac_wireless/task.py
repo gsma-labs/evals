@@ -14,7 +14,7 @@ from evals.ttac_wireless.config import (
 )
 from evals.ttac_wireless.samples import load_dataset
 from evals.ttac_wireless.scorer import official_scorer
-from evals.ttac_wireless.tools import filter_allowed
+from evals.ttac_wireless.tools import all_tools, filter_allowed
 
 
 @solver
@@ -26,14 +26,14 @@ def prepare_scenario() -> Solver:
         allowed = state.metadata.get("allowed_tools", ["all"])
 
         store().set("scenario_id", state.metadata["scenario_id"])
-        store().set("tag", tag)
 
         prompt = (
             SYSTEM_PROMPT_SINGLE if tag == "single-answer" else SYSTEM_PROMPT_MULTIPLE
         )
         state.messages = [ChatMessageSystem(content=prompt), *state.messages]
 
-        state.tools = filter_allowed(allowed)
+        tools = filter_allowed(allowed)
+        state.tools = tools if tools else all_tools()
         return state
 
     return solve

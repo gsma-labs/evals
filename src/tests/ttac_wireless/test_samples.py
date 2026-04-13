@@ -107,3 +107,10 @@ def test_filter_allowed_drops_unknown_names():
 
 def test_filter_allowed_empty_list_returns_empty():
     assert filter_allowed([]) == []
+
+
+def test_filter_allowed_empty_then_prepare_scenario_falls_back_to_all():
+    # This is a spec-level assertion; prepare_scenario is a solver and is
+    # exercised at task run time, not here. Document the defensive default.
+    assert filter_allowed([]) == []
+    assert len(all_tools()) > 0

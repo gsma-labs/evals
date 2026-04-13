@@ -35,13 +35,19 @@ def extract_codes(text: str) -> list[str] | None:
 
 
 def official_score(predicted: list[str], gt: str) -> bool:
-    """Faithful port of the official compute_score (hard-match only).
+    """Lenient port of the official compute_score (hard-match only).
 
-    Multi-code predictions are joined with '|' into a raw string and compared
-    case-insensitively. If the raw strings match, return True. Otherwise, when
-    the ground truth contains '|' it denotes alternatives; return any() over
-    the split pieces. Matches the official asymmetry between prediction-join
-    and gt-split.
+    NOT bit-identical to the competition's compute_score. Semantics:
+      - Empty `predicted` returns False.
+      - Whole-string equality is checked first (case-insensitive, after
+        joining `predicted` with '|'). This is the lenient extension:
+        the competition scorer would return False for a multi-code
+        prediction against a `gt` of the same shape, because its
+        recursion compares each split alternative against the joined
+        prediction as a raw string.
+      - Otherwise, if `gt` contains '|', it is split and each alternative
+        is compared (order-sensitive) to the joined `pred_str`.
+      - Case-insensitive throughout.
     """
     if not predicted:
         return False
@@ -60,12 +66,23 @@ def build_score_metadata(
     tag: str,
     tool_calls: int,
 ) -> dict:
+    """Per-sample telemetry dict consumed by the custom @metric functions.
+
+    `strict_match` is set-equality on codes (does `predicted` contain exactly
+    the alternatives listed in `gt`, order-independent, no extras). This is a
+    deliberately stricter, order-agnostic signal than `official_score`: a
+    sample can have `value=INCORRECT` and `strict_match=True` (e.g. agent
+    emitted all alternatives in the "wrong" order under the official raw-
+    string compare). It can also have `value=CORRECT` and `strict_match=False`
+    (agent matched one alternative but did not list them all).
+    """
     pred = predicted or []
     expected = sorted({c.strip() for c in gt.split(ANSWER_SEPARATOR) if c.strip()})
     return {
         "predicted": sorted(pred),
         "expected": expected,
         "tag": tag,
+        # Order-agnostic set equality; see docstring for semantics vs value.
         "strict_match": sorted(pred) == expected,
         "no_answer": predicted is None,
         "num_predicted": len(pred),
