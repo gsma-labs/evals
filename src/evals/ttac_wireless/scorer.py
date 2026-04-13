@@ -1,4 +1,4 @@
-r"""TTAC Wireless scorer. IoU over answer code sets extracted from \\boxed{}."""
+r"""TTAC Wireless scorer. Port of official compute_score with Inspect metrics."""
 
 import re
 
@@ -16,49 +16,47 @@ from inspect_ai.solver import TaskState
 from evals.ttac_wireless.config import ANSWER_PATTERN, ANSWER_SEPARATOR
 
 
-def extract_codes(text: str) -> set[str] | None:
-    r"""Pull answer codes from \\boxed{C3|C5} notation. Returns None if no match."""
-    match = re.search(ANSWER_PATTERN, text)
-    if not match:
+def extract_codes(text: str) -> list[str] | None:
+    r"""Return the codes inside the last \boxed{...} in `text`, or None.
+
+    Mirrors official utils.extract_answer: the last match wins, whitespace is
+    stripped, and pipe-separated tokens are returned in source order.
+    """
+    matches = re.findall(ANSWER_PATTERN, text)
+    if not matches:
         return None
+    raw = matches[-1].strip()
+    codes = [c.strip() for c in raw.split(ANSWER_SEPARATOR) if c.strip()]
+    return codes or None
 
-    raw = match.group(1).strip()
-    codes = {c.strip() for c in raw.split(ANSWER_SEPARATOR) if c.strip()}
-    return codes
 
+def official_score(predicted: list[str], gt: str) -> bool:
+    """Faithful port of the official compute_score (hard-match only).
 
-def compute_iou(predicted: set[str], expected: set[str]) -> float:
-    """Intersection over union of two code sets."""
-    overlap = predicted & expected
-    combined = predicted | expected
-
-    if not combined:
-        return 0.0
-    return len(overlap) / len(combined)
+    Multi-code predictions are joined with '|' into a raw string and compared
+    case-insensitively. If the raw strings match, return True. Otherwise, when
+    the ground truth contains '|' it denotes alternatives; return any() over
+    the split pieces. Matches the official asymmetry between prediction-join
+    and gt-split.
+    """
+    if not predicted:
+        return False
+    pred_str = ANSWER_SEPARATOR.join(predicted).strip().lower()
+    gt_clean = gt.strip().lower()
+    if pred_str == gt_clean:
+        return True
+    if ANSWER_SEPARATOR in gt_clean:
+        return any(pred_str == g.strip() for g in gt_clean.split(ANSWER_SEPARATOR))
+    return False
 
 
 @scorer(metrics=[accuracy(), stderr()])
-def iou_scorer():
+def official_scorer():
     async def score(state: TaskState, target: Target) -> Score:
-        raw_answer = state.output.completion
-
-        predicted_codes = extract_codes(raw_answer)
-        if predicted_codes is None:
-            return Score(value=INCORRECT, answer="no \\boxed{} found")
-
-        expected_codes = {c.strip() for c in target.text.split(ANSWER_SEPARATOR)}
-
-        iou = compute_iou(predicted_codes, expected_codes)
-        is_correct = iou == 1.0
-
-        return Score(
-            value=CORRECT if is_correct else INCORRECT,
-            answer=ANSWER_SEPARATOR.join(sorted(predicted_codes)),
-            metadata={
-                "iou": iou,
-                "predicted": sorted(predicted_codes),
-                "expected": sorted(expected_codes),
-            },
-        )
+        predicted = extract_codes(state.output.completion)
+        if predicted is None:
+            return Score(value=INCORRECT, answer=r"no \boxed{} found")
+        value = CORRECT if official_score(predicted, target.text) else INCORRECT
+        return Score(value=value, answer=ANSWER_SEPARATOR.join(predicted))
 
     return score

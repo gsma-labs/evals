@@ -1,32 +1,56 @@
-"""Tests for ttac_wireless scorer."""
+"""Tests for ttac_wireless scorer (official compute_score port)."""
 
-from evals.ttac_wireless.scorer import compute_iou, extract_codes
+from evals.ttac_wireless.scorer import extract_codes, official_score
+
+# --- extract_codes ---
 
 
 def test_extract_codes_single():
-    assert extract_codes("The answer is \\boxed{C3}") == {"C3"}
+    assert extract_codes(r"The answer is \boxed{C3}") == ["C3"]
 
 
-def test_extract_codes_multiple():
-    assert extract_codes("\\boxed{C3|C5|C8}") == {"C3", "C5", "C8"}
+def test_extract_codes_pipe_separated():
+    assert extract_codes(r"\boxed{C3|C5|C8}") == ["C3", "C5", "C8"]
 
 
-def test_extract_codes_no_match():
-    assert extract_codes("No boxed answer here") is None
+def test_extract_codes_last_box_wins():
+    text = r"First try \boxed{C1}, actually \boxed{C7}."
+    assert extract_codes(text) == ["C7"]
 
 
-def test_iou_perfect():
-    assert compute_iou({"C3", "C5"}, {"C3", "C5"}) == 1.0
+def test_extract_codes_no_box_returns_none():
+    assert extract_codes("No boxed answer here.") is None
 
 
-def test_iou_partial():
-    result = compute_iou({"C3", "C5", "C8"}, {"C3", "C5"})
-    assert abs(result - 2 / 3) < 0.01
+def test_extract_codes_empty_box_returns_none():
+    assert extract_codes(r"\boxed{}") is None
 
 
-def test_iou_no_overlap():
-    assert compute_iou({"C1"}, {"C2"}) == 0.0
+def test_extract_codes_whitespace_in_codes():
+    assert extract_codes(r"\boxed{ C3 | C5 }") == ["C3", "C5"]
 
 
-def test_iou_empty():
-    assert compute_iou(set(), set()) == 0.0
+# --- official_score ---
+
+
+def test_official_score_single_match_case_insensitive():
+    assert official_score(["c3"], "C3") is True
+
+
+def test_official_score_single_miss():
+    assert official_score(["C3"], "C5") is False
+
+
+def test_official_score_multi_gt_matches_any_single():
+    assert official_score(["C8"], "C2|C8|C11|C16") is True
+    assert official_score(["C99"], "C2|C8|C11|C16") is False
+
+
+def test_official_score_multi_pred_vs_single_gt_is_raw_compare():
+    assert official_score(["C3", "C5"], "C3|C5") is True
+    assert official_score(["C3"], "C3|C5") is True
+    assert official_score(["C5", "C3"], "C3|C5") is False
+
+
+def test_official_score_empty_pred_is_false():
+    assert official_score([], "C3") is False
