@@ -1,6 +1,10 @@
 """Tests for ttac_wireless scorer (official compute_score port)."""
 
-from evals.ttac_wireless.scorer import extract_codes, official_score
+from evals.ttac_wireless.scorer import (
+    build_score_metadata,
+    extract_codes,
+    official_score,
+)
 
 # --- extract_codes ---
 
@@ -54,3 +58,40 @@ def test_official_score_multi_pred_vs_single_gt_is_raw_compare():
 
 def test_official_score_empty_pred_is_false():
     assert official_score([], "C3") is False
+
+
+# --- build_score_metadata ---
+
+
+def test_metadata_strict_match_true_when_sets_equal():
+    meta = build_score_metadata(
+        predicted=["C3", "C5"], gt="C3|C5", tag="multiple-answer", tool_calls=4
+    )
+    assert meta["strict_match"] is True
+
+
+def test_metadata_strict_match_false_when_missing_code():
+    meta = build_score_metadata(
+        predicted=["C3"], gt="C3|C5", tag="multiple-answer", tool_calls=4
+    )
+    assert meta["strict_match"] is False
+
+
+def test_metadata_no_answer_flag():
+    meta = build_score_metadata(
+        predicted=None, gt="C3", tag="single-answer", tool_calls=0
+    )
+    assert meta["no_answer"] is True
+    assert meta["num_predicted"] == 0
+    assert meta["predicted"] == []
+
+
+def test_metadata_num_predicted_and_sorted_lists():
+    meta = build_score_metadata(
+        predicted=["C5", "C3"], gt="C3|C5", tag="multiple-answer", tool_calls=7
+    )
+    assert meta["num_predicted"] == 2
+    assert meta["predicted"] == ["C3", "C5"]
+    assert meta["expected"] == ["C3", "C5"]
+    assert meta["tool_calls"] == 7
+    assert meta["tag"] == "multiple-answer"

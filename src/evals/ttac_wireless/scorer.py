@@ -50,13 +50,55 @@ def official_score(predicted: list[str], gt: str) -> bool:
     return False
 
 
+def build_score_metadata(
+    predicted: list[str] | None,
+    gt: str,
+    tag: str,
+    tool_calls: int,
+) -> dict:
+    pred = predicted or []
+    expected = sorted({c.strip() for c in gt.split(ANSWER_SEPARATOR) if c.strip()})
+    return {
+        "predicted": sorted(pred),
+        "expected": expected,
+        "tag": tag,
+        "strict_match": sorted(pred) == expected,
+        "no_answer": predicted is None,
+        "num_predicted": len(pred),
+        "tool_calls": tool_calls,
+    }
+
+
+def _count_tool_calls(state: TaskState) -> int:
+    count = 0
+    for m in state.messages:
+        if getattr(m, "role", None) != "assistant":
+            continue
+        tool_calls = getattr(m, "tool_calls", None) or []
+        count += len(tool_calls)
+    return count
+
+
 @scorer(metrics=[accuracy(), stderr()])
 def official_scorer():
     async def score(state: TaskState, target: Target) -> Score:
         predicted = extract_codes(state.output.completion)
+        tag = state.metadata.get("tag", "multiple-answer")
+        tool_calls = _count_tool_calls(state)
+        metadata = build_score_metadata(predicted, target.text, tag, tool_calls)
+
         if predicted is None:
-            return Score(value=INCORRECT, answer=r"no \boxed{} found")
+            return Score(
+                value=INCORRECT,
+                answer=r"no \boxed{} found",
+                metadata=metadata,
+            )
+
         value = CORRECT if official_score(predicted, target.text) else INCORRECT
-        return Score(value=value, answer=ANSWER_SEPARATOR.join(predicted))
+        return Score(
+            value=value,
+            answer=ANSWER_SEPARATOR.join(predicted),
+            metadata=metadata,
+        )
 
     return score
