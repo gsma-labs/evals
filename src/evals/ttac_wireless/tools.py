@@ -29,6 +29,7 @@ def get_throughput_logs():
     async def execute() -> str:
         """Get the timestamped user throughput logs during the drive-test. With the throughput logs, we can identify the poor-quality point, and use the corresponding timestamp to gather more information for analysis by using tools."""
         return await _get("/throughput-logs")
+
     return execute
 
 
@@ -41,6 +42,7 @@ def get_cell_info():
             pci: Physical Cell ID.
         """
         return await _get(f"/cell-info?pci={pci}")
+
     return execute
 
 
@@ -53,6 +55,7 @@ def get_gnodeb_location():
             pci: Physical Cell ID.
         """
         return await _get(f"/gnodeb-location?pci={pci}")
+
     return execute
 
 
@@ -65,6 +68,7 @@ def get_user_location():
             time: Timestamp string.
         """
         return await _get(f"/user-location?time={time}")
+
     return execute
 
 
@@ -77,6 +81,7 @@ def get_serving_cell_pci():
             time: Timestamp string.
         """
         return await _get(f"/serving-cell-pci?time={time}")
+
     return execute
 
 
@@ -89,6 +94,7 @@ def get_serving_cell_rsrp():
             time: Timestamp string.
         """
         return await _get(f"/serving-cell-rsrp?time={time}")
+
     return execute
 
 
@@ -101,6 +107,7 @@ def get_serving_cell_sinr():
             time: Timestamp string.
         """
         return await _get(f"/serving-cell-sinr?time={time}")
+
     return execute
 
 
@@ -113,6 +120,7 @@ def get_rbs_allocated_to_user():
             time: Timestamp string.
         """
         return await _get(f"/rbs-allocated-to-user?time={time}")
+
     return execute
 
 
@@ -125,6 +133,7 @@ def get_signaling_plane_event_log():
             time: Timestamp string.
         """
         return await _get(f"/signaling-plane-event-log?time={time}")
+
     return execute
 
 
@@ -137,6 +146,7 @@ def get_neighboring_cells_pci():
             time: Timestamp string.
         """
         return await _get(f"/neighboring-cells-pci?time={time}")
+
     return execute
 
 
@@ -150,6 +160,7 @@ def get_neighboring_cell_rsrp():
             pci: Physical Cell ID of the neighbor.
         """
         return await _get(f"/neighboring-cell-rsrp?time={time}&pci={pci}")
+
     return execute
 
 
@@ -158,6 +169,7 @@ def get_all_cells_pci():
     async def execute() -> str:
         """List the PCIs of all cells in the network."""
         return await _get("/all-cells-pci")
+
     return execute
 
 
@@ -166,6 +178,7 @@ def get_kpi_data():
     async def execute() -> str:
         """Get the data with cell-level KPI, including the information of PRB utilization, PRB Interference, Throughput, CCE utilization and CCE Allocation Success Rate."""
         return await _get("/get_kpi_data")
+
     return execute
 
 
@@ -174,6 +187,7 @@ def get_mr_data():
     async def execute() -> str:
         """Get the normal Measurement Report (MR) data surrounding poor-quality users."""
         return await _get("/get_mr_data")
+
     return execute
 
 
@@ -190,6 +204,7 @@ def judge_mainlobe_or_not():
             pci: Physical Cell ID.
         """
         return await _get(f"/judge_mainlobe?time={time}&pci={pci}")
+
     return execute
 
 
@@ -203,6 +218,7 @@ def calculate_horizontal_angle():
             pci: Physical Cell ID.
         """
         return await _get(f"/calculate_horizontal_angle?time={time}&pci={pci}")
+
     return execute
 
 
@@ -216,6 +232,7 @@ def calculate_tilt_angle():
             pci: Physical Cell ID.
         """
         return await _get(f"/calculate_tilt_angle?time={time}&pci={pci}")
+
     return execute
 
 
@@ -229,6 +246,7 @@ def calculate_pathloss():
             pci: Physical Cell ID.
         """
         return await _get(f"/calculate_pathloss?time={time}&pci={pci}")
+
     return execute
 
 
@@ -241,13 +259,18 @@ def calculate_overlap_ratio():
             pci_serving: PCI of the serving cell.
             pci_neighbor: PCI of the neighbor cell.
         """
-        return await _get(f"/calculate_overlap_ratio?pci_serving={pci_serving}&pci_neighbor={pci_neighbor}")
+        return await _get(
+            f"/calculate_overlap_ratio?pci_serving={pci_serving}&pci_neighbor={pci_neighbor}"
+        )
+
     return execute
 
 
 @tool
 def optimize_antenna_gain():
-    async def execute(time: str, pci: int, adjust_horizontal_angle: float, adjust_tilt_angle: float) -> str:
+    async def execute(
+        time: str, pci: int, adjust_horizontal_angle: float, adjust_tilt_angle: float
+    ) -> str:
         """Simulate the RSRP gain if adjust the azimuth angle and tilt angle of the antenna.
 
         Args:
@@ -261,6 +284,7 @@ def optimize_antenna_gain():
             f"&adjust_horizontal_angle={adjust_horizontal_angle}"
             f"&adjust_tilt_angle={adjust_tilt_angle}"
         )
+
     return execute
 
 
@@ -291,3 +315,37 @@ def all_tools() -> list:
         calculate_overlap_ratio(),
         optimize_antenna_gain(),
     ]
+
+
+_TOOL_BUILDERS = {
+    "get_throughput_logs": get_throughput_logs,
+    "get_cell_info": get_cell_info,
+    "get_gnodeb_location": get_gnodeb_location,
+    "get_user_location": get_user_location,
+    "get_serving_cell_pci": get_serving_cell_pci,
+    "get_serving_cell_rsrp": get_serving_cell_rsrp,
+    "get_serving_cell_sinr": get_serving_cell_sinr,
+    "get_rbs_allocated_to_user": get_rbs_allocated_to_user,
+    "get_signaling_plane_event_log": get_signaling_plane_event_log,
+    "get_neighboring_cells_pci": get_neighboring_cells_pci,
+    "get_neighboring_cell_rsrp": get_neighboring_cell_rsrp,
+    "get_all_cells_pci": get_all_cells_pci,
+    "get_kpi_data": get_kpi_data,
+    "get_mr_data": get_mr_data,
+    "judge_mainlobe_or_not": judge_mainlobe_or_not,
+    "calculate_horizontal_angle": calculate_horizontal_angle,
+    "calculate_tilt_angle": calculate_tilt_angle,
+    "calculate_pathloss": calculate_pathloss,
+    "calculate_overlap_ratio": calculate_overlap_ratio,
+    "optimize_antenna_gain": optimize_antenna_gain,
+}
+
+
+def filter_allowed(names: list[str]) -> list:
+    """Return instantiated tools filtered by name.
+
+    `["all"]` returns every tool. Unknown names are dropped silently.
+    """
+    if names == ["all"]:
+        return all_tools()
+    return [_TOOL_BUILDERS[n]() for n in names if n in _TOOL_BUILDERS]

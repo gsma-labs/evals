@@ -3,6 +3,7 @@
 import copy
 
 from evals.ttac_wireless.samples import record_to_sample
+from evals.ttac_wireless.tools import all_tools, filter_allowed
 
 MOCK_RECORD = {
     "scenario_id": "test-scenario-001",
@@ -87,3 +88,22 @@ def test_record_to_sample_input_without_context_still_builds():
     sample = record_to_sample(record)
     assert "Diagnose the throughput issue." in sample.input
     assert "C1: Weak coverage" in sample.input
+
+
+def test_filter_allowed_with_all_returns_every_tool():
+    expected = len(all_tools())
+    assert len(filter_allowed(["all"])) == expected
+
+
+def test_filter_allowed_with_subset():
+    tools = filter_allowed(["get_cell_info", "get_kpi_data"])
+    assert len(tools) == 2
+
+
+def test_filter_allowed_drops_unknown_names():
+    tools = filter_allowed(["get_cell_info", "nope_not_real"])
+    assert len(tools) == 1
+
+
+def test_filter_allowed_empty_list_returns_empty():
+    assert filter_allowed([]) == []
