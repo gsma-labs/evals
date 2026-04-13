@@ -1,7 +1,7 @@
 """TTAC Wireless: 5G drive-test troubleshooting evaluation."""
 
 from inspect_ai import Task, task
-from inspect_ai.agent import react
+from inspect_ai.agent import AgentPrompt, react
 from inspect_ai.model import ChatMessageSystem
 from inspect_ai.solver import Solver, TaskState, solver
 from inspect_ai.util import store
@@ -40,7 +40,19 @@ def ttac_wireless(full: bool = False) -> Task:
 
     return Task(
         dataset=dataset,
-        solver=[prepare_scenario(), react(tools=all_tools())],
+        solver=[
+            prepare_scenario(),
+            react(
+                prompt=AgentPrompt(
+                    instructions=None,
+                    handoff_prompt=None,
+                    assistant_prompt=None,
+                    submit_prompt=None,
+                ),
+                tools=all_tools(),
+                submit=False,
+            ),
+        ],
         scorer=official_scorer(),
         sandbox=("docker", COMPOSE_FILE),
         message_limit=MESSAGE_LIMIT,
