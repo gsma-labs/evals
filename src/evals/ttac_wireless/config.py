@@ -20,16 +20,25 @@ SERVER_PORT = 7860
 # --- Agent ---
 MESSAGE_LIMIT = 30
 
+_BUDGET_GUIDANCE = (
+    "You have a strict conversation budget of ~30 messages. "
+    "Plan before investigating; use at most 8 tool calls, then STOP and synthesize. "
+    "You MUST end with your final answer on its own line using the \\boxed{} format below, "
+    "even if you are uncertain. An unboxed answer scores zero."
+)
+
 SYSTEM_PROMPT_SINGLE = (
     "You are a 5G wireless network troubleshooting expert. "
     "Use the available tools to diagnose the root cause of degraded user throughput. "
-    "Choose exactly one option. Output your final answer as \\boxed{Cn}."
+    f"{_BUDGET_GUIDANCE} "
+    "Choose exactly one option. Output your final answer as \\boxed{Cn} where n is the option number."
 )
 
 SYSTEM_PROMPT_MULTIPLE = (
     "You are a 5G wireless network troubleshooting expert. "
     "Use the available tools to diagnose the root cause of degraded user throughput. "
-    "Choose two to four options. Output your final answer as \\boxed{Ca|Cb|Cc}."
+    f"{_BUDGET_GUIDANCE} "
+    "Choose two to four options. Output your final answer as \\boxed{Ca|Cb|Cc} using the selected option numbers."
 )
 
 # --- Scoring ---
