@@ -71,3 +71,19 @@ def test_record_to_sample_normalises_string_allowed_tools_to_list():
     record["task"]["allowed_tools"] = "all"
     sample = record_to_sample(record)
     assert sample.metadata["allowed_tools"] == ["all"]
+
+
+def test_record_to_sample_input_has_context_preamble():
+    sample = record_to_sample(MOCK_RECORD)
+    assert "drive testing across 5 BSs" in sample.input
+    assert "network_type=5G" in sample.input
+    assert "num_base_stations=5" in sample.input
+    assert "mobility_scenario=vehicle-based drive test" in sample.input
+
+
+def test_record_to_sample_input_without_context_still_builds():
+    record = copy.deepcopy(MOCK_RECORD)
+    del record["context"]
+    sample = record_to_sample(record)
+    assert "Diagnose the throughput issue." in sample.input
+    assert "C1: Weak coverage" in sample.input

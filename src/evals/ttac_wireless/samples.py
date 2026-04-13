@@ -9,6 +9,20 @@ from inspect_ai.dataset import Sample
 from evals.ttac_wireless.config import LITE_SIZE, SANDBOX_DIR
 
 
+def _build_context_preamble(context: dict | None) -> str:
+    if not context:
+        return ""
+    parts = []
+    description = (context.get("description") or "").strip()
+    if description:
+        parts.append(description)
+    wni = context.get("wireless_network_information") or {}
+    if wni:
+        fields = "; ".join(f"{k}={v}" for k, v in wni.items())
+        parts.append(f"Network: {fields}")
+    return "\n".join(parts)
+
+
 def record_to_sample(record: dict) -> Sample:
     """Convert one scenario record into an Inspect Sample."""
     scenario_id = record["scenario_id"]
@@ -17,7 +31,9 @@ def record_to_sample(record: dict) -> Sample:
     description = task["description"]
     options = task["options"]
     options_text = "\n".join(f"{opt['id']}: {opt['label']}" for opt in options)
-    question = f"{description}\n\nOptions:\n{options_text}"
+    preamble = _build_context_preamble(record.get("context"))
+    body = f"{description}\n\nOptions:\n{options_text}"
+    question = f"{preamble}\n\n{body}" if preamble else body
 
     allowed = task.get("allowed_tools", ["all"])
     if isinstance(allowed, str):
