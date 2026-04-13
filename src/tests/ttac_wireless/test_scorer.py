@@ -1,9 +1,17 @@
 """Tests for ttac_wireless scorer (official compute_score port)."""
 
+from inspect_ai.scorer import CORRECT, INCORRECT, SampleScore, Score
+
 from evals.ttac_wireless.scorer import (
+    accuracy_multiple,
+    accuracy_single,
     build_score_metadata,
     extract_codes,
+    mean_options_selected,
+    mean_tool_calls,
+    no_answer_rate,
     official_score,
+    strict_accuracy,
 )
 
 # --- extract_codes ---
@@ -95,3 +103,65 @@ def test_metadata_num_predicted_and_sorted_lists():
     assert meta["expected"] == ["C3", "C5"]
     assert meta["tool_calls"] == 7
     assert meta["tag"] == "multiple-answer"
+
+
+# --- custom metrics ---
+
+
+def _make(value, **meta) -> SampleScore:
+    return SampleScore(sample_id="s", score=Score(value=value, metadata=meta))
+
+
+def test_strict_accuracy_counts_strict_match_flag():
+    scores = [
+        _make(CORRECT, strict_match=True),
+        _make(CORRECT, strict_match=False),
+        _make(INCORRECT, strict_match=False),
+    ]
+    assert strict_accuracy()(scores) == 1 / 3
+
+
+def test_no_answer_rate():
+    scores = [
+        _make(INCORRECT, no_answer=True),
+        _make(CORRECT, no_answer=False),
+        _make(INCORRECT, no_answer=False),
+    ]
+    assert no_answer_rate()(scores) == 1 / 3
+
+
+def test_mean_tool_calls():
+    scores = [_make(CORRECT, tool_calls=2), _make(INCORRECT, tool_calls=8)]
+    assert mean_tool_calls()(scores) == 5.0
+
+
+def test_mean_options_selected_skips_no_answer():
+    scores = [
+        _make(CORRECT, num_predicted=1, no_answer=False),
+        _make(CORRECT, num_predicted=3, no_answer=False),
+        _make(INCORRECT, num_predicted=0, no_answer=True),
+    ]
+    assert mean_options_selected()(scores) == 2.0
+
+
+def test_accuracy_single_filters_by_tag():
+    scores = [
+        _make(CORRECT, tag="single-answer"),
+        _make(INCORRECT, tag="single-answer"),
+        _make(CORRECT, tag="multiple-answer"),
+    ]
+    assert accuracy_single()(scores) == 0.5
+
+
+def test_accuracy_multiple_filters_by_tag():
+    scores = [
+        _make(CORRECT, tag="multiple-answer"),
+        _make(CORRECT, tag="multiple-answer"),
+        _make(INCORRECT, tag="single-answer"),
+    ]
+    assert accuracy_multiple()(scores) == 1.0
+
+
+def test_accuracy_single_returns_zero_when_no_samples_match():
+    scores = [_make(CORRECT, tag="multiple-answer")]
+    assert accuracy_single()(scores) == 0.0
