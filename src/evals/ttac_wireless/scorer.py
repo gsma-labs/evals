@@ -132,10 +132,10 @@ def mean_options_selected() -> Metric:
 
 @metric
 def accuracy_single() -> Metric:
-    def compute(scores: list[SampleScore]) -> float | str:
+    def compute(scores: list[SampleScore]) -> float:
         subset = [s for s in scores if s.score.metadata.get("tag") == "single-answer"]
         if not subset:
-            return "N/A"
+            return float("nan")
         to_float = value_to_float()
         return sum(to_float(s.score.value) for s in subset) / len(subset)
 
@@ -144,10 +144,10 @@ def accuracy_single() -> Metric:
 
 @metric
 def accuracy_multiple() -> Metric:
-    def compute(scores: list[SampleScore]) -> float | str:
+    def compute(scores: list[SampleScore]) -> float:
         subset = [s for s in scores if s.score.metadata.get("tag") == "multiple-answer"]
         if not subset:
-            return "N/A"
+            return float("nan")
         to_float = value_to_float()
         return sum(to_float(s.score.value) for s in subset) / len(subset)
 

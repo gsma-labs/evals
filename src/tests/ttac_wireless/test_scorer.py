@@ -183,11 +183,15 @@ def test_accuracy_multiple_filters_by_tag():
     assert accuracy_multiple()(scores) == 1.0
 
 
-def test_accuracy_single_returns_na_when_no_samples_match():
+def test_accuracy_single_returns_nan_when_no_samples_match():
     scores = [_make(CORRECT, tag="multiple-answer")]
-    assert accuracy_single()(scores) == "N/A"
+    import math
+
+    assert math.isnan(accuracy_single()(scores))
 
 
-def test_accuracy_multiple_returns_na_when_no_samples_match():
+def test_accuracy_multiple_returns_nan_when_no_samples_match():
     scores = [_make(CORRECT, tag="single-answer")]
-    assert accuracy_multiple()(scores) == "N/A"
+    import math
+
+    assert math.isnan(accuracy_multiple()(scores))
