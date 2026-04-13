@@ -2,12 +2,20 @@
 
 from evals.ttac_wireless.samples import record_to_sample
 
-
 MOCK_RECORD = {
     "scenario_id": "test-scenario-001",
+    "tag": "multiple-answer",
     "answer": "C3|C5",
+    "context": {
+        "description": "A network engineer conducted drive testing across 5 BSs.",
+        "wireless_network_information": {
+            "network_type": "5G",
+            "num_base_stations": "5",
+            "mobility_scenario": "vehicle-based drive test",
+        },
+    },
     "task": {
-        "allowed_tools": "all",
+        "allowed_tools": ["all"],
         "description": "Diagnose the throughput issue.",
         "options": [
             {"id": "C1", "label": "Weak coverage"},
@@ -37,3 +45,20 @@ def test_record_to_sample_input_has_options():
 def test_record_to_sample_metadata():
     sample = record_to_sample(MOCK_RECORD)
     assert sample.metadata["scenario_id"] == "test-scenario-001"
+
+
+def test_record_to_sample_metadata_carries_tag():
+    sample = record_to_sample(MOCK_RECORD)
+    assert sample.metadata["tag"] == "multiple-answer"
+
+
+def test_record_to_sample_metadata_carries_allowed_tools():
+    sample = record_to_sample(MOCK_RECORD)
+    assert sample.metadata["allowed_tools"] == ["all"]
+
+
+def test_record_to_sample_metadata_defaults_allowed_tools_when_missing():
+    record = {**MOCK_RECORD, "task": {**MOCK_RECORD["task"]}}
+    del record["task"]["allowed_tools"]
+    sample = record_to_sample(record)
+    assert sample.metadata["allowed_tools"] == ["all"]

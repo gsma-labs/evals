@@ -19,13 +19,19 @@ def record_to_sample(record: dict) -> Sample:
     options_text = "\n".join(f"{opt['id']}: {opt['label']}" for opt in options)
     question = f"{description}\n\nOptions:\n{options_text}"
 
-    answer = record["answer"]
+    allowed = task.get("allowed_tools", ["all"])
+    if isinstance(allowed, str):
+        allowed = [allowed]
 
     return Sample(
         id=scenario_id,
         input=question,
-        target=answer,
-        metadata={"scenario_id": scenario_id},
+        target=record["answer"],
+        metadata={
+            "scenario_id": scenario_id,
+            "tag": record.get("tag", "multiple-answer"),
+            "allowed_tools": allowed,
+        },
     )
 
 
