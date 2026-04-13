@@ -1,8 +1,10 @@
 services:
   default:
-    image: python:3.13-slim
+    image: curlimages/curl:latest
     init: true
+    entrypoint: [""]
     command: tail -f /dev/null
+    user: root
     depends_on:
       server:
         condition: service_healthy
