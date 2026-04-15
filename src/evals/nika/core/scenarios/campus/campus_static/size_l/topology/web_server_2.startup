@@ -1,0 +1,5 @@
+ip addr add 10.200.0.5/24 dev eth0
+ip route add default via 10.200.0.1 dev eth0
+systemctl daemon-reload
+systemctl enable web_server
+systemctl start web_server

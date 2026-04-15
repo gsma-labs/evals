@@ -1,0 +1,511 @@
+# Scenario registry for build_images/scenarios
+# Used to automate dataset.yaml generation. Each entry describes one runnable
+# lab (one compose file) with its lab_name and paths relative to this directory.
+#
+# Path convention: paths are relative to build_images/scenarios (SCENARIOS_DIR).
+# Sandbox format in dataset: [kathara, "<compose_path>"]
+
+scenarios:
+  # ---------------------------------------------------------------------------
+  # data_center
+  # ---------------------------------------------------------------------------
+
+  - id: data_center/dc_clos_service/size_s
+    category: data_center
+    name: dc_clos_service
+    size: s
+    compose_path: data_center/dc_clos_service/size_s/compose.yaml
+    lab_name: dc_clos_service
+    lab_conf_path: data_center/dc_clos_service/size_s/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to a 3-tier CLOS data center network with services (small size):
+      - 1 super-spine, 2 spine, 2 leaf routers
+      - 1 DNS server (dns_pod0), 1 web server (webserver0_pod0), 1 external client (client_0)
+      - BGP routing; traffic control (tc) may affect interface performance
+      Each leaf router connects to spine routers and one service/host; spines connect to super-spine and leaves.
+      DNS and web servers; BGP routing; tc may affect interface performance.
+    device_naming: |
+      ## Device Naming Convention
+      - Super-spine: super_spine_router_0
+      - Spine: spine_router_X_Y (X=pod, Y=router_id)
+      - Leaf: leaf_router_X_Y (X=pod, Y=router_id)
+      - DNS: dns_pod0 (pod 0)
+      - Web: webserver0_pod0 (pod 0)
+      - Clients: client_0
+
+  - id: data_center/dc_clos_service/size_m
+    category: data_center
+    name: dc_clos_service
+    size: m
+    compose_path: data_center/dc_clos_service/size_m/compose.yaml
+    lab_name: dc_clos_service
+    lab_conf_path: data_center/dc_clos_service/size_m/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to a 3-tier CLOS data center network with services:
+      - 2 super-spine, 8 spine, 8 leaf routers
+      - 2 DNS servers (dns_pod0, dns_pod1), 8 web servers (webserverN_podX), 2 external clients (client_0, client_1)
+      - BGP routing; traffic control (tc) may affect interface performance
+      DNS zones: pod0.dc (web 10.0.x.10), pod1.dc (web 10.1.x.10). Each leaf connects to 4 spines (eth0-eth3) and one service; each spine to 2 super-spine (eth0-eth1) and 4 leaves (eth2-eth5).
+    device_naming: |
+      ## Device Naming Convention
+      - Super-spine: super_spine_router_0, super_spine_router_1
+      - Spine: spine_router_X_Y (X=pod, Y=router_id)
+      - Leaf: leaf_router_X_Y (X=pod, Y=router_id)
+      - DNS: dns_pod0, dns_pod1
+      - Web: webserver0_pod0, webserver1_pod0, webserver2_pod0, webserver0_pod1, webserver1_pod1, webserver2_pod1
+      - Clients: client_0, client_1
+
+  - id: data_center/dc_clos_service/size_l
+    category: data_center
+    name: dc_clos_service
+    size: l
+    compose_path: data_center/dc_clos_service/size_l/compose.yaml
+    lab_name: dc_clos_service
+    lab_conf_path: data_center/dc_clos_service/size_l/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to a 3-tier CLOS data center network with services (large size):
+      - 4 super-spine, 32 spine, 32 leaf routers
+      - 2 DNS servers (dns_pod0, dns_pod1), 32 web servers (webserverN_podX), 2 external clients
+      - BGP routing; traffic control (tc) may affect interface performance
+      CLOS 3-tier; each leaf connects to spines and one service; each spine to super-spines and leaves. BGP; tc may affect performance.
+    device_naming: |
+      ## Device Naming Convention
+      - Super-spine: super_spine_router_0, super_spine_router_1, ...
+      - Spine: spine_router_X_Y (X=pod, Y=router_id)
+      - Leaf: leaf_router_X_Y (X=pod, Y=router_id)
+      - DNS: dns_pod0, dns_pod1
+      - Web: webserverN_podX (N=leaf index in pod, X=pod)
+      - Clients: client_0, client_1
+
+  - id: data_center/dc_clos_worker/size_s
+    category: data_center
+    name: dc_clos_worker
+    size: s
+    compose_path: data_center/dc_clos_worker/size_s/compose.yaml
+    lab_name: dc_clos_worker
+    lab_conf_path: data_center/dc_clos_worker/size_s/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to a 3-tier CLOS data center network with BGP only (small):
+      - 1 super-spine, 2 spine, 2 leaf routers, 2 hosts (pc_0_0, pc_0_1)
+      - EBGP between all adjacent routers; each leaf connects to spines and one host.
+      Each leaf connects to spine routers (eth0-eth3) and 1 host (eth4); each spine to super-spine (eth0-eth1) and leaf routers (eth2-eth5). All routers run FRR with BGP.
+    device_naming: |
+      ## Device Naming Convention
+      - Super-spine: super_spine_router_0
+      - Spine: spine_router_0_0, spine_router_0_1
+      - Leaf: leaf_router_0_0, leaf_router_0_1
+      - Hosts: pc_0_0, pc_0_1
+
+  - id: data_center/dc_clos_worker/size_m
+    category: data_center
+    name: dc_clos_worker
+    size: m
+    compose_path: data_center/dc_clos_worker/size_m/compose.yaml
+    lab_name: dc_clos_worker
+    lab_conf_path: data_center/dc_clos_worker/size_m/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to a 3-tier CLOS data center network with 26 devices (BGP only):
+      - 2 super-spine (super_spine_router_0, super_spine_router_1), 8 spine (spine_router_X_Y), 8 leaf (leaf_router_X_Y), 8 hosts (pc_X_Y)
+      - Each leaf connects to 4 spines (eth0-eth3) and 1 host (eth4); each spine to 2 super-spine (eth0-eth1) and 4 leaves (eth2-eth5). All routers run FRR with BGP.
+    device_naming: |
+      ## Device Naming Convention
+      - Super-spine: super_spine_router_0, super_spine_router_1
+      - Spine: spine_router_X_Y (X=pod 0|1, Y=0..3)
+      - Leaf: leaf_router_X_Y (X=pod 0|1, Y=0..3)
+      - Hosts: pc_X_Y (e.g. pc_0_0, pc_0_1, pc_1_0, pc_1_3)
+
+  - id: data_center/dc_clos_worker/size_l
+    category: data_center
+    name: dc_clos_worker
+    size: l
+    compose_path: data_center/dc_clos_worker/size_l/compose.yaml
+    lab_name: dc_clos_worker
+    lab_conf_path: data_center/dc_clos_worker/size_l/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to a 3-tier CLOS data center network with BGP only (large):
+      - 4 super-spine, 32 spine, 32 leaf routers, 32 hosts (pc_X_Y)
+      - EBGP between all adjacent routers; leaf routers advertise connected host networks. Same connectivity: leaf–spines (eth0-eth3), leaf–host (eth4); spine–super-spine (eth0-eth1), spine–leaves (eth2-eth5).
+    device_naming: |
+      ## Device Naming Convention
+      - Super-spine: super_spine_router_0, super_spine_router_1, ...
+      - Spine: spine_router_X_Y (X=pod, Y=router_id)
+      - Leaf: leaf_router_X_Y (X=pod, Y=router_id)
+      - Hosts: pc_X_Y (X=pod, Y=host_id, e.g. pc_0_0, pc_1_2)
+
+  # ---------------------------------------------------------------------------
+  # campus
+  # ---------------------------------------------------------------------------
+
+  - id: campus/campus_dhcp/size_s
+    category: campus
+    name: campus_dhcp
+    size: s
+    compose_path: campus/campus_dhcp/size_s/compose.yaml
+    lab_name: campus_dhcp
+    lab_conf_path: campus/campus_dhcp/size_s/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to an enterprise campus network (OSPF, DHCP):
+      - Core and distribution routers (OSPF areas 0 and 1), access switches, hosts via DHCP
+      - Server farm with DNS, web servers, load balancer (Nginx), DHCP server
+      OSPF areas 0 (core) and 1 (distribution). Hosts get IPs via DHCP. Server farm (10.200.0.0/24) with DNS (Bind), web servers, Nginx load balancer, DHCP server.
+    device_naming: |
+      ## Device Naming Convention
+      - Core: router_core_1, router_core_2, router_core_3
+      - Distribution: router_dist_1_1, router_dist_2_1
+      - Server access: server_access_router
+      - Access switches: switch_access_1_1_1, switch_access_2_1_1
+      - Hosts: host_1_1_1_1, host_2_1_1_1
+      - Servers: dns_server, web_server_0, web_server_1, web_server_2, web_server_3, load_balancer, dhcp_server, backend_web_0, backend_web_1, backend_web_2
+
+  - id: campus/campus_dhcp/size_m
+    category: campus
+    name: campus_dhcp
+    size: m
+    compose_path: campus/campus_dhcp/size_m/compose.yaml
+    lab_name: campus_dhcp
+    lab_conf_path: campus/campus_dhcp/size_m/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to an enterprise campus network (OSPF, DHCP), medium size:
+      - Core, distribution, access layers; hosts get IPs via DHCP
+      - Server farm with DNS, web servers, load balancer, DHCP server
+      Core, distribution, access layers; OSPF areas 0 and 1. Hosts use DHCP. Server farm with DNS, web servers, load balancer, DHCP server.
+    device_naming: |
+      ## Device Naming Convention
+      - Core: router_core_1, router_core_2, router_core_3
+      - Distribution: router_dist_1_1, router_dist_1_2, router_dist_2_1, router_dist_2_2
+      - Server access: server_access_router
+      - Access switches: switch_access_X_Y_Z (e.g. switch_access_1_1_1, switch_access_2_2_2)
+      - Hosts: host_X_Y_Z_W (e.g. host_1_1_1_1, host_2_2_2_2)
+      - Servers: dns_server, web_server_0..3, load_balancer, dhcp_server, backend_web_0, backend_web_1, backend_web_2
+
+  - id: campus/campus_dhcp/size_l
+    category: campus
+    name: campus_dhcp
+    size: l
+    compose_path: campus/campus_dhcp/size_l/compose.yaml
+    lab_name: campus_dhcp
+    lab_conf_path: campus/campus_dhcp/size_l/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to an enterprise campus network (OSPF, DHCP), large size:
+      - Core, distribution, access layers; DHCP for hosts; server farm (DNS, web, LB, DHCP)
+      Larger campus: core, distribution, access; OSPF; DHCP for hosts. Server farm (DNS, web, LB, DHCP).
+    device_naming: |
+      ## Device Naming Convention
+      - Core: router_core_1, router_core_2, router_core_3
+      - Distribution: router_dist_X_Y
+      - Server access: server_access_router
+      - Access switches: switch_access_X_Y_Z
+      - Hosts: host_X_Y_Z_W (DHCP)
+      - Servers: dns_server, web_server_0..3, load_balancer, dhcp_server, backend_web_*
+
+  - id: campus/campus_static/size_s
+    category: campus
+    name: campus_static
+    size: s
+    compose_path: campus/campus_static/size_s/compose.yaml
+    lab_name: campus_static
+    lab_conf_path: campus/campus_static/size_s/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to an enterprise campus network (OSPF, static addressing):
+      - Core, distribution, access routers (OSPF areas 0 and 1); hosts with static IPs
+      - Server farm with DNS (Bind) and Apache web servers (web0.local–web3.local)
+      OSPF areas 0 and 1; static host addressing. Server farm 10.200.0.0/24 with DNS (Bind) and web servers (web0.local–web3.local).
+    device_naming: |
+      ## Device Naming Convention
+      - Core: router_core_1, router_core_2, router_core_3
+      - Distribution: switch_dist_1_1, switch_dist_2_1
+      - Server access: switch_server_access
+      - Access switches: switch_access_1_1_1, switch_access_2_1_1
+      - Hosts: host_1_1_1_1, host_2_1_1_1
+      - Servers: dns_server, web_server_0, web_server_1, web_server_2, web_server_3
+
+  - id: campus/campus_static/size_m
+    category: campus
+    name: campus_static
+    size: m
+    compose_path: campus/campus_static/size_m/compose.yaml
+    lab_name: campus_static
+    lab_conf_path: campus/campus_static/size_m/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to an enterprise campus network (OSPF, static), 37 machines:
+      - 3 core, 4 distribution, 8 access switches, 16 hosts (10.<core>.<dist>.0/24)
+      - Server farm 10.200.0.0/24 with DNS and 4 web servers
+      OSPF areas 0 and 1. Host IPs: 10.<core>.<dist>.0/24. Server farm 10.200.0.0/24 with DNS and 4 web servers.
+    device_naming: |
+      ## Device Naming Convention
+      - Core: router_core_1, router_core_2, router_core_3
+      - Distribution: switch_dist_1_1, switch_dist_1_2, switch_dist_2_1, switch_dist_2_2
+      - Server access: switch_server_access
+      - Access switches: switch_access_1_1_1, switch_access_1_1_2, switch_access_1_2_1, ... (switch_access_X_Y_Z)
+      - Hosts: host_1_1_1_1, host_1_1_1_2, host_1_1_2_1, ... host_2_2_2_2 (10.<core>.<dist>.0/24)
+      - Servers: dns_server, web_server_0, web_server_1, web_server_2, web_server_3
+
+  - id: campus/campus_static/size_l
+    category: campus
+    name: campus_static
+    size: l
+    compose_path: campus/campus_static/size_l/compose.yaml
+    lab_name: campus_static
+    lab_conf_path: campus/campus_static/size_l/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to an enterprise campus network (OSPF, static), large:
+      - Core, distribution, access; static host addressing; server farm with DNS and web
+      Large campus: core, distribution, access; OSPF; static addressing. Server farm with DNS and web servers.
+    device_naming: |
+      ## Device Naming Convention
+      - Core: router_core_1, router_core_2, router_core_3
+      - Distribution: switch_dist_1_1 .. switch_dist_2_4
+      - Server access: switch_server_access
+      - Access switches: switch_access_X_Y_Z
+      - Hosts: host_X_Y_Z_W (10.<core>.<dist>.0/24)
+      - Servers: dns_server, web_server_0, web_server_1, web_server_2
+
+  # ---------------------------------------------------------------------------
+  # isp
+  # ---------------------------------------------------------------------------
+
+  - id: isp/isp_rip_vpn/size_s
+    category: isp
+    name: isp_rip_vpn
+    size: s
+    compose_path: isp/isp_rip_vpn/size_s/compose.yaml
+    lab_name: rip_small_internet_vpn
+    lab_conf_path: isp/isp_rip_vpn/size_s/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to a small internet-style network with RIP and WireGuard VPN:
+      - Site routers (router1, router2), gateway router, external router
+      - Hosts and web servers over VPN (172.16.1.0/24); VPN server reachable at 20.0.0.2
+      RIP routing. WireGuard VPN; traffic over VPN (172.16.1.0/24). VPN server at 20.0.0.2.
+    device_naming: |
+      ## Device Naming Convention
+      - Site routers: router1, router2
+      - Gateway: gateway_router
+      - External: external_router_1
+      - Hosts: host_1, host_2
+      - VPN server: vpn_server_1
+      - Web servers: web_server_1_1, web_server_1_2
+
+  - id: isp/isp_rip_vpn/size_m
+    category: isp
+    name: isp_rip_vpn
+    size: m
+    compose_path: isp/isp_rip_vpn/size_m/compose.yaml
+    lab_name: rip_small_internet_vpn
+    lab_conf_path: isp/isp_rip_vpn/size_m/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to a small internet-style network (RIP, WireGuard VPN), medium size:
+      - RIP routing; VPN server and web servers reachable over VPN (172.16.1.0/24)
+    device_naming: |
+      ## Device Naming Convention
+      - Site routers: router1, router2, router3, router4
+      - Gateway: gateway_router
+      - External: external_router_1, external_router_2
+      - Host: host_1
+      - VPN server: vpn_server_1
+      - Web servers: web_server_1_1, web_server_1_2
+
+  - id: isp/isp_rip_vpn/size_l
+    category: isp
+    name: isp_rip_vpn
+    size: l
+    compose_path: isp/isp_rip_vpn/size_l/compose.yaml
+    lab_name: rip_small_internet_vpn
+    lab_conf_path: isp/isp_rip_vpn/size_l/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to a small internet-style network (RIP, WireGuard VPN), large size:
+      - Multiple sites, gateway, external zone; VPN and web services. RIP routing; WireGuard VPN.
+    device_naming: |
+      ## Device Naming Convention
+      - Site routers: router1 .. router8
+      - Gateway: gateway_router
+      - External: external_router_1 .. external_router_4
+      - Host: host_1
+      - VPN server: vpn_server_1
+      - Web servers: web_server_1_1, web_server_1_2
+
+  # ---------------------------------------------------------------------------
+  # sdn
+  # ---------------------------------------------------------------------------
+
+  - id: sdn/sdn_clos/size_s
+    category: sdn
+    name: sdn_clos
+    size: s
+    compose_path: sdn/sdn_clos/size_s/compose.yaml
+    lab_name: sdn_clos
+    lab_conf_path: sdn/sdn_clos/size_s/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to an SDN spine-leaf fabric: OpenFlow switches (spine, leaf) controlled by Ryu; hosts attached to leaves.
+    device_naming: |
+      ## Device Naming Convention
+      - Spine: spine_1
+      - Leaf: leaf_1, leaf_2
+      - Hosts: host_1_1, host_1_2, host_2_1, host_2_2 (attached to leaf_1 / leaf_2)
+      - Controller: controller (Ryu)
+
+  - id: sdn/sdn_clos/size_m
+    category: sdn
+    name: sdn_clos
+    size: m
+    compose_path: sdn/sdn_clos/size_m/compose.yaml
+    lab_name: sdn_clos
+    lab_conf_path: sdn/sdn_clos/size_m/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to an SDN spine-leaf fabric (medium): OpenFlow switches + Ryu controller. Hosts attached to leaf switches.
+    device_naming: |
+      ## Device Naming Convention
+      - Spine: spine_1, spine_2, ...
+      - Leaf: leaf_1, leaf_2, ...
+      - Hosts: host_X_Y (attached to leaves)
+      - Controller: controller (Ryu)
+
+  - id: sdn/sdn_clos/size_l
+    category: sdn
+    name: sdn_clos
+    size: l
+    compose_path: sdn/sdn_clos/size_l/compose.yaml
+    lab_name: sdn_clos
+    lab_conf_path: sdn/sdn_clos/size_l/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to an SDN spine-leaf fabric (large): OpenFlow switches + Ryu controller. Hosts on leaf switches.
+    device_naming: |
+      ## Device Naming Convention
+      - Spine: spine_1, spine_2, ...
+      - Leaf: leaf_1, leaf_2, ...
+      - Hosts: host_X_Y (attached to leaves)
+      - Controller: controller (Ryu)
+
+  - id: sdn/sdn_star/size_s
+    category: sdn
+    name: sdn_star
+    size: s
+    compose_path: sdn/sdn_star/size_s/compose.yaml
+    lab_name: sdn_star
+    lab_conf_path: sdn/sdn_star/size_s/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to an SDN star topology: center switch (switch_0), 4 edge switches (switch_1–switch_4), 4 hosts; Ryu controller. Star: switch_0 connected to switch_1..4; each edge switch has one host.
+    device_naming: |
+      ## Device Naming Convention
+      - Center switch: switch_0
+      - Edge switches: switch_1, switch_2, switch_3, switch_4
+      - Hosts: host_1, host_2, host_3, host_4 (one per edge switch)
+      - Controller: controller (Ryu)
+
+  - id: sdn/sdn_star/size_m
+    category: sdn
+    name: sdn_star
+    size: m
+    compose_path: sdn/sdn_star/size_m/compose.yaml
+    lab_name: sdn_star
+    lab_conf_path: sdn/sdn_star/size_m/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to an SDN star topology (medium): OpenFlow switches + Ryu controller. Center switch_0 and edge switches (switch_1, ...) with hosts.
+    device_naming: |
+      ## Device Naming Convention
+      - Center: switch_0
+      - Edge switches: switch_1, switch_2, ... (one host per edge)
+      - Hosts: host_1, host_2, ...
+      - Controller: controller (Ryu)
+
+  - id: sdn/sdn_star/size_l
+    category: sdn
+    name: sdn_star
+    size: l
+    compose_path: sdn/sdn_star/size_l/compose.yaml
+    lab_name: sdn_star
+    lab_conf_path: sdn/sdn_star/size_l/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to an SDN star topology (large): OpenFlow switches + Ryu controller. Center switch_0 and edge switches with hosts.
+    device_naming: |
+      ## Device Naming Convention
+      - Center: switch_0
+      - Edge switches: switch_1, switch_2, ...
+      - Hosts: host_1, host_2, ...
+      - Controller: controller (Ryu)
+
+  # ---------------------------------------------------------------------------
+  # p4 (no size variants)
+  # ---------------------------------------------------------------------------
+
+  - id: p4/p4_counter
+    category: p4
+    name: p4_counter
+    size: null
+    compose_path: p4/p4_counter/compose.yaml
+    lab_name: p4_counter
+    lab_conf_path: p4/p4_counter/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to a P4 counter topology: 3 hosts (pc1, pc2, pc3), 4 P4/BMv2 switches (s1–s4). In-switch counter logic.
+    device_naming: |
+      ## Device Naming Convention
+      - Hosts: pc1, pc2, pc3
+      - P4/BMv2 switches: s1, s2, s3, s4
+
+  - id: p4/p4_bloom_filter
+    category: p4
+    name: p4_bloom_filter
+    size: null
+    compose_path: p4/p4_bloom_filter/compose.yaml
+    lab_name: p4_bloom_filter
+    lab_conf_path: p4/p4_bloom_filter/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to a P4 Bloom filter topology: 2 hosts (host_1, host_2), 2 P4/BMv2 switches (switch_1, switch_2); in-switch Bloom filter logic.
+    device_naming: |
+      ## Device Naming Convention
+      - Hosts: host_1, host_2
+      - P4 switches: switch_1, switch_2
+
+  - id: p4/p4_int
+    category: p4
+    name: p4_int
+    size: null
+    compose_path: p4/p4_int/compose.yaml
+    lab_name: p4_int
+    lab_conf_path: p4/p4_int/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to a P4 INT (In-band Network Telemetry) topology: 2 hosts (pc1, pc2), 4 P4 switches (spine1, spine2, leaf1, leaf2), 1 InfluxDB collector for telemetry.
+    device_naming: |
+      ## Device Naming Convention
+      - Hosts: pc1, pc2
+      - Spine switches: spine1, spine2
+      - Leaf switches: leaf1, leaf2
+      - Collector: collector (InfluxDB telemetry)
+
+  - id: p4/p4_mpls
+    category: p4
+    name: p4_mpls
+    size: null
+    compose_path: p4/p4_mpls/compose.yaml
+    lab_name: p4_mpls
+    lab_conf_path: p4/p4_mpls/topology/lab.conf
+    has_lab_generator: true
+    description: |
+      You have access to a P4 MPLS topology: 3 hosts (host_1, host_2, host_3), 7 P4/BMv2 switches (switch_1–switch_7); MPLS label push/swap/pop forwarding.
+    device_naming: |
+      ## Device Naming Convention
+      - Hosts: host_1, host_2, host_3
+      - P4 switches: switch_1, switch_2, switch_3, switch_4, switch_5, switch_6, switch_7

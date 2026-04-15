@@ -1,0 +1,14 @@
+$TTL 1H
+@   IN  SOA ns1.local. admin.local. (
+        2025111101 ; Serial
+        1H         ; Refresh
+        15M        ; Retry
+        1W         ; Expire
+        1D )       ; Minimum
+
+    IN  NS  ns1.local.
+ns1 IN  A   10.200.0.2
+web0 IN  A  10.200.0.3
+web1 IN  A  10.200.0.4
+web2 IN  A  10.200.0.5
+web3 IN  A  10.200.0.6

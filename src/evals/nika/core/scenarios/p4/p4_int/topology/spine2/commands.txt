@@ -1,0 +1,2 @@
+table_set_default dmac_forward drop
+EOF

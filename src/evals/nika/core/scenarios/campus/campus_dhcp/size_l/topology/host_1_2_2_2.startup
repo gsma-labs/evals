@@ -1,0 +1,2 @@
+printf "timeout 1;\nretry 1;\n" >> /etc/dhcp/dhclient.conf
+dhclient -d eth0

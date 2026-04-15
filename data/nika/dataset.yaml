@@ -1,0 +1,3531 @@
+# NIKA Network Troubleshooting Dataset (auto-generated)
+
+templates:
+  standard: &standard_input |
+    ## Topology
+    {topology}
+    
+    ## Symptom
+    {symptom}
+    
+    ## Difficulty
+    {guidance}
+    
+    Use the diagnostic tools to investigate, then submit your findings.
+
+samples:
+  # ============================================================================
+  # LINK FAILURE FAMILY
+  # ============================================================================
+
+  # --- link_crc_errors variant ---
+
+  - id: link_crc_errors_dc_clos_worker_size_l_leaf_router_0_0_eth0
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - link_crc_errors
+    setup: tc qdisc add dev eth0 root netem corrupt 35%
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: link_crc_errors
+      difficulty: medium
+      target_device: leaf_router_0_0
+  - id: link_crc_errors_dc_clos_worker_size_m_pc_1_0_eth0
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - pc_1_0
+    - link_crc_errors
+    setup: tc qdisc add dev eth0 root netem corrupt 40%
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: link_crc_errors
+      difficulty: medium
+      target_device: pc_1_0
+  - id: link_crc_errors_dc_clos_worker_size_s_leaf_router_0_0_eth0
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - link_crc_errors
+    setup: tc qdisc add dev eth0 root netem corrupt 30%
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_crc_errors
+      difficulty: medium
+      target_device: leaf_router_0_0
+  - id: link_crc_errors_dc_clos_worker_size_s_leaf_router_0_1_eth1
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_1
+    - link_crc_errors
+    setup: tc qdisc add dev eth1 root netem corrupt 50%
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_crc_errors
+      difficulty: medium
+      target_device: leaf_router_0_1
+  - id: link_crc_errors_dc_clos_worker_size_s_pc_0_0_eth0
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - pc_0_0
+    - link_crc_errors
+    setup: tc qdisc add dev eth0 root netem corrupt 60%
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_crc_errors
+      difficulty: medium
+      target_device: pc_0_0
+
+  # --- link_detach variant ---
+
+  - id: link_detach_dc_clos_worker_size_l_spine_router_0_1_eth2
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_1
+    - link_detach
+    setup: ip link del eth2
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: link_detach
+      difficulty: easy
+      target_device: spine_router_0_1
+  - id: link_detach_dc_clos_worker_size_m_spine_router_1_0_eth2
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_1_0
+    - link_detach
+    setup: ip link del eth2
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: link_detach
+      difficulty: easy
+      target_device: spine_router_1_0
+  - id: link_detach_dc_clos_worker_size_s_leaf_router_0_0_eth1
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - link_detach
+    setup: ip link del eth1
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_detach
+      difficulty: easy
+      target_device: leaf_router_0_0
+  - id: link_detach_dc_clos_worker_size_s_leaf_router_0_1_eth2
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_1
+    - link_detach
+    setup: ip link del eth2
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_detach
+      difficulty: easy
+      target_device: leaf_router_0_1
+  - id: link_detach_dc_clos_worker_size_s_spine_router_0_0_eth1
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_0
+    - link_detach
+    setup: ip link del eth1
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_detach
+      difficulty: easy
+      target_device: spine_router_0_0
+
+  # --- link_down variant ---
+
+  - id: link_down_dc_clos_worker_size_l_leaf_router_0_0_eth1
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - link_down
+    setup: ip link set eth1 down
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: link_down
+      difficulty: easy
+      target_device: leaf_router_0_0
+  - id: link_down_dc_clos_worker_size_m_leaf_router_1_0_eth0
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_1_0
+    - link_down
+    setup: ip link set eth0 down
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: link_down
+      difficulty: easy
+      target_device: leaf_router_1_0
+  - id: link_down_dc_clos_worker_size_m_spine_router_0_2_eth2
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_2
+    - link_down
+    setup: ip link set eth2 down
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: link_down
+      difficulty: easy
+      target_device: spine_router_0_2
+  - id: link_down_dc_clos_worker_size_s_leaf_router_0_0_eth0
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - link_down
+    setup: ip link set eth0 down
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_down
+      difficulty: easy
+      target_device: leaf_router_0_0
+  - id: link_down_dc_clos_worker_size_s_leaf_router_0_1_eth1
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_1
+    - link_down
+    setup: ip link set eth1 down
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_down
+      difficulty: easy
+      target_device: leaf_router_0_1
+  - id: link_down_dc_clos_worker_size_s_spine_router_0_1_eth2
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_1
+    - link_down
+    setup: ip link set eth2 down
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_down
+      difficulty: easy
+      target_device: spine_router_0_1
+
+  # --- baseline variant ---
+
+  - id: link_failure_baseline_healthy
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - false
+    - []
+    - none
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: baseline
+      difficulty: easy
+      target_device: none
+  - id: link_failure_baseline_healthy_size_l
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - false
+    - []
+    - none
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: baseline
+      difficulty: easy
+      target_device: none
+  - id: link_failure_baseline_healthy_size_m
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - false
+    - []
+    - none
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: baseline
+      difficulty: easy
+      target_device: none
+
+  # --- link_flap variant ---
+
+  - id: link_flap_dc_clos_worker_size_l_leaf_router_1_0_eth0
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_1_0
+    - link_flap
+    setup: while true; do ip link set eth0 down; sleep 1; ip link set eth0 up; sleep 1; done &
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: link_flap
+      difficulty: medium
+      target_device: leaf_router_1_0
+  - id: link_flap_dc_clos_worker_size_m_leaf_router_0_2_eth1
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_2
+    - link_flap
+    setup: while true; do ip link set eth1 down; sleep 1; ip link set eth1 up; sleep 1; done &
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: link_flap
+      difficulty: medium
+      target_device: leaf_router_0_2
+  - id: link_flap_dc_clos_worker_size_s_leaf_router_0_0_eth0
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - link_flap
+    setup: while true; do ip link set eth0 down; sleep 1; ip link set eth0 up; sleep 1; done &
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_flap
+      difficulty: medium
+      target_device: leaf_router_0_0
+  - id: link_flap_dc_clos_worker_size_s_leaf_router_0_1_eth1
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_1
+    - link_flap
+    setup: while true; do ip link set eth1 down; sleep 1; ip link set eth1 up; sleep 1; done &
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_flap
+      difficulty: medium
+      target_device: leaf_router_0_1
+  - id: link_flap_dc_clos_worker_size_s_spine_router_0_0_eth2
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_0
+    - link_flap
+    setup: while true; do ip link set eth2 down; sleep 1; ip link set eth2 up; sleep 1; done &
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_flap
+      difficulty: medium
+      target_device: spine_router_0_0
+
+  # --- link_fragmentation_disabled variant ---
+
+  - id: link_fragmentation_disabled_dc_clos_worker_size_l_spine_router_1_0
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_1_0
+    - link_fragmentation_disabled
+    setup: iptables -A OUTPUT -m length --length 10:65535 -j DROP
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: link_fragmentation_disabled
+      difficulty: hard
+      target_device: spine_router_1_0
+  - id: link_fragmentation_disabled_dc_clos_worker_size_m_leaf_router_1_1
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_1_1
+    - link_fragmentation_disabled
+    setup: iptables -A OUTPUT -m length --length 10:65535 -j DROP
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: link_fragmentation_disabled
+      difficulty: hard
+      target_device: leaf_router_1_1
+  - id: link_fragmentation_disabled_dc_clos_worker_size_s_leaf_router_0_0
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - link_fragmentation_disabled
+    setup: iptables -A OUTPUT -m length --length 10:65535 -j DROP
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_fragmentation_disabled
+      difficulty: hard
+      target_device: leaf_router_0_0
+  - id: link_fragmentation_disabled_dc_clos_worker_size_s_spine_router_0_0
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_0
+    - link_fragmentation_disabled
+    setup: iptables -A OUTPUT -m length --length 10:65535 -j DROP
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_fragmentation_disabled
+      difficulty: hard
+      target_device: spine_router_0_0
+  - id: link_fragmentation_disabled_dc_clos_worker_size_s_spine_router_0_1
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_1
+    - link_fragmentation_disabled
+    setup: iptables -A OUTPUT -m length --length 10:65535 -j DROP
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_fragmentation_disabled
+      difficulty: hard
+      target_device: spine_router_0_1
+
+  # --- mac_address_conflict variant ---
+
+  - id: mac_address_conflict_dc_clos_worker_size_l_leaf_router_0_0
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - mac_address_conflict
+    setup: ip link set dev eth0 address 02:00:00:00:00:04 && ip link set dev eth1 address 02:00:00:00:00:04
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: mac_address_conflict
+      difficulty: medium
+      target_device: leaf_router_0_0
+  - id: mac_address_conflict_dc_clos_worker_size_m_leaf_router_0_0
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - mac_address_conflict
+    setup: ip link set dev eth0 address 02:00:00:00:00:03 && ip link set dev eth1 address 02:00:00:00:00:03
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: mac_address_conflict
+      difficulty: medium
+      target_device: leaf_router_0_0
+  - id: mac_address_conflict_dc_clos_worker_size_s_leaf_router_0_0
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - mac_address_conflict
+    setup: ip link set dev eth0 address 02:00:00:00:00:01 && ip link set dev eth1 address 02:00:00:00:00:01
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: mac_address_conflict
+      difficulty: medium
+      target_device: leaf_router_0_0
+  - id: mac_address_conflict_dc_clos_worker_size_s_leaf_router_0_1
+    family_id: link_failure
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_1
+    - mac_address_conflict
+    setup: ip link set dev eth0 address 02:00:00:00:00:02 && ip link set dev eth1 address 02:00:00:00:00:02
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: mac_address_conflict
+      difficulty: medium
+      target_device: leaf_router_0_1
+
+  # ============================================================================
+  # SERVICE FAILURE FAMILY
+  # ============================================================================
+
+  # --- dhcp_server_down variant ---
+
+  - id: dhcp_server_down_campus_dhcp_size_l_dhcp_server
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - dhcp_server
+    - dhcp_server_down
+    setup: systemctl stop isc-dhcp-server
+    sandbox:
+    - kathara
+    - campus/campus_dhcp/size_l/compose.yaml
+    metadata:
+      variant: dhcp_server_down
+      difficulty: easy
+      target_device: dhcp_server
+  - id: dhcp_server_down_campus_dhcp_size_m_dhcp_server
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - dhcp_server
+    - dhcp_server_down
+    setup: systemctl stop isc-dhcp-server
+    sandbox:
+    - kathara
+    - campus/campus_dhcp/size_m/compose.yaml
+    metadata:
+      variant: dhcp_server_down
+      difficulty: easy
+      target_device: dhcp_server
+  - id: dhcp_server_down_campus_dhcp_size_s_dhcp_server
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - dhcp_server
+    - dhcp_server_down
+    setup: systemctl stop isc-dhcp-server
+    sandbox:
+    - kathara
+    - campus/campus_dhcp/size_s/compose.yaml
+    metadata:
+      variant: dhcp_server_down
+      difficulty: easy
+      target_device: dhcp_server
+
+  # --- dns_server_down variant ---
+
+  - id: dns_server_down_dc_clos_service_size_l_dns_pod1
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod1
+    - dns_server_down
+    setup: pkill -9 named
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: dns_server_down
+      difficulty: easy
+      target_device: dns_pod1
+  - id: dns_server_down_dc_clos_service_size_m_dns_pod1
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod1
+    - dns_server_down
+    setup: pkill -9 named
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: dns_server_down
+      difficulty: easy
+      target_device: dns_pod1
+  - id: dns_server_down_dc_clos_service_size_s_dns_pod0
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod0
+    - dns_server_down
+    setup: pkill -9 named
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: dns_server_down
+      difficulty: easy
+      target_device: dns_pod0
+
+  # --- missing_ip variant ---
+
+  - id: missing_ip_dc_clos_service_size_l_client_0_eth0
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - client_0
+    - missing_ip
+    setup: ip addr del 10.0.2.2/24 dev eth0
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: missing_ip
+      difficulty: easy
+      target_device: client_0
+  - id: missing_ip_dc_clos_service_size_m_client_1_eth0
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - client_1
+    - missing_ip
+    setup: ip addr del 10.0.2.3/24 dev eth0
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: missing_ip
+      difficulty: easy
+      target_device: client_1
+  - id: missing_ip_dc_clos_service_size_s_client_0_eth0
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - client_0
+    - missing_ip
+    setup: ip addr del 10.0.2.2/24 dev eth0
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: missing_ip
+      difficulty: easy
+      target_device: client_0
+  - id: missing_ip_dc_clos_service_size_s_webserver0_pod0_eth0
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod0
+    - missing_ip
+    setup: ip addr del 10.0.1.10/24 dev eth0
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: missing_ip
+      difficulty: easy
+      target_device: webserver0_pod0
+
+  # --- baseline variant ---
+
+  - id: service_failure_baseline_healthy
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - false
+    - []
+    - none
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: baseline
+      difficulty: easy
+      target_device: none
+  - id: service_failure_baseline_healthy_size_l
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - false
+    - []
+    - none
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: baseline
+      difficulty: easy
+      target_device: none
+  - id: service_failure_baseline_healthy_size_m
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - false
+    - []
+    - none
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: baseline
+      difficulty: easy
+      target_device: none
+
+  # --- vpn_membership_removed variant ---
+
+  - id: vpn_membership_removed_isp_rip_vpn_size_l_vpn_server_1
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - vpn_server_1
+    - vpn_membership_removed
+    setup: sed -i '/# host_1/{n; s/^/# /; n; s/^/# /; n; s/^/# /;}' /etc/wireguard/wg0.conf && wg-quick down wg0 && wg-quick up wg0
+    sandbox:
+    - kathara
+    - isp/isp_rip_vpn/size_l/compose.yaml
+    metadata:
+      variant: vpn_membership_removed
+      difficulty: medium
+      target_device: vpn_server_1
+  - id: vpn_membership_removed_isp_rip_vpn_size_m_vpn_server_1
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - vpn_server_1
+    - vpn_membership_removed
+    setup: sed -i '/# host_1/{n; s/^/# /; n; s/^/# /; n; s/^/# /;}' /etc/wireguard/wg0.conf && wg-quick down wg0 && wg-quick up wg0
+    sandbox:
+    - kathara
+    - isp/isp_rip_vpn/size_m/compose.yaml
+    metadata:
+      variant: vpn_membership_removed
+      difficulty: medium
+      target_device: vpn_server_1
+  - id: vpn_membership_removed_isp_rip_vpn_size_s_vpn_server_1
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - vpn_server_1
+    - vpn_membership_removed
+    setup: sed -i '/# host_1/{n; s/^/# /; n; s/^/# /; n; s/^/# /;}' /etc/wireguard/wg0.conf && wg-quick down wg0 && wg-quick up wg0
+    sandbox:
+    - kathara
+    - isp/isp_rip_vpn/size_s/compose.yaml
+    metadata:
+      variant: vpn_membership_removed
+      difficulty: medium
+      target_device: vpn_server_1
+  - id: vpn_membership_removed_isp_rip_vpn_size_s_vpn_server_1_2
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - vpn_server_1
+    - vpn_membership_removed
+    setup: sed -i '/# web_server_1_1/{n; s/^/# /; n; s/^/# /; n; s/^/# /;}' /etc/wireguard/wg0.conf && wg-quick down wg0 && wg-quick up wg0
+    sandbox:
+    - kathara
+    - isp/isp_rip_vpn/size_s/compose.yaml
+    metadata:
+      variant: vpn_membership_removed
+      difficulty: medium
+      target_device: vpn_server_1
+
+  # --- vpn_server_down variant ---
+
+  - id: vpn_server_down_isp_rip_vpn_size_l_vpn_server_1
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - vpn_server_1
+    - vpn_server_down
+    setup: wg-quick down wg0
+    sandbox:
+    - kathara
+    - isp/isp_rip_vpn/size_l/compose.yaml
+    metadata:
+      variant: vpn_server_down
+      difficulty: medium
+      target_device: vpn_server_1
+  - id: vpn_server_down_isp_rip_vpn_size_m_vpn_server_1
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - vpn_server_1
+    - vpn_server_down
+    setup: wg-quick down wg0
+    sandbox:
+    - kathara
+    - isp/isp_rip_vpn/size_m/compose.yaml
+    metadata:
+      variant: vpn_server_down
+      difficulty: medium
+      target_device: vpn_server_1
+  - id: vpn_server_down_isp_rip_vpn_size_s_vpn_server_1
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - vpn_server_1
+    - vpn_server_down
+    setup: wg-quick down wg0
+    sandbox:
+    - kathara
+    - isp/isp_rip_vpn/size_s/compose.yaml
+    metadata:
+      variant: vpn_server_down
+      difficulty: medium
+      target_device: vpn_server_1
+
+  # --- web_server_down variant ---
+
+  - id: web_server_down_dc_clos_service_size_l_webserver0_pod1
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod1
+    - web_server_down
+    setup: systemctl stop web_server 2>/dev/null; pkill -9 -f http.server 2>/dev/null; systemctl stop apache2 2>/dev/null; pkill -9 apache2 2>/dev/null; true
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: web_server_down
+      difficulty: easy
+      target_device: webserver0_pod1
+  - id: web_server_down_dc_clos_service_size_m_webserver1_pod0
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - webserver1_pod0
+    - web_server_down
+    setup: systemctl stop web_server 2>/dev/null; pkill -9 -f http.server 2>/dev/null; systemctl stop apache2 2>/dev/null; pkill -9 apache2 2>/dev/null; true
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: web_server_down
+      difficulty: easy
+      target_device: webserver1_pod0
+  - id: web_server_down_dc_clos_service_size_s_webserver0_pod0
+    family_id: end_host_failure
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod0
+    - web_server_down
+    setup: systemctl stop web_server 2>/dev/null; pkill -9 -f http.server 2>/dev/null; systemctl stop apache2 2>/dev/null; pkill -9 apache2 2>/dev/null; true
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: web_server_down
+      difficulty: easy
+      target_device: webserver0_pod0
+
+  # ============================================================================
+  # MISCONFIGURATIONS FAMILY
+  # ============================================================================
+
+  # --- acl_arp_block variant ---
+
+  - id: acl_arp_block_dc_clos_worker_size_l_leaf_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - acl_arp_block
+    setup: nft add table arp filter 2>/dev/null || true nft add chain arp filter input '{ type filter hook input priority 0 ; }' 2>/dev/null || true nft add rule arp filter input drop ip neigh flush all
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: acl_arp_block
+      difficulty: hard
+      target_device: leaf_router_0_0
+  - id: acl_arp_block_dc_clos_worker_size_m_leaf_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - acl_arp_block
+    setup: nft add table arp filter 2>/dev/null || true nft add chain arp filter input '{ type filter hook input priority 0 ; }' 2>/dev/null || true nft add rule arp filter input drop ip neigh flush all
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: acl_arp_block
+      difficulty: hard
+      target_device: leaf_router_0_0
+  - id: acl_arp_block_dc_clos_worker_size_m_spine_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_0
+    - acl_arp_block
+    setup: nft add table arp filter 2>/dev/null || true nft add chain arp filter input '{ type filter hook input priority 0 ; }' 2>/dev/null || true nft add rule arp filter input drop ip neigh flush all
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: acl_arp_block
+      difficulty: hard
+      target_device: spine_router_0_0
+  - id: acl_arp_block_dc_clos_worker_size_s_leaf_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - acl_arp_block
+    setup: nft add table arp filter 2>/dev/null || true && nft add chain arp filter input '{ type filter hook input priority 0 ; }' 2>/dev/null || true && nft add rule arp filter input drop && ip neigh flush all
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: acl_arp_block
+      difficulty: hard
+      target_device: leaf_router_0_0
+
+  # --- acl_bgp_block variant ---
+
+  - id: acl_bgp_block_dc_clos_worker_size_l_leaf_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - acl_bgp_block
+    setup: nft add rule inet filter input tcp dport 179 drop nft add rule inet filter input tcp sport 179 drop
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: acl_bgp_block
+      difficulty: medium
+      target_device: leaf_router_0_0
+  - id: acl_bgp_block_dc_clos_worker_size_m_leaf_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - acl_bgp_block
+    setup: nft add rule inet filter input tcp dport 179 drop nft add rule inet filter input tcp sport 179 drop
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: acl_bgp_block
+      difficulty: medium
+      target_device: leaf_router_0_0
+  - id: acl_bgp_block_dc_clos_worker_size_m_spine_router_0_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_1
+    - acl_bgp_block
+    setup: nft add rule inet filter input tcp dport 179 drop nft add rule inet filter input tcp sport 179 drop
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: acl_bgp_block
+      difficulty: medium
+      target_device: spine_router_0_1
+  - id: acl_bgp_block_dc_clos_worker_size_s_leaf_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - acl_bgp_block
+    setup: nft add rule inet filter input tcp dport 179 drop && nft add rule inet filter input tcp sport 179 drop
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: acl_bgp_block
+      difficulty: medium
+      target_device: leaf_router_0_0
+
+  # --- acl_dns_block variant ---
+
+  - id: acl_dns_block_dc_clos_service_size_l_dns_pod0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod0
+    - acl_dns_block
+    setup: nft add rule inet filter input tcp dport 53 drop nft add rule inet filter input udp dport 53 drop
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: acl_dns_block
+      difficulty: easy
+      target_device: dns_pod0
+  - id: acl_dns_block_dc_clos_service_size_m_dns_pod1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod1
+    - acl_dns_block
+    setup: nft add rule inet filter input tcp dport 53 drop nft add rule inet filter input udp dport 53 drop
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: acl_dns_block
+      difficulty: easy
+      target_device: dns_pod1
+  - id: acl_dns_block_dc_clos_service_size_s_dns_pod0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod0
+    - acl_dns_block
+    setup: nft add rule inet filter input tcp dport 53 drop nft add rule inet filter input udp dport 53 drop
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: acl_dns_block
+      difficulty: easy
+      target_device: dns_pod0
+  - id: acl_dns_block_dc_clos_service_size_s_super_spine_router_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - super_spine_router_0
+    - acl_dns_block
+    setup: nft add rule inet filter input tcp dport 53 drop nft add rule inet filter input udp dport 53 drop
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: acl_dns_block
+      difficulty: easy
+      target_device: super_spine_router_0
+
+  # --- acl_http_block variant ---
+
+  - id: acl_http_block_dc_clos_service_size_l_webserver0_pod0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod0
+    - acl_http_block
+    setup: nft add rule inet filter input tcp dport 80 drop
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: acl_http_block
+      difficulty: easy
+      target_device: webserver0_pod0
+  - id: acl_http_block_dc_clos_service_size_m_webserver0_pod1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod1
+    - acl_http_block
+    setup: nft add rule inet filter input tcp dport 80 drop
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: acl_http_block
+      difficulty: easy
+      target_device: webserver0_pod1
+  - id: acl_http_block_dc_clos_service_size_s_dns_pod0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod0
+    - acl_http_block
+    setup: nft add rule inet filter input tcp dport 80 drop
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: acl_http_block
+      difficulty: easy
+      target_device: dns_pod0
+  - id: acl_http_block_dc_clos_service_size_s_webserver0_pod0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod0
+    - acl_http_block
+    setup: nft add rule inet filter input tcp dport 80 drop
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: acl_http_block
+      difficulty: easy
+      target_device: webserver0_pod0
+
+  # --- acl_icmp_block variant ---
+
+  - id: acl_icmp_block_dc_clos_worker_size_l_leaf_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - acl_icmp_block
+    setup: nft add rule ip filter input ip protocol icmp drop
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: acl_icmp_block
+      difficulty: easy
+      target_device: leaf_router_0_0
+  - id: acl_icmp_block_dc_clos_worker_size_m_leaf_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - acl_icmp_block
+    setup: nft add rule ip filter input ip protocol icmp drop
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: acl_icmp_block
+      difficulty: easy
+      target_device: leaf_router_0_0
+  - id: acl_icmp_block_dc_clos_worker_size_m_spine_router_0_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_1
+    - acl_icmp_block
+    setup: nft add rule ip filter input ip protocol icmp drop
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: acl_icmp_block
+      difficulty: easy
+      target_device: spine_router_0_1
+  - id: acl_icmp_block_dc_clos_worker_size_s_leaf_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - acl_icmp_block
+    setup: nft add rule ip filter input ip protocol icmp drop
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: acl_icmp_block
+      difficulty: easy
+      target_device: leaf_router_0_0
+
+  # --- acl_ospf_block variant ---
+
+  - id: acl_ospf_block_campus_static_size_l_router_core_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - router_core_1
+    - acl_ospf_block
+    setup: nft add rule inet filter input ip protocol 89 drop
+    sandbox:
+    - kathara
+    - campus/campus_static/size_l/compose.yaml
+    metadata:
+      variant: acl_ospf_block
+      difficulty: medium
+      target_device: router_core_1
+  - id: acl_ospf_block_campus_static_size_s_router_core_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - router_core_1
+    - acl_ospf_block
+    setup: nft add rule inet filter input ip protocol 89 drop
+    sandbox:
+    - kathara
+    - campus/campus_static/size_s/compose.yaml
+    metadata:
+      variant: acl_ospf_block
+      difficulty: medium
+      target_device: router_core_1
+  - id: acl_ospf_block_campus_static_size_s_switch_dist_1_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - switch_dist_1_1
+    - acl_ospf_block
+    setup: nft add rule inet filter input ip protocol 89 drop
+    sandbox:
+    - kathara
+    - campus/campus_static/size_s/compose.yaml
+    metadata:
+      variant: acl_ospf_block
+      difficulty: medium
+      target_device: switch_dist_1_1
+
+  # --- bgp_asn_misconfig variant ---
+
+  - id: bgp_asn_misconfig_dc_clos_worker_size_l_leaf_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - bgp_asn_misconfig
+    setup: vtysh -c "conf t" -c "no router bgp 65200" -c "router bgp 65999"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: bgp_asn_misconfig
+      difficulty: hard
+      target_device: leaf_router_0_0
+  - id: bgp_asn_misconfig_dc_clos_worker_size_m_leaf_router_0_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_1
+    - bgp_asn_misconfig
+    setup: vtysh -c "conf t" -c "no router bgp 65201" -c "router bgp 65901"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: bgp_asn_misconfig
+      difficulty: hard
+      target_device: leaf_router_0_1
+  - id: bgp_asn_misconfig_dc_clos_worker_size_s_leaf_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - bgp_asn_misconfig
+    setup: vtysh -c "conf t" -c "no router bgp 65200" -c "router bgp 65999" -c "neighbor 10.0.0.129 remote-as 65100" -c "neighbor 10.0.0.133 remote-as 65101" -c "neighbor 10.0.0.137 remote-as 65102" -c "neighbor 10.0.0.141 remote-as 65103" -c "network 10.0.0.0/24"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: bgp_asn_misconfig
+      difficulty: hard
+      target_device: leaf_router_0_0
+  - id: bgp_asn_misconfig_dc_clos_worker_size_s_spine_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_0
+    - bgp_asn_misconfig
+    setup: vtysh -c "conf t" -c "no router bgp 65100" -c "router bgp 65777"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: bgp_asn_misconfig
+      difficulty: hard
+      target_device: spine_router_0_0
+  - id: bgp_asn_misconfig_dc_clos_worker_size_s_spine_router_0_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_1
+    - bgp_asn_misconfig
+    setup: vtysh -c "conf t" -c "no router bgp 65101" -c "router bgp 65888"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: bgp_asn_misconfig
+      difficulty: hard
+      target_device: spine_router_0_1
+
+  # --- bgp_blackhole_route_leak variant ---
+
+  - id: bgp_blackhole_route_leak_dc_clos_worker_size_l_leaf_router_0_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_1
+    - bgp_blackhole_route_leak
+    setup: ip route add 10.0.2.0/30 blackhole && vtysh -c "conf t" -c "router bgp 65202" -c "network 10.0.2.0/30"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: bgp_blackhole_route_leak
+      difficulty: hard
+      target_device: leaf_router_0_1
+  - id: bgp_blackhole_route_leak_dc_clos_worker_size_m_leaf_router_0_2
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_2
+    - bgp_blackhole_route_leak
+    setup: ip route add 10.0.4.0/30 blackhole && vtysh -c "conf t" -c "router bgp 65202" -c "network 10.0.4.0/30"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: bgp_blackhole_route_leak
+      difficulty: hard
+      target_device: leaf_router_0_2
+  - id: bgp_blackhole_route_leak_dc_clos_worker_size_s_leaf_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - bgp_blackhole_route_leak
+    setup: ip route add 10.0.3.0/30 blackhole && vtysh -c "conf t" -c "router bgp 65200" -c "network 10.0.3.0/30"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: bgp_blackhole_route_leak
+      difficulty: hard
+      target_device: leaf_router_0_0
+  - id: bgp_blackhole_route_leak_dc_clos_worker_size_s_leaf_router_0_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_1
+    - bgp_blackhole_route_leak
+    setup: ip route add 10.0.2.0/30 blackhole && vtysh -c "conf t" -c "router bgp 65202" -c "network 10.0.2.0/30"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: bgp_blackhole_route_leak
+      difficulty: hard
+      target_device: leaf_router_0_1
+  - id: bgp_blackhole_route_leak_dc_clos_worker_size_s_spine_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_0
+    - bgp_blackhole_route_leak
+    setup: ip route add 172.16.0.0/30 blackhole && vtysh -c "conf t" -c "router bgp 65100" -c "network 172.16.0.0/30"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: bgp_blackhole_route_leak
+      difficulty: hard
+      target_device: spine_router_0_0
+
+  # --- bgp_missing_route_advertisement variant ---
+
+  - id: bgp_missing_route_advertisement_dc_clos_worker_size_l_leaf_router_1_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_1_0
+    - bgp_missing_route_advertisement
+    setup: vtysh -c "conf t" -c "router bgp 65204" -c "no network 10.1.0.0/24"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: bgp_missing_route_advertisement
+      difficulty: medium
+      target_device: leaf_router_1_0
+  - id: bgp_missing_route_advertisement_dc_clos_worker_size_m_leaf_router_1_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_1_0
+    - bgp_missing_route_advertisement
+    setup: vtysh -c "conf t" -c "router bgp 65204" -c "no network 10.1.0.0/24"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: bgp_missing_route_advertisement
+      difficulty: medium
+      target_device: leaf_router_1_0
+  - id: bgp_missing_route_advertisement_dc_clos_worker_size_s_leaf_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - bgp_missing_route_advertisement
+    setup: vtysh -c "conf t" -c "router bgp 65200" -c "no network 10.0.0.0/24"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: bgp_missing_route_advertisement
+      difficulty: medium
+      target_device: leaf_router_0_0
+  - id: bgp_missing_route_advertisement_dc_clos_worker_size_s_leaf_router_0_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_1
+    - bgp_missing_route_advertisement
+    setup: vtysh -c "conf t" -c "router bgp 65201" -c "no network 10.0.1.0/24"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: bgp_missing_route_advertisement
+      difficulty: medium
+      target_device: leaf_router_0_1
+  - id: bgp_missing_route_advertisement_dc_clos_worker_size_s_leaf_router_0_1_2
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_1
+    - bgp_missing_route_advertisement
+    setup: vtysh -c "conf t" -c "router bgp 65201" -c "no network 10.1.1.0/24"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: bgp_missing_route_advertisement
+      difficulty: medium
+      target_device: leaf_router_0_1
+
+  # --- dns_misconfiguration variant ---
+
+  - id: dns_misconfiguration_dc_clos_service_size_l_dns_pod0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod0
+    - dns_misconfiguration
+    setup: sed -i 's/^\(webserver0_pod0[[:space:]]\+IN[[:space:]]\+A[[:space:]]\+\)[0-9.]\+/\110.0.1.99/' /etc/bind/db.pod0 && systemctl restart named
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: dns_misconfiguration
+      difficulty: medium
+      target_device: dns_pod0
+  - id: dns_misconfiguration_dc_clos_service_size_m_dns_pod1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod1
+    - dns_misconfiguration
+    setup: sed -i 's/^\(webserver0_pod1[[:space:]]\+IN[[:space:]]\+A[[:space:]]\+\)[0-9.]\+/\110.1.1.99/' /etc/bind/db.pod1 && systemctl restart named
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: dns_misconfiguration
+      difficulty: medium
+      target_device: dns_pod1
+  - id: dns_misconfiguration_dc_clos_service_size_s_dns_pod0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod0
+    - dns_misconfiguration
+    setup: sed -i 's/^\(web0[[:space:]]\+IN[[:space:]]\+A[[:space:]]\+\)[0-9.]\+/\110.0.1.99/' /etc/bind/db.pod0 && systemctl restart named
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: dns_misconfiguration
+      difficulty: medium
+      target_device: dns_pod0
+  - id: dns_misconfiguration_dc_clos_service_size_s_dns_pod0_2
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod0
+    - dns_misconfiguration
+    setup: sed -i 's/^\(web0[[:space:]]\+IN[[:space:]]\+A[[:space:]]\+\)[0-9.]\+/\110.0.1.98/' /etc/bind/db.pod0 && systemctl restart named
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: dns_misconfiguration
+      difficulty: medium
+      target_device: dns_pod0
+  - id: dns_misconfiguration_dc_clos_service_size_s_dns_pod0_3
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod0
+    - dns_misconfiguration
+    setup: sed -i 's/^\(web0[[:space:]]\+IN[[:space:]]\+A[[:space:]]\+\)[0-9.]\+/\110.0.1.97/' /etc/bind/db.pod0 && systemctl restart named
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: dns_misconfiguration
+      difficulty: medium
+      target_device: dns_pod0
+
+  # --- host_static_blackhole variant ---
+
+  - id: host_static_blackhole_dc_clos_worker_size_l_leaf_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - host_static_blackhole
+    setup: ip route add blackhole 10.0.0.2/32
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: host_static_blackhole
+      difficulty: medium
+      target_device: leaf_router_0_0
+  - id: host_static_blackhole_dc_clos_worker_size_m_leaf_router_1_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_1_0
+    - host_static_blackhole
+    setup: ip route add blackhole 10.1.0.2/32
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: host_static_blackhole
+      difficulty: medium
+      target_device: leaf_router_1_0
+  - id: host_static_blackhole_dc_clos_worker_size_s_leaf_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - host_static_blackhole
+    setup: ip route add blackhole 10.0.0.2/32
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: host_static_blackhole
+      difficulty: medium
+      target_device: leaf_router_0_0
+  - id: host_static_blackhole_dc_clos_worker_size_s_leaf_router_0_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_1
+    - host_static_blackhole
+    setup: ip route add blackhole 10.1.1.2/32
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: host_static_blackhole
+      difficulty: medium
+      target_device: leaf_router_0_1
+  - id: host_static_blackhole_dc_clos_worker_size_s_spine_router_0_0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_0
+    - host_static_blackhole
+    setup: ip route add blackhole 172.16.0.4/31
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: host_static_blackhole
+      difficulty: medium
+      target_device: spine_router_0_0
+
+  # --- host_wrong_ip variant ---
+
+  - id: host_wrong_ip_dc_clos_service_size_l_client_1_eth0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - client_1
+    - host_wrong_ip
+    setup: ip addr del 10.0.2.3/24 dev eth0 && ip addr add 10.2.1.50/24 dev eth0 && ip route replace default via 10.2.1.1
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: host_wrong_ip
+      difficulty: medium
+      target_device: client_1
+  - id: host_wrong_ip_dc_clos_service_size_m_client_0_eth0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - client_0
+    - host_wrong_ip
+    setup: ip addr del 10.0.2.2/24 dev eth0 && ip addr add 10.2.1.50/24 dev eth0 && ip route replace default via 10.2.1.1
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: host_wrong_ip
+      difficulty: medium
+      target_device: client_0
+  - id: host_wrong_ip_dc_clos_service_size_s_client_0_eth0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - client_0
+    - host_wrong_ip
+    setup: ip addr del 10.0.2.2/24 dev eth0 && ip addr add 10.2.1.50/24 dev eth0 && ip route replace default via 10.2.1.1
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: host_wrong_ip
+      difficulty: medium
+      target_device: client_0
+
+  # --- host_wrong_prefix variant ---
+
+  - id: host_wrong_prefix_dc_clos_service_size_l_client_0_eth0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - client_0
+    - host_wrong_prefix
+    setup: ip addr del 10.0.2.2/24 dev eth0 && ip addr add 10.0.2.2/8 dev eth0
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: host_wrong_prefix
+      difficulty: medium
+      target_device: client_0
+  - id: host_wrong_prefix_dc_clos_service_size_m_client_1_eth0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - client_1
+    - host_wrong_prefix
+    setup: ip addr del 10.0.2.3/24 dev eth0 && ip addr add 10.0.2.3/8 dev eth0
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: host_wrong_prefix
+      difficulty: medium
+      target_device: client_1
+  - id: host_wrong_prefix_dc_clos_service_size_s_client_0_eth0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - client_0
+    - host_wrong_prefix
+    setup: ip addr del 10.0.2.2/24 dev eth0 && ip addr add 10.0.2.2/8 dev eth0
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: host_wrong_prefix
+      difficulty: medium
+      target_device: client_0
+
+  # --- ip_duplicate variant ---
+
+  - id: ip_duplicate_dc_clos_service_size_l_client_0_eth0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - client_0
+    - ip_duplicate
+    setup: ip addr del 10.0.2.2/24 dev eth0 && ip addr add 10.0.1.10/24 dev eth0 && ip route replace default via 10.0.1.1
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: ip_duplicate
+      difficulty: medium
+      target_device: client_0
+  - id: ip_duplicate_dc_clos_service_size_m_client_1_eth0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - client_1
+    - ip_duplicate
+    setup: ip addr del 10.0.2.3/24 dev eth0 && ip addr add 10.0.1.10/24 dev eth0 && ip route replace default via 10.0.1.1
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: ip_duplicate
+      difficulty: medium
+      target_device: client_1
+  - id: ip_duplicate_dc_clos_service_size_s_client_0_eth0
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - client_0
+    - ip_duplicate
+    setup: ip addr del 10.0.2.2/24 dev eth0 && ip addr add 10.0.1.10/24 dev eth0 && ip route replace default via 10.0.1.1
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: ip_duplicate
+      difficulty: medium
+      target_device: client_0
+
+  # --- baseline variant ---
+
+  - id: misconfiguration_baseline_healthy
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - false
+    - []
+    - none
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: baseline
+      difficulty: easy
+      target_device: none
+  - id: misconfiguration_baseline_healthy_size_l
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - false
+    - []
+    - none
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: baseline
+      difficulty: easy
+      target_device: none
+  - id: misconfiguration_baseline_healthy_size_m
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - false
+    - []
+    - none
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: baseline
+      difficulty: easy
+      target_device: none
+
+  # --- ospf_area_misconfig variant ---
+
+  - id: ospf_area_misconfig_campus_static_size_l_router_core_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - router_core_1
+    - ospf_area_misconfig
+    setup: vtysh -c 'show running-config' | sed -E 's/(area )(0)$/\\166/' > /etc/frr/frr.conf && systemctl restart frr
+    sandbox:
+    - kathara
+    - campus/campus_static/size_l/compose.yaml
+    metadata:
+      variant: ospf_area_misconfig
+      difficulty: hard
+      target_device: router_core_1
+  - id: ospf_area_misconfig_campus_static_size_m_router_core_2
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - router_core_2
+    - ospf_area_misconfig
+    setup: vtysh -c 'show running-config' | sed -E 's/(area )(0)$/\\166/' > /etc/frr/frr.conf && systemctl restart frr
+    sandbox:
+    - kathara
+    - campus/campus_static/size_m/compose.yaml
+    metadata:
+      variant: ospf_area_misconfig
+      difficulty: hard
+      target_device: router_core_2
+  - id: ospf_area_misconfig_campus_static_size_s_router_core_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - router_core_1
+    - ospf_area_misconfig
+    setup: vtysh -c 'show running-config' | sed -E 's/(area )(0)$/\\166/' > /etc/frr/frr.conf && systemctl restart frr
+    sandbox:
+    - kathara
+    - campus/campus_static/size_s/compose.yaml
+    metadata:
+      variant: ospf_area_misconfig
+      difficulty: hard
+      target_device: router_core_1
+  - id: ospf_area_misconfig_campus_static_size_s_switch_dist_1_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - switch_dist_1_1
+    - ospf_area_misconfig
+    setup: vtysh -c 'show running-config' | sed -E 's/(area )(1)$/\\199/' > /etc/frr/frr.conf && systemctl restart frr
+    sandbox:
+    - kathara
+    - campus/campus_static/size_s/compose.yaml
+    metadata:
+      variant: ospf_area_misconfig
+      difficulty: hard
+      target_device: switch_dist_1_1
+
+  # --- ospf_neighbor_missing variant ---
+
+  - id: ospf_neighbor_missing_campus_static_size_l_router_core_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - router_core_1
+    - ospf_neighbor_missing
+    setup: sed -i.bak -E 's|^([[:space:]]*)network[[:space:]]+[^[:space:]]+[[:space:]]+area|\1# &|' /etc/frr/frr.conf && systemctl restart frr
+    sandbox:
+    - kathara
+    - campus/campus_static/size_l/compose.yaml
+    metadata:
+      variant: ospf_neighbor_missing
+      difficulty: medium
+      target_device: router_core_1
+  - id: ospf_neighbor_missing_campus_static_size_m_switch_dist_1_2
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - switch_dist_1_2
+    - ospf_neighbor_missing
+    setup: sed -i.bak -E 's|^([[:space:]]*)network[[:space:]]+[^[:space:]]+[[:space:]]+area|\1# &|' /etc/frr/frr.conf && systemctl restart frr
+    sandbox:
+    - kathara
+    - campus/campus_static/size_m/compose.yaml
+    metadata:
+      variant: ospf_neighbor_missing
+      difficulty: medium
+      target_device: switch_dist_1_2
+  - id: ospf_neighbor_missing_campus_static_size_s_router_core_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - router_core_1
+    - ospf_neighbor_missing
+    setup: sed -i.bak -E 's|^([[:space:]]*)network[[:space:]]+[^[:space:]]+[[:space:]]+area|\1# &|' /etc/frr/frr.conf && systemctl restart frr
+    sandbox:
+    - kathara
+    - campus/campus_static/size_s/compose.yaml
+    metadata:
+      variant: ospf_neighbor_missing
+      difficulty: medium
+      target_device: router_core_1
+  - id: ospf_neighbor_missing_campus_static_size_s_switch_dist_2_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - switch_dist_2_1
+    - ospf_neighbor_missing
+    setup: sed -i.bak -E 's|^([[:space:]]*)network[[:space:]]+[^[:space:]]+[[:space:]]+area|\1# &|' /etc/frr/frr.conf && systemctl restart frr
+    sandbox:
+    - kathara
+    - campus/campus_static/size_s/compose.yaml
+    metadata:
+      variant: ospf_neighbor_missing
+      difficulty: medium
+      target_device: switch_dist_2_1
+
+  # --- p4_empty_forwarding_table variant ---
+
+  - id: p4_empty_forwarding_table_p4_int_size_s_leaf1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf1
+    - p4_empty_forwarding_table
+    setup: simple_switch_CLI <<< 'table_clear ipv4_lpm'
+    sandbox:
+    - kathara
+    - p4/p4_int/compose.yaml
+    metadata:
+      variant: p4_empty_forwarding_table
+      difficulty: medium
+      target_device: leaf1
+  - id: p4_empty_forwarding_table_p4_int_size_s_leaf2
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf2
+    - p4_empty_forwarding_table
+    setup: simple_switch_CLI <<< 'table_clear ipv4_lpm'
+    sandbox:
+    - kathara
+    - p4/p4_int/compose.yaml
+    metadata:
+      variant: p4_empty_forwarding_table
+      difficulty: medium
+      target_device: leaf2
+
+  # --- sdn_default_drop variant ---
+
+  - id: sdn_default_drop_sdn_clos_size_l_leaf_2
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_2
+    - sdn_default_drop
+    setup: ovs-ofctl add-flow leaf_2 'priority=0,actions=drop'
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_l/compose.yaml
+    metadata:
+      variant: sdn_default_drop
+      difficulty: medium
+      target_device: leaf_2
+  - id: sdn_default_drop_sdn_clos_size_m_leaf_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_1
+    - sdn_default_drop
+    setup: ovs-ofctl add-flow leaf_1 'priority=0,actions=drop'
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_m/compose.yaml
+    metadata:
+      variant: sdn_default_drop
+      difficulty: medium
+      target_device: leaf_1
+  - id: sdn_default_drop_sdn_clos_size_m_spine_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - spine_1
+    - sdn_default_drop
+    setup: ovs-ofctl add-flow spine_1 'priority=0,actions=drop'
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_m/compose.yaml
+    metadata:
+      variant: sdn_default_drop
+      difficulty: medium
+      target_device: spine_1
+  - id: sdn_default_drop_sdn_clos_size_s_leaf_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_1
+    - sdn_default_drop
+    setup: ovs-ofctl add-flow leaf_1 'priority=0,actions=drop'
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_s/compose.yaml
+    metadata:
+      variant: sdn_default_drop
+      difficulty: medium
+      target_device: leaf_1
+
+  # --- sdn_flow_drop variant ---
+
+  - id: sdn_flow_drop_sdn_clos_size_l_leaf_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_1
+    - sdn_flow_drop
+    setup: ovs-ofctl add-flow leaf_1 'priority=100,actions=drop'
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_l/compose.yaml
+    metadata:
+      variant: sdn_flow_drop
+      difficulty: medium
+      target_device: leaf_1
+  - id: sdn_flow_drop_sdn_clos_size_m_leaf_3
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_3
+    - sdn_flow_drop
+    setup: ovs-ofctl add-flow leaf_3 'priority=100,actions=drop'
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_m/compose.yaml
+    metadata:
+      variant: sdn_flow_drop
+      difficulty: medium
+      target_device: leaf_3
+  - id: sdn_flow_drop_sdn_clos_size_s_leaf_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_1
+    - sdn_flow_drop
+    setup: ovs-ofctl add-flow leaf_1 'priority=100,actions=drop'
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_s/compose.yaml
+    metadata:
+      variant: sdn_flow_drop
+      difficulty: medium
+      target_device: leaf_1
+  - id: sdn_flow_drop_sdn_clos_size_s_leaf_2
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - leaf_2
+    - sdn_flow_drop
+    setup: ovs-ofctl add-flow leaf_2 'priority=100,actions=drop'
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_s/compose.yaml
+    metadata:
+      variant: sdn_flow_drop
+      difficulty: medium
+      target_device: leaf_2
+
+  # --- sdn_forwarding_loop variant ---
+
+  - id: sdn_forwarding_loop_sdn_clos_size_l_spine_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - spine_1
+    - sdn_forwarding_loop
+    setup: ovs-ofctl add-flow spine_1 'in_port=eth0,actions=output:eth0' ovs-ofctl add-flow leaf_1 'in_port=eth2,actions=output:eth2'
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_l/compose.yaml
+    metadata:
+      variant: sdn_forwarding_loop
+      difficulty: hard
+      target_device: spine_1
+  - id: sdn_forwarding_loop_sdn_clos_size_m_spine_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - spine_1
+    - sdn_forwarding_loop
+    setup: ovs-ofctl add-flow spine_1 'in_port=eth0,actions=output:eth0' ovs-ofctl add-flow leaf_1 'in_port=eth2,actions=output:eth2'
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_m/compose.yaml
+    metadata:
+      variant: sdn_forwarding_loop
+      difficulty: hard
+      target_device: spine_1
+  - id: sdn_forwarding_loop_sdn_clos_size_s_spine_1
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - spine_1
+    - sdn_forwarding_loop
+    setup: ovs-ofctl add-flow spine_1 'in_port=eth0,actions=output:eth0' ovs-ofctl add-flow leaf_1 'in_port=eth2,actions=output:eth2'
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_s/compose.yaml
+    metadata:
+      variant: sdn_forwarding_loop
+      difficulty: hard
+      target_device: spine_1
+
+  # --- web_server_misconfiguration variant ---
+
+  - id: web_server_misconfiguration_dc_clos_service_size_l_webserver0_pod0_8080
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod0
+    - web_server_misconfiguration
+    setup: (systemctl stop web_server 2>/dev/null; pkill -f http.server 2>/dev/null;  systemctl stop apache2 2>/dev/null; pkill -9 apache2 2>/dev/null; true); (sed -i 's/^Listen .*/Listen 8080/' /etc/apache2/ports.conf 2>/dev/null && systemctl restart apache2 2>/dev/null) || (cd /var/www/html 2>/dev/null || cd /tmp; nohup python3 -m http.server 8080 > /dev/null 2>&1 &)
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: web_server_misconfiguration
+      difficulty: medium
+      target_device: webserver0_pod0
+  - id: web_server_misconfiguration_dc_clos_service_size_m_webserver2_pod0_8080
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - webserver2_pod0
+    - web_server_misconfiguration
+    setup: (systemctl stop web_server 2>/dev/null; pkill -f http.server 2>/dev/null;  systemctl stop apache2 2>/dev/null; pkill -9 apache2 2>/dev/null; true); (sed -i 's/^Listen .*/Listen 8080/' /etc/apache2/ports.conf 2>/dev/null && systemctl restart apache2 2>/dev/null) || (cd /var/www/html 2>/dev/null || cd /tmp; nohup python3 -m http.server 8080 > /dev/null 2>&1 &)
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: web_server_misconfiguration
+      difficulty: medium
+      target_device: webserver2_pod0
+  - id: web_server_misconfiguration_dc_clos_service_size_s_webserver0_pod0_8080
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod0
+    - web_server_misconfiguration
+    setup: (systemctl stop web_server 2>/dev/null; pkill -f http.server 2>/dev/null;  systemctl stop apache2 2>/dev/null; pkill -9 apache2 2>/dev/null; true); (sed -i 's/^Listen .*/Listen 8080/' /etc/apache2/ports.conf 2>/dev/null && systemctl restart apache2 2>/dev/null) || (cd /var/www/html 2>/dev/null || cd /tmp; nohup python3 -m http.server 8080 > /dev/null 2>&1 &)
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: web_server_misconfiguration
+      difficulty: medium
+      target_device: webserver0_pod0
+  - id: web_server_misconfiguration_dc_clos_service_size_s_webserver0_pod0_8081
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod0
+    - web_server_misconfiguration
+    setup: (systemctl stop web_server 2>/dev/null; pkill -f http.server 2>/dev/null;  systemctl stop apache2 2>/dev/null; pkill -9 apache2 2>/dev/null; true); (sed -i 's/^Listen .*/Listen 8081/' /etc/apache2/ports.conf 2>/dev/null && systemctl restart apache2 2>/dev/null) || (cd /var/www/html 2>/dev/null || cd /tmp; nohup python3 -m http.server 8081 > /dev/null 2>&1 &)
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: web_server_misconfiguration
+      difficulty: medium
+      target_device: webserver0_pod0
+  - id: web_server_misconfiguration_dc_clos_service_size_s_webserver0_pod0_8082
+    family_id: misconfiguration
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod0
+    - web_server_misconfiguration
+    setup: (systemctl stop web_server 2>/dev/null; pkill -f http.server 2>/dev/null;  systemctl stop apache2 2>/dev/null; pkill -9 apache2 2>/dev/null; true); (sed -i 's/^Listen .*/Listen 8082/' /etc/apache2/ports.conf 2>/dev/null && systemctl restart apache2 2>/dev/null) || (cd /var/www/html 2>/dev/null || cd /tmp; nohup python3 -m http.server 8082 > /dev/null 2>&1 &)
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: web_server_misconfiguration
+      difficulty: medium
+      target_device: webserver0_pod0
+
+  # ============================================================================
+  # RESOURCE CONTENTION FAMILY
+  # ============================================================================
+
+  # --- dns_lookup_latency variant ---
+
+  - id: dns_lookup_latency_dc_clos_service_size_l_dns_pod0_eth0
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod0
+    - dns_lookup_latency
+    setup: tc qdisc add dev eth0 root netem delay 900ms
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: dns_lookup_latency
+      difficulty: medium
+      target_device: dns_pod0
+  - id: dns_lookup_latency_dc_clos_service_size_m_dns_pod1_eth0
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod1
+    - dns_lookup_latency
+    setup: tc qdisc add dev eth0 root netem delay 800ms
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: dns_lookup_latency
+      difficulty: medium
+      target_device: dns_pod1
+  - id: dns_lookup_latency_dc_clos_service_size_s_dns_pod0_eth0
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod0
+    - dns_lookup_latency
+    setup: tc qdisc add dev eth0 root netem delay 1000ms
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: dns_lookup_latency
+      difficulty: medium
+      target_device: dns_pod0
+  - id: dns_lookup_latency_dc_clos_service_size_s_dns_pod0_eth0_2
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod0
+    - dns_lookup_latency
+    setup: tc qdisc add dev eth0 root netem delay 1500ms
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: dns_lookup_latency
+      difficulty: medium
+      target_device: dns_pod0
+  - id: dns_lookup_latency_dc_clos_service_size_s_dns_pod0_eth0_3
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod0
+    - dns_lookup_latency
+    setup: tc qdisc add dev eth0 root netem delay 500ms
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: dns_lookup_latency
+      difficulty: medium
+      target_device: dns_pod0
+
+  # --- incast_traffic_limitation variant ---
+
+  - id: incast_traffic_limitation_dc_clos_service_size_l_webserver0_pod0_eth0
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod0
+    - incast_traffic_limitation
+    setup: 'tc qdisc add dev eth0 root handle 1: netem delay 22ms && tc qdisc add dev eth0 parent 1:1 handle 10: tbf rate 1mbit burst 500kb limit 500kb'
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: incast_traffic_limitation
+      difficulty: hard
+      target_device: webserver0_pod0
+  - id: incast_traffic_limitation_dc_clos_service_size_m_webserver1_pod1_eth0
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - webserver1_pod1
+    - incast_traffic_limitation
+    setup: 'tc qdisc add dev eth0 root handle 1: netem delay 25ms && tc qdisc add dev eth0 parent 1:1 handle 10: tbf rate 1mbit burst 500kb limit 500kb'
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: incast_traffic_limitation
+      difficulty: hard
+      target_device: webserver1_pod1
+  - id: incast_traffic_limitation_dc_clos_service_size_s_webserver0_pod0_eth0
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod0
+    - incast_traffic_limitation
+    setup: 'tc qdisc add dev eth0 root handle 1: netem delay 20ms && tc qdisc add dev eth0 parent 1:1 handle 10: tbf rate 1mbit burst 500kb limit 500kb'
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: incast_traffic_limitation
+      difficulty: hard
+      target_device: webserver0_pod0
+  - id: incast_traffic_limitation_dc_clos_service_size_s_webserver0_pod0_eth0_2
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod0
+    - incast_traffic_limitation
+    setup: 'tc qdisc add dev eth0 root handle 1: netem delay 30ms && tc qdisc add dev eth0 parent 1:1 handle 10: tbf rate 800kbit burst 500kb limit 500kb'
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: incast_traffic_limitation
+      difficulty: hard
+      target_device: webserver0_pod0
+  - id: incast_traffic_limitation_dc_clos_service_size_s_webserver0_pod0_eth0_3
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod0
+    - incast_traffic_limitation
+    setup: 'tc qdisc add dev eth0 root handle 1: netem delay 15ms && tc qdisc add dev eth0 parent 1:1 handle 10: tbf rate 1.2mbit burst 500kb limit 500kb'
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: incast_traffic_limitation
+      difficulty: hard
+      target_device: webserver0_pod0
+
+  # --- link_bandwidth_throttling variant ---
+
+  - id: link_bandwidth_throttling_dc_clos_worker_size_l_pc_0_0_eth0
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - pc_0_0
+    - link_bandwidth_throttling
+    setup: tc qdisc add dev eth0 root tbf rate 30kbit burst 64kb limit 500kb
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: link_bandwidth_throttling
+      difficulty: medium
+      target_device: pc_0_0
+  - id: link_bandwidth_throttling_dc_clos_worker_size_m_pc_1_0_eth0
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - pc_1_0
+    - link_bandwidth_throttling
+    setup: tc qdisc add dev eth0 root tbf rate 30kbit burst 64kb limit 500kb
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: link_bandwidth_throttling
+      difficulty: medium
+      target_device: pc_1_0
+  - id: link_bandwidth_throttling_dc_clos_worker_size_s_leaf_router_0_0_eth2
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - link_bandwidth_throttling
+    setup: tc qdisc add dev eth2 root tbf rate 25kbit burst 64kb limit 500kb
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_bandwidth_throttling
+      difficulty: medium
+      target_device: leaf_router_0_0
+  - id: link_bandwidth_throttling_dc_clos_worker_size_s_leaf_router_0_1_eth2
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_1
+    - link_bandwidth_throttling
+    setup: tc qdisc add dev eth2 root tbf rate 30kbit burst 64kb limit 500kb
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_bandwidth_throttling
+      difficulty: medium
+      target_device: leaf_router_0_1
+  - id: link_bandwidth_throttling_dc_clos_worker_size_s_pc_0_1_eth0
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - pc_0_1
+    - link_bandwidth_throttling
+    setup: tc qdisc add dev eth0 root tbf rate 30kbit burst 64kb limit 500kb
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: link_bandwidth_throttling
+      difficulty: medium
+      target_device: pc_0_1
+
+  # --- baseline variant ---
+
+  - id: resource_contention_baseline_healthy
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - false
+    - []
+    - none
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: baseline
+      difficulty: easy
+      target_device: none
+  - id: resource_contention_baseline_healthy_size_l
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - false
+    - []
+    - none
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: baseline
+      difficulty: easy
+      target_device: none
+  - id: resource_contention_baseline_healthy_size_m
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - false
+    - []
+    - none
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: baseline
+      difficulty: easy
+      target_device: none
+
+  # --- stress_load_balancer variant ---
+
+  - id: stress_load_balancer_campus_dhcp_size_l_load_balancer
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - load_balancer
+    - stress_load_balancer
+    setup: stress-ng --cpu 0 --cpu-load 100 --iomix 0 --sock 0 --hdd 2 --vm 0 --vm-bytes 75% --timeout 300 &
+    sandbox:
+    - kathara
+    - campus/campus_dhcp/size_l/compose.yaml
+    metadata:
+      variant: stress_load_balancer
+      difficulty: medium
+      target_device: load_balancer
+  - id: stress_load_balancer_campus_dhcp_size_m_load_balancer
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - load_balancer
+    - stress_load_balancer
+    setup: stress-ng --cpu 0 --cpu-load 100 --iomix 0 --sock 0 --hdd 2 --vm 0 --vm-bytes 75% --timeout 300 &
+    sandbox:
+    - kathara
+    - campus/campus_dhcp/size_m/compose.yaml
+    metadata:
+      variant: stress_load_balancer
+      difficulty: medium
+      target_device: load_balancer
+  - id: stress_load_balancer_campus_dhcp_size_s_load_balancer
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - load_balancer
+    - stress_load_balancer
+    setup: stress-ng --cpu 0 --cpu-load 100 --iomix 0 --sock 0 --hdd 2 --vm 0 --vm-bytes 75% --timeout 300 &
+    sandbox:
+    - kathara
+    - campus/campus_dhcp/size_s/compose.yaml
+    metadata:
+      variant: stress_load_balancer
+      difficulty: medium
+      target_device: load_balancer
+  - id: stress_load_balancer_campus_dhcp_size_s_load_balancer_2
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - load_balancer
+    - stress_load_balancer
+    setup: stress-ng --cpu 0 --cpu-load 100 --iomix 0 --sock 0 --hdd 2 --vm 0 --vm-bytes 75% --timeout 120 &
+    sandbox:
+    - kathara
+    - campus/campus_dhcp/size_s/compose.yaml
+    metadata:
+      variant: stress_load_balancer
+      difficulty: medium
+      target_device: load_balancer
+
+  # --- stress_receiver variant ---
+
+  - id: stress_receiver_dc_clos_service_size_l_webserver0_pod0
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod0
+    - stress_receiver
+    setup: stress-ng --cpu 0 --cpu-load 100 --iomix 0 --sock 0 --hdd 2 --vm 0 --vm-bytes 75% --timeout 300 &
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: stress_receiver
+      difficulty: medium
+      target_device: webserver0_pod0
+  - id: stress_receiver_dc_clos_service_size_m_webserver0_pod1
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod1
+    - stress_receiver
+    setup: stress-ng --cpu 0 --cpu-load 100 --iomix 0 --sock 0 --hdd 2 --vm 0 --vm-bytes 75% --timeout 300 &
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: stress_receiver
+      difficulty: medium
+      target_device: webserver0_pod1
+  - id: stress_receiver_dc_clos_service_size_s_webserver0_pod0
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod0
+    - stress_receiver
+    setup: stress-ng --cpu 0 --cpu-load 100 --iomix 0 --sock 0 --hdd 2 --vm 0 --vm-bytes 75% --timeout 300 &
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: stress_receiver
+      difficulty: medium
+      target_device: webserver0_pod0
+
+  # --- stress_sender variant ---
+
+  - id: stress_sender_dc_clos_service_size_l_client_0
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - client_0
+    - stress_sender
+    setup: stress-ng --cpu 0 --cpu-load 100 --iomix 0 --sock 0 --hdd 2 --vm 0 --vm-bytes 75% --timeout 300 &
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: stress_sender
+      difficulty: medium
+      target_device: client_0
+  - id: stress_sender_dc_clos_service_size_m_client_1
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - client_1
+    - stress_sender
+    setup: stress-ng --cpu 0 --cpu-load 100 --iomix 0 --sock 0 --hdd 2 --vm 0 --vm-bytes 75% --timeout 300 &
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: stress_sender
+      difficulty: medium
+      target_device: client_1
+  - id: stress_sender_dc_clos_service_size_s_client_0
+    family_id: resource_contention
+    input: *standard_input
+    target:
+    - true
+    - - client_0
+    - stress_sender
+    setup: stress-ng --cpu 0 --cpu-load 100 --iomix 0 --sock 0 --hdd 2 --vm 0 --vm-bytes 75% --timeout 300 &
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: stress_sender
+      difficulty: medium
+      target_device: client_0
+
+  # ============================================================================
+  # NETWORK UNDER ATTACK FAMILY
+  # ============================================================================
+
+  # --- arp_cache_poisoning variant ---
+
+  - id: arp_cache_poisoning_dc_clos_service_size_l_client_0_eth0
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - client_0
+    - arp_cache_poisoning
+    setup: ip neigh replace 10.0.2.1 lladdr 02:00:00:00:00:66 dev eth0
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: arp_cache_poisoning
+      difficulty: medium
+      target_device: client_0
+  - id: arp_cache_poisoning_dc_clos_service_size_m_client_1_eth0
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - client_1
+    - arp_cache_poisoning
+    setup: ip neigh replace 10.0.2.1 lladdr 02:00:00:00:00:77 dev eth0
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: arp_cache_poisoning
+      difficulty: medium
+      target_device: client_1
+  - id: arp_cache_poisoning_dc_clos_service_size_s_client_0_eth0
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - client_0
+    - arp_cache_poisoning
+    setup: ip neigh replace 10.0.2.1 lladdr 02:00:00:00:00:99 dev eth0
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: arp_cache_poisoning
+      difficulty: medium
+      target_device: client_0
+  - id: arp_cache_poisoning_dc_clos_service_size_s_client_0_eth0_2
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - client_0
+    - arp_cache_poisoning
+    setup: ip neigh replace 10.0.1.10 lladdr 02:00:00:00:00:88 dev eth0
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: arp_cache_poisoning
+      difficulty: medium
+      target_device: client_0
+
+  # --- bgp_hijacking variant ---
+
+  - id: bgp_hijacking_dc_clos_worker_size_l_spine_router_0_0
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_0
+    - bgp_hijacking
+    setup: vtysh -c "conf t" -c "router bgp 65100" -c "network 10.1.0.0/24"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: bgp_hijacking
+      difficulty: hard
+      target_device: spine_router_0_0
+  - id: bgp_hijacking_dc_clos_worker_size_m_spine_router_0_2
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_2
+    - bgp_hijacking
+    setup: vtysh -c "conf t" -c "router bgp 65102" -c "network 10.0.2.0/24"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: bgp_hijacking
+      difficulty: hard
+      target_device: spine_router_0_2
+  - id: bgp_hijacking_dc_clos_worker_size_s_leaf_router_0_1
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_1
+    - bgp_hijacking
+    setup: vtysh -c "conf t" -c "router bgp 65203" -c "network 10.1.1.0/24"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: bgp_hijacking
+      difficulty: hard
+      target_device: leaf_router_0_1
+  - id: bgp_hijacking_dc_clos_worker_size_s_spine_router_0_0
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_0
+    - bgp_hijacking
+    setup: vtysh -c "conf t" -c "router bgp 65100" -c "network 10.1.0.0/24"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: bgp_hijacking
+      difficulty: hard
+      target_device: spine_router_0_0
+  - id: bgp_hijacking_dc_clos_worker_size_s_spine_router_0_1
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_1
+    - bgp_hijacking
+    setup: vtysh -c "conf t" -c "router bgp 65101" -c "network 10.0.1.0/24"
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: bgp_hijacking
+      difficulty: hard
+      target_device: spine_router_0_1
+
+  # --- dhcp_spoofing variant ---
+
+  - id: dhcp_spoofing_campus_dhcp_size_l_host_1_1_1_1_eth0
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - host_1_1_1_1
+    - dhcp_spoofing
+    setup: ip addr replace 10.0.1.99/24 dev eth0 && ip route replace default via 10.0.1.1 && echo 'nameserver 8.8.8.8' > /etc/resolv.conf
+    sandbox:
+    - kathara
+    - campus/campus_dhcp/size_l/compose.yaml
+    metadata:
+      variant: dhcp_spoofing
+      difficulty: medium
+      target_device: host_1_1_1_1
+  - id: dhcp_spoofing_campus_dhcp_size_m_host_1_1_1_1_eth0
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - host_1_1_1_1
+    - dhcp_spoofing
+    setup: ip addr replace 10.0.1.99/24 dev eth0 && ip route replace default via 10.0.1.1 && echo 'nameserver 8.8.8.8' > /etc/resolv.conf
+    sandbox:
+    - kathara
+    - campus/campus_dhcp/size_m/compose.yaml
+    metadata:
+      variant: dhcp_spoofing
+      difficulty: medium
+      target_device: host_1_1_1_1
+  - id: dhcp_spoofing_campus_dhcp_size_s_host_1_1_1_1_eth0
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - host_1_1_1_1
+    - dhcp_spoofing
+    setup: ip addr replace 10.0.1.99/24 dev eth0 && ip route replace default via 10.0.1.1 && echo 'nameserver 8.8.8.8' > /etc/resolv.conf
+    sandbox:
+    - kathara
+    - campus/campus_dhcp/size_s/compose.yaml
+    metadata:
+      variant: dhcp_spoofing
+      difficulty: medium
+      target_device: host_1_1_1_1
+  - id: dhcp_spoofing_campus_dhcp_size_s_host_2_1_1_1_eth0
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - host_2_1_1_1
+    - dhcp_spoofing
+    setup: ip addr replace 10.0.1.98/24 dev eth0 && ip route replace default via 10.0.1.1 && echo 'nameserver 1.2.3.4' > /etc/resolv.conf
+    sandbox:
+    - kathara
+    - campus/campus_dhcp/size_s/compose.yaml
+    metadata:
+      variant: dhcp_spoofing
+      difficulty: medium
+      target_device: host_2_1_1_1
+
+  # --- dns_hijacking variant ---
+
+  - id: dns_hijacking_dc_clos_service_size_l_client_0
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - client_0
+    - dns_hijacking
+    setup: echo 'nameserver 8.8.8.8' > /etc/resolv.conf
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: dns_hijacking
+      difficulty: easy
+      target_device: client_0
+  - id: dns_hijacking_dc_clos_service_size_m_client_1
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - client_1
+    - dns_hijacking
+    setup: echo 'nameserver 8.8.8.8' > /etc/resolv.conf
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: dns_hijacking
+      difficulty: easy
+      target_device: client_1
+  - id: dns_hijacking_dc_clos_service_size_s_client_0
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - client_0
+    - dns_hijacking
+    setup: echo 'nameserver 8.8.8.8' > /etc/resolv.conf
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: dns_hijacking
+      difficulty: easy
+      target_device: client_0
+  - id: dns_hijacking_dc_clos_service_size_s_client_0_2
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - client_0
+    - dns_hijacking
+    setup: echo 'nameserver 1.2.3.4' > /etc/resolv.conf
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: dns_hijacking
+      difficulty: easy
+      target_device: client_0
+
+  # --- baseline variant ---
+
+  - id: network_under_attack_baseline_healthy
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - false
+    - []
+    - none
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: baseline
+      difficulty: easy
+      target_device: none
+  - id: network_under_attack_baseline_healthy_size_l
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - false
+    - []
+    - none
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: baseline
+      difficulty: easy
+      target_device: none
+  - id: network_under_attack_baseline_healthy_size_m
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - false
+    - []
+    - none
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: baseline
+      difficulty: easy
+      target_device: none
+
+  # --- p4_misaligned_sketch_threshold variant ---
+
+  - id: p4_misaligned_sketch_threshold_p4_bloom_filter_size_s_switch_1
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - switch_1
+    - p4_misaligned_sketch_threshold
+    setup: cp bloom_filter.p4 bloom_filter.p4.bak && rm -f bloom_filter.json && sed -Ei 's/#define PACKET_THRESHOLD 1000/#define PACKET_THRESHOLD 100/g' bloom_filter.p4 && pkill -f simple_switch || true && ./hostlab/switch_1.startup
+    sandbox:
+    - kathara
+    - p4/p4_bloom_filter/compose.yaml
+    metadata:
+      variant: p4_misaligned_sketch_threshold
+      difficulty: hard
+      target_device: switch_1
+  - id: p4_misaligned_sketch_threshold_p4_bloom_filter_size_s_switch_2
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - switch_2
+    - p4_misaligned_sketch_threshold
+    setup: cp bloom_filter.p4 bloom_filter.p4.bak && rm -f bloom_filter.json && sed -Ei 's/#define PACKET_THRESHOLD 1000/#define PACKET_THRESHOLD 100/g' bloom_filter.p4 && pkill -f simple_switch || true && ./hostlab/switch_2.startup
+    sandbox:
+    - kathara
+    - p4/p4_bloom_filter/compose.yaml
+    metadata:
+      variant: p4_misaligned_sketch_threshold
+      difficulty: hard
+      target_device: switch_2
+
+  # --- rate_limit_excessive variant ---
+
+  - id: rate_limit_excessive_dc_clos_service_size_l_webserver0_pod0_80
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod0
+    - rate_limit_excessive
+    setup: iptables -A INPUT -p tcp --dport 80 -m connlimit --connlimit-above 2 -j DROP
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_l/compose.yaml
+    metadata:
+      variant: rate_limit_excessive
+      difficulty: medium
+      target_device: webserver0_pod0
+  - id: rate_limit_excessive_dc_clos_service_size_m_webserver2_pod0_80
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - webserver2_pod0
+    - rate_limit_excessive
+    setup: iptables -A INPUT -p tcp --dport 80 -m connlimit --connlimit-above 3 -j DROP
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_m/compose.yaml
+    metadata:
+      variant: rate_limit_excessive
+      difficulty: medium
+      target_device: webserver2_pod0
+  - id: rate_limit_excessive_dc_clos_service_size_s_webserver0_pod0_80
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod0
+    - rate_limit_excessive
+    setup: iptables -A INPUT -p tcp --dport 80 -m connlimit --connlimit-above 2 -j DROP
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: rate_limit_excessive
+      difficulty: medium
+      target_device: webserver0_pod0
+  - id: rate_limit_excessive_dc_clos_service_size_s_webserver0_pod0_80_2
+    family_id: network_under_attack
+    input: *standard_input
+    target:
+    - true
+    - - webserver0_pod0
+    - rate_limit_excessive
+    setup: iptables -A INPUT -p tcp --dport 80 -m connlimit --connlimit-above 5 -j DROP
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: rate_limit_excessive
+      difficulty: medium
+      target_device: webserver0_pod0
+
+  # ============================================================================
+  # NETWORK NODE ERRORS FAMILY
+  # ============================================================================
+
+  # --- bmv2_down variant ---
+
+  - id: bmv2_down_p4_int_size_s_leaf1
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - leaf1
+    - bmv2_down
+    setup: pkill simple_switch
+    sandbox:
+    - kathara
+    - p4/p4_int/compose.yaml
+    metadata:
+      variant: bmv2_down
+      difficulty: easy
+      target_device: leaf1
+  - id: bmv2_down_p4_int_size_s_spine1
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - spine1
+    - bmv2_down
+    setup: pkill simple_switch
+    sandbox:
+    - kathara
+    - p4/p4_int/compose.yaml
+    metadata:
+      variant: bmv2_down
+      difficulty: easy
+      target_device: spine1
+
+  # --- controller_down variant ---
+
+  - id: controller_down_sdn_clos_size_l_controller
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - controller
+    - controller_down
+    setup: pkill -f ryu-manager
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_l/compose.yaml
+    metadata:
+      variant: controller_down
+      difficulty: easy
+      target_device: controller
+  - id: controller_down_sdn_clos_size_m_controller
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - controller
+    - controller_down
+    setup: pkill -f ryu-manager
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_m/compose.yaml
+    metadata:
+      variant: controller_down
+      difficulty: easy
+      target_device: controller
+  - id: controller_down_sdn_clos_size_s_controller
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - controller
+    - controller_down
+    setup: pkill -f ryu-manager
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_s/compose.yaml
+    metadata:
+      variant: controller_down
+      difficulty: easy
+      target_device: controller
+
+  # --- frr_down variant ---
+
+  - id: frr_down_dc_clos_worker_size_l_leaf_router_0_0
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - frr_down
+    setup: systemctl stop frr
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: frr_down
+      difficulty: easy
+      target_device: leaf_router_0_0
+  - id: frr_down_dc_clos_worker_size_l_spine_router_1_0
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_1_0
+    - frr_down
+    setup: systemctl stop frr
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_l/compose.yaml
+    metadata:
+      variant: frr_down
+      difficulty: easy
+      target_device: spine_router_1_0
+  - id: frr_down_dc_clos_worker_size_m_leaf_router_0_0
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - frr_down
+    setup: systemctl stop frr
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: frr_down
+      difficulty: easy
+      target_device: leaf_router_0_0
+  - id: frr_down_dc_clos_worker_size_m_spine_router_0_1
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - spine_router_0_1
+    - frr_down
+    setup: systemctl stop frr
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: frr_down
+      difficulty: easy
+      target_device: spine_router_0_1
+  - id: frr_down_dc_clos_worker_size_s_leaf_router_0_0
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+    - frr_down
+    setup: systemctl stop frr
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: frr_down
+      difficulty: easy
+      target_device: leaf_router_0_0
+
+  # --- mpls_label_limit_exceeded variant ---
+
+  - id: mpls_label_limit_exceeded_p4_mpls_size_s_switch_1
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - switch_1
+    - mpls_label_limit_exceeded
+    setup: cp mpls.p4 mpls.p4.bak && rm -f mpls.json && sed -Ei 's/#define[[:space:]]+CONST_MAX_LABELS[[:space:]]+10/#define CONST_MAX_LABELS 2/g' mpls.p4 && pkill -f simple_switch || true && ./hostlab/switch_1.startup
+    sandbox:
+    - kathara
+    - p4/p4_mpls/compose.yaml
+    metadata:
+      variant: mpls_label_limit_exceeded
+      difficulty: hard
+      target_device: switch_1
+  - id: mpls_label_limit_exceeded_p4_mpls_size_s_switch_2
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - switch_2
+    - mpls_label_limit_exceeded
+    setup: cp mpls.p4 mpls.p4.bak && rm -f mpls.json && sed -Ei 's/#define[[:space:]]+CONST_MAX_LABELS[[:space:]]+10/#define CONST_MAX_LABELS 2/g' mpls.p4 && pkill -f simple_switch || true && ./hostlab/switch_2.startup
+    sandbox:
+    - kathara
+    - p4/p4_mpls/compose.yaml
+    metadata:
+      variant: mpls_label_limit_exceeded
+      difficulty: hard
+      target_device: switch_2
+
+  # --- baseline variant ---
+
+  - id: network_node_error_baseline_healthy
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - false
+    - []
+    - none
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_m/compose.yaml
+    metadata:
+      variant: baseline
+      difficulty: easy
+      target_device: none
+  - id: network_node_error_baseline_healthy_size_l
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - false
+    - []
+    - none
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_l/compose.yaml
+    metadata:
+      variant: baseline
+      difficulty: easy
+      target_device: none
+
+  # --- ovs_down variant ---
+
+  - id: ovs_down_sdn_clos_size_l_leaf_2
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - leaf_2
+    - ovs_down
+    setup: /usr/share/openvswitch/scripts/ovs-ctl stop
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_l/compose.yaml
+    metadata:
+      variant: ovs_down
+      difficulty: easy
+      target_device: leaf_2
+  - id: ovs_down_sdn_clos_size_m_leaf_1
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - leaf_1
+    - ovs_down
+    setup: /usr/share/openvswitch/scripts/ovs-ctl stop
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_m/compose.yaml
+    metadata:
+      variant: ovs_down
+      difficulty: easy
+      target_device: leaf_1
+  - id: ovs_down_sdn_clos_size_m_spine_1
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - spine_1
+    - ovs_down
+    setup: /usr/share/openvswitch/scripts/ovs-ctl stop
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_m/compose.yaml
+    metadata:
+      variant: ovs_down
+      difficulty: easy
+      target_device: spine_1
+  - id: ovs_down_sdn_clos_size_s_leaf_1
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - leaf_1
+    - ovs_down
+    setup: /usr/share/openvswitch/scripts/ovs-ctl stop
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_s/compose.yaml
+    metadata:
+      variant: ovs_down
+      difficulty: easy
+      target_device: leaf_1
+
+  # --- southbound_port_unreachable variant ---
+
+  - id: southbound_port_unreachable_sdn_clos_size_l_controller
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - controller
+    - southbound_port_unreachable
+    setup: pkill -f ryu-manager ryu-manager --ofp-tcp-listen-port 6634 ryu.app.simple_switch &
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_l/compose.yaml
+    metadata:
+      variant: southbound_port_unreachable
+      difficulty: medium
+      target_device: controller
+  - id: southbound_port_unreachable_sdn_clos_size_m_controller
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - controller
+    - southbound_port_unreachable
+    setup: pkill -f ryu-manager ryu-manager --ofp-tcp-listen-port 6634 ryu.app.simple_switch &
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_m/compose.yaml
+    metadata:
+      variant: southbound_port_unreachable
+      difficulty: medium
+      target_device: controller
+  - id: southbound_port_unreachable_sdn_clos_size_m_controller_2
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - controller
+    - southbound_port_unreachable
+    setup: pkill -f ryu-manager ryu-manager --ofp-tcp-listen-port 6635 ryu.app.simple_switch &
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_m/compose.yaml
+    metadata:
+      variant: southbound_port_unreachable
+      difficulty: medium
+      target_device: controller
+  - id: southbound_port_unreachable_sdn_clos_size_s_controller
+    family_id: network_node_error
+    input: *standard_input
+    target:
+    - true
+    - - controller
+    - southbound_port_unreachable
+    setup: pkill -f ryu-manager && ryu-manager --ofp-tcp-listen-port 6634 ryu.app.simple_switch &
+    sandbox:
+    - kathara
+    - sdn/sdn_clos/size_s/compose.yaml
+    metadata:
+      variant: southbound_port_unreachable
+      difficulty: medium
+      target_device: controller
+
+  # ============================================================================
+  # MULTIPLE FAULTS FAMILY
+  # ============================================================================
+
+  - id: multiple_faults_dc_clos_service_size_s_dns_and_web
+    family_id: multiple_faults
+    input: *standard_input
+    target:
+    - true
+    - - dns_pod0
+      - webserver0_pod0
+    - - dns_server_down
+      - acl_http_block
+    sandbox:
+    - kathara
+    - data_center/dc_clos_service/size_s/compose.yaml
+    metadata:
+      variant: multiple_faults_compound
+      difficulty: hard
+      faults:
+      - device: dns_pod0
+        setup: pkill -9 named
+      - device: webserver0_pod0
+        setup: nft add rule inet filter input tcp dport 80 drop
+
+  - id: multiple_faults_dc_clos_worker_size_s_link_and_bgp
+    family_id: multiple_faults
+    input: *standard_input
+    target:
+    - true
+    - - leaf_router_0_0
+      - spine_router_0_1
+    - - link_down
+      - acl_bgp_block
+    sandbox:
+    - kathara
+    - data_center/dc_clos_worker/size_s/compose.yaml
+    metadata:
+      variant: multiple_faults_compound
+      difficulty: hard
+      faults:
+      - device: leaf_router_0_0
+        setup: ip link set eth0 down
+      - device: spine_router_0_1
+        setup: nft add rule inet filter input tcp dport 179 drop && nft add rule inet filter input tcp sport 179 drop
+
+  - id: multiple_faults_campus_dhcp_size_s_server_and_client
+    family_id: multiple_faults
+    input: *standard_input
+    target:
+    - true
+    - - dhcp_server
+      - host_1_1_1_1
+    - - dhcp_server_down
+      - dhcp_spoofing
+    sandbox:
+    - kathara
+    - campus/campus_dhcp/size_s/compose.yaml
+    metadata:
+      variant: multiple_faults_compound
+      difficulty: hard
+      faults:
+      - device: dhcp_server
+        setup: systemctl stop isc-dhcp-server
+      - device: host_1_1_1_1
+        setup: ip addr replace 10.0.1.99/24 dev eth0 && ip route replace default via 10.0.1.1 && echo 'nameserver 8.8.8.8' > /etc/resolv.conf
+

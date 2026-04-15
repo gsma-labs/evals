@@ -65,6 +65,18 @@ uv run inspect eval src/evals/teleqna/teleqna.py --model openai/gpt-4o --limit 5
 
 If successful, you'll see evaluation progress and results in your terminal.
 
+For NIKA (experimental), install the optional extra and run a separate smoke test:
+
+```bash
+uv sync --extra nika
+```
+
+NIKA also requires sandbox/container runtime support:
+
+```bash
+uv run inspect eval src/evals/nika/nika.py --model openai/gpt-4o --limit 1 -T task_family=network_node_error
+```
+
 ## Troubleshooting
 
 **"HF_TOKEN not set" or dataset access errors**
@@ -79,6 +91,12 @@ If successful, you'll see evaluation progress and results in your terminal.
 **Python version issues**
 - Run `python --version` to check your version
 - Use `uv python pin 3.12` to set a specific version
+
+**NIKA (experimental) sandbox errors (compose/container startup failures)**
+- Verify your container runtime is installed and running
+- Verify NIKA extras are installed: `uv sync --extra nika`
+- Start with `--limit 1` and a single `task_family` to smoke test environment setup
+- Check NIKA task docs: `src/evals/nika/README.md`
 
 ## Next Steps
 

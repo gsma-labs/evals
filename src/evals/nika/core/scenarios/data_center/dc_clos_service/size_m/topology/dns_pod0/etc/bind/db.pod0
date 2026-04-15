@@ -1,0 +1,13 @@
+$TTL 1H
+@   IN  SOA ns0.pod0. admin.pod0. (
+        2025111101 ; Serial
+        1H         ; Refresh
+        15M        ; Retry
+        1W         ; Expire
+        1D )       ; Minimum
+
+    IN  NS  ns0.pod0.
+ns0 IN  A   10.0.0.2
+web0 IN  A  10.0.1.2
+web1 IN  A  10.0.2.2
+web2 IN  A  10.0.3.2

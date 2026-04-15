@@ -1,0 +1,8 @@
+for p in /proc/sys/net/ipv4/conf/*; do iface=$$(basename "$$p"); case "$$iface" in lo|all|default) continue ;; esac; sysctl -w "net.ipv4.conf.$${iface}.arp_ignore=1" || true; done;
+for p in /proc/sys/net/ipv4/conf/*; do iface=$$(basename "$$p"); case "$$iface" in lo|all|default) continue ;; esac; sysctl -w "net.ipv4.conf.$${iface}.arp_announce=2" || true; done;
+bash collector_src/collector_influxdb.sh
+ip link set eth0 address 00:00:0a:00:00:03
+ip addr add 10.0.0.3/24 dev eth0
+arp -s 10.0.0.1 00:00:0a:00:00:01
+arp -s 10.0.0.2 00:00:0a:00:00:02
+python3 collector_src/int_collector.py &> int_collector.log

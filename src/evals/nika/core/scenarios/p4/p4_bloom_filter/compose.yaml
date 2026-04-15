@@ -1,0 +1,170 @@
+# Auto-generated from Kathara lab.conf
+# Machines: host_1, host_2, switch_1, switch_2
+# Networks: A, B, C
+# Per-network x-interface-name = eth0, eth1, ... (from lab.conf machine[0], machine[1], ...)
+
+services:
+  default:
+    image: kathara/base
+    x-local: true
+    init: true
+    hostname: default
+    cap_add: &id002
+    - NET_ADMIN
+    - SYS_ADMIN
+    command: sleep infinity
+  host_1:
+    image: kathara/base
+    x-local: true
+    init: true
+    hostname: host_1
+    cap_add: &id001
+    - NET_ADMIN
+    privileged: true
+    networks:
+      A:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      sysctl net.ipv4.conf.all.arp_ignore=8
+      sysctl net.ipv4.conf.default.arp_ignore=8
+      sysctl net.ipv4.conf.all.arp_announce=8
+      sysctl net.ipv4.conf.default.arp_announce=8
+      ip link set eth0 address 00:00:0a:00:00:01
+      ip addr add 10.0.0.1/24 dev eth0
+      arp -s 10.0.0.2 00:00:0a:00:00:02
+      sleep infinity
+      '
+  host_2:
+    image: kathara/base
+    x-local: true
+    init: true
+    hostname: host_2
+    cap_add: *id001
+    privileged: true
+    networks:
+      B:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      sysctl net.ipv4.conf.all.arp_ignore=8
+      sysctl net.ipv4.conf.default.arp_ignore=8
+      sysctl net.ipv4.conf.all.arp_announce=8
+      sysctl net.ipv4.conf.default.arp_announce=8
+      ip link set eth0 address 00:00:0a:00:00:02
+      ip addr add 10.0.0.2/24 dev eth0
+      arp -s 10.0.0.1 00:00:0a:00:00:01
+      sleep infinity
+      '
+  switch_1:
+    image: kathara/p4
+    x-local: true
+    init: true
+    hostname: switch_1
+    cap_add: *id002
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      A:
+        interface_name: eth0
+      C:
+        interface_name: eth1
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f simple_switch_grpc
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/switch_1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      sysctl net.ipv4.conf.all.arp_ignore=8
+      sysctl net.ipv4.conf.default.arp_ignore=8
+      sysctl net.ipv4.conf.all.arp_announce=8
+      sysctl net.ipv4.conf.default.arp_announce=8
+      p4c bloom_filter.p4
+      simple_switch -i 1@eth0 -i 2@eth1 --log-console bloom_filter.json >> sw.log &
+      while [[ $(pgrep simple_switch) -eq 0 ]]; do sleep 1; done
+      max_tries=5; count=0; until simple_switch_CLI <<< "help"; do sleep 1; count=$((count+1)); if [ "$count" -ge "$max_tries" ]; then echo "simple_switch_CLI not ready" >&2; exit 1; fi; done
+      simple_switch_CLI <<< $(cat commands.txt)
+      sleep infinity
+      '
+  switch_2:
+    image: kathara/p4
+    x-local: true
+    init: true
+    hostname: switch_2
+    cap_add: *id002
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      B:
+        interface_name: eth0
+      C:
+        interface_name: eth1
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f simple_switch_grpc
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/switch_2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      sysctl net.ipv4.conf.all.arp_ignore=8
+      sysctl net.ipv4.conf.default.arp_ignore=8
+      sysctl net.ipv4.conf.all.arp_announce=8
+      sysctl net.ipv4.conf.default.arp_announce=8
+      p4c bloom_filter.p4
+      simple_switch -i 1@eth0 -i 2@eth1 --log-console bloom_filter.json >> sw.log &
+      while [[ $(pgrep simple_switch) -eq 0 ]]; do sleep 1; done
+      max_tries=5; count=0; until simple_switch_CLI <<< "help"; do sleep 1; count=$((count+1)); if [ "$count" -ge "$max_tries" ]; then echo "simple_switch_CLI not ready" >&2; exit 1; fi; done
+      simple_switch_CLI <<< $(cat commands.txt)
+      sleep infinity
+      '
+networks:
+  A:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.0/28
+  B:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.16/28
+  C:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.32/28

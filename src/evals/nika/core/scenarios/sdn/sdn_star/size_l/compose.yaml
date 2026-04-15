@@ -1,0 +1,1318 @@
+# Auto-generated from Kathara lab.conf
+# Machines: switch_0, switch_1, switch_2, switch_3, switch_4, switch_5, switch_6, switch_7, switch_8, switch_9, switch_10, switch_11, switch_12, switch_13, switch_14, switch_15, switch_16, host_1, host_2, host_3, host_4, host_5, host_6, host_7, host_8, host_9, host_10, host_11, host_12, host_13, host_14, host_15, host_16, controller
+# Networks: host_10_switch_10, host_11_switch_11, host_12_switch_12, host_13_switch_13, host_14_switch_14, host_15_switch_15, host_16_switch_16, host_1_switch_1, host_2_switch_2, host_3_switch_3, host_4_switch_4, host_5_switch_5, host_6_switch_6, host_7_switch_7, host_8_switch_8, host_9_switch_9, switch_0_switch_1, switch_0_switch_10, switch_0_switch_11, switch_0_switch_12, switch_0_switch_13, switch_0_switch_14, switch_0_switch_15, switch_0_switch_16, switch_0_switch_2, switch_0_switch_3, switch_0_switch_4, switch_0_switch_5, switch_0_switch_6, switch_0_switch_7, switch_0_switch_8, switch_0_switch_9, switch_controller
+# Per-network x-interface-name = eth0, eth1, ... (from lab.conf machine[0], machine[1], ...)
+
+services:
+  default:
+    image: kathara/base
+    x-local: true
+    init: true
+    hostname: default
+    cap_add: &id001
+    - NET_ADMIN
+    - SYS_ADMIN
+    command: sleep infinity
+  switch_0:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: switch_0
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      switch_0_switch_1:
+        interface_name: eth0
+      switch_0_switch_2:
+        interface_name: eth1
+      switch_0_switch_3:
+        interface_name: eth2
+      switch_0_switch_4:
+        interface_name: eth3
+      switch_0_switch_5:
+        interface_name: eth4
+      switch_0_switch_6:
+        interface_name: eth5
+      switch_0_switch_7:
+        interface_name: eth6
+      switch_0_switch_8:
+        interface_name: eth7
+      switch_0_switch_9:
+        interface_name: eth8
+      switch_0_switch_10:
+        interface_name: eth9
+      switch_0_switch_11:
+        interface_name: eth10
+      switch_0_switch_12:
+        interface_name: eth11
+      switch_0_switch_13:
+        interface_name: eth12
+      switch_0_switch_14:
+        interface_name: eth13
+      switch_0_switch_15:
+        interface_name: eth14
+      switch_0_switch_16:
+        interface_name: eth15
+      switch_controller:
+        interface_name: eth16
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br switch_0
+      ovs-vsctl set-fail-mode switch_0 secure
+      ip link set eth0 up
+      ovs-vsctl add-port switch_0 eth0
+      ip link set eth1 up
+      ovs-vsctl add-port switch_0 eth1
+      ip link set eth2 up
+      ovs-vsctl add-port switch_0 eth2
+      ip link set eth3 up
+      ovs-vsctl add-port switch_0 eth3
+      ip link set eth4 up
+      ovs-vsctl add-port switch_0 eth4
+      ip link set eth5 up
+      ovs-vsctl add-port switch_0 eth5
+      ip link set eth6 up
+      ovs-vsctl add-port switch_0 eth6
+      ip link set eth7 up
+      ovs-vsctl add-port switch_0 eth7
+      ip link set eth8 up
+      ovs-vsctl add-port switch_0 eth8
+      ip link set eth9 up
+      ovs-vsctl add-port switch_0 eth9
+      ip link set eth10 up
+      ovs-vsctl add-port switch_0 eth10
+      ip link set eth11 up
+      ovs-vsctl add-port switch_0 eth11
+      ip link set eth12 up
+      ovs-vsctl add-port switch_0 eth12
+      ip link set eth13 up
+      ovs-vsctl add-port switch_0 eth13
+      ip link set eth14 up
+      ovs-vsctl add-port switch_0 eth14
+      ip link set eth15 up
+      ovs-vsctl add-port switch_0 eth15
+      ip addr add 20.0.0.1/24 dev eth16
+      ovs-vsctl set-controller switch_0 tcp:20.0.0.100:6633
+      sleep infinity
+      '
+  switch_1:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: switch_1
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_1_switch_1:
+        interface_name: eth0
+      switch_0_switch_1:
+        interface_name: eth1
+      switch_controller:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br switch_1
+      ovs-vsctl set-fail-mode switch_1 secure
+      ovs-vsctl add-port switch_1 eth0
+      ip link set eth1 up
+      ovs-vsctl add-port switch_1 eth1
+      ip addr add 20.0.0.2/24 dev eth2
+      ovs-vsctl set-controller switch_1 tcp:20.0.0.100:6633
+      sleep infinity
+      '
+  switch_2:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: switch_2
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_2_switch_2:
+        interface_name: eth0
+      switch_0_switch_2:
+        interface_name: eth1
+      switch_controller:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br switch_2
+      ovs-vsctl set-fail-mode switch_2 secure
+      ovs-vsctl add-port switch_2 eth0
+      ip link set eth1 up
+      ovs-vsctl add-port switch_2 eth1
+      ip addr add 20.0.0.3/24 dev eth2
+      ovs-vsctl set-controller switch_2 tcp:20.0.0.100:6633
+      sleep infinity
+      '
+  switch_3:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: switch_3
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_3_switch_3:
+        interface_name: eth0
+      switch_0_switch_3:
+        interface_name: eth1
+      switch_controller:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br switch_3
+      ovs-vsctl set-fail-mode switch_3 secure
+      ovs-vsctl add-port switch_3 eth0
+      ip link set eth1 up
+      ovs-vsctl add-port switch_3 eth1
+      ip addr add 20.0.0.4/24 dev eth2
+      ovs-vsctl set-controller switch_3 tcp:20.0.0.100:6633
+      sleep infinity
+      '
+  switch_4:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: switch_4
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_4_switch_4:
+        interface_name: eth0
+      switch_0_switch_4:
+        interface_name: eth1
+      switch_controller:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br switch_4
+      ovs-vsctl set-fail-mode switch_4 secure
+      ovs-vsctl add-port switch_4 eth0
+      ip link set eth1 up
+      ovs-vsctl add-port switch_4 eth1
+      ip addr add 20.0.0.5/24 dev eth2
+      ovs-vsctl set-controller switch_4 tcp:20.0.0.100:6633
+      sleep infinity
+      '
+  switch_5:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: switch_5
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_5_switch_5:
+        interface_name: eth0
+      switch_0_switch_5:
+        interface_name: eth1
+      switch_controller:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br switch_5
+      ovs-vsctl set-fail-mode switch_5 secure
+      ovs-vsctl add-port switch_5 eth0
+      ip link set eth1 up
+      ovs-vsctl add-port switch_5 eth1
+      ip addr add 20.0.0.6/24 dev eth2
+      ovs-vsctl set-controller switch_5 tcp:20.0.0.100:6633
+      sleep infinity
+      '
+  switch_6:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: switch_6
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_6_switch_6:
+        interface_name: eth0
+      switch_0_switch_6:
+        interface_name: eth1
+      switch_controller:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br switch_6
+      ovs-vsctl set-fail-mode switch_6 secure
+      ovs-vsctl add-port switch_6 eth0
+      ip link set eth1 up
+      ovs-vsctl add-port switch_6 eth1
+      ip addr add 20.0.0.7/24 dev eth2
+      ovs-vsctl set-controller switch_6 tcp:20.0.0.100:6633
+      sleep infinity
+      '
+  switch_7:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: switch_7
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_7_switch_7:
+        interface_name: eth0
+      switch_0_switch_7:
+        interface_name: eth1
+      switch_controller:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br switch_7
+      ovs-vsctl set-fail-mode switch_7 secure
+      ovs-vsctl add-port switch_7 eth0
+      ip link set eth1 up
+      ovs-vsctl add-port switch_7 eth1
+      ip addr add 20.0.0.8/24 dev eth2
+      ovs-vsctl set-controller switch_7 tcp:20.0.0.100:6633
+      sleep infinity
+      '
+  switch_8:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: switch_8
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_8_switch_8:
+        interface_name: eth0
+      switch_0_switch_8:
+        interface_name: eth1
+      switch_controller:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br switch_8
+      ovs-vsctl set-fail-mode switch_8 secure
+      ovs-vsctl add-port switch_8 eth0
+      ip link set eth1 up
+      ovs-vsctl add-port switch_8 eth1
+      ip addr add 20.0.0.9/24 dev eth2
+      ovs-vsctl set-controller switch_8 tcp:20.0.0.100:6633
+      sleep infinity
+      '
+  switch_9:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: switch_9
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_9_switch_9:
+        interface_name: eth0
+      switch_0_switch_9:
+        interface_name: eth1
+      switch_controller:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br switch_9
+      ovs-vsctl set-fail-mode switch_9 secure
+      ovs-vsctl add-port switch_9 eth0
+      ip link set eth1 up
+      ovs-vsctl add-port switch_9 eth1
+      ip addr add 20.0.0.10/24 dev eth2
+      ovs-vsctl set-controller switch_9 tcp:20.0.0.100:6633
+      sleep infinity
+      '
+  switch_10:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: switch_10
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_10_switch_10:
+        interface_name: eth0
+      switch_0_switch_10:
+        interface_name: eth1
+      switch_controller:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br switch_10
+      ovs-vsctl set-fail-mode switch_10 secure
+      ovs-vsctl add-port switch_10 eth0
+      ip link set eth1 up
+      ovs-vsctl add-port switch_10 eth1
+      ip addr add 20.0.0.11/24 dev eth2
+      ovs-vsctl set-controller switch_10 tcp:20.0.0.100:6633
+      sleep infinity
+      '
+  switch_11:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: switch_11
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_11_switch_11:
+        interface_name: eth0
+      switch_0_switch_11:
+        interface_name: eth1
+      switch_controller:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br switch_11
+      ovs-vsctl set-fail-mode switch_11 secure
+      ovs-vsctl add-port switch_11 eth0
+      ip link set eth1 up
+      ovs-vsctl add-port switch_11 eth1
+      ip addr add 20.0.0.12/24 dev eth2
+      ovs-vsctl set-controller switch_11 tcp:20.0.0.100:6633
+      sleep infinity
+      '
+  switch_12:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: switch_12
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_12_switch_12:
+        interface_name: eth0
+      switch_0_switch_12:
+        interface_name: eth1
+      switch_controller:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br switch_12
+      ovs-vsctl set-fail-mode switch_12 secure
+      ovs-vsctl add-port switch_12 eth0
+      ip link set eth1 up
+      ovs-vsctl add-port switch_12 eth1
+      ip addr add 20.0.0.13/24 dev eth2
+      ovs-vsctl set-controller switch_12 tcp:20.0.0.100:6633
+      sleep infinity
+      '
+  switch_13:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: switch_13
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_13_switch_13:
+        interface_name: eth0
+      switch_0_switch_13:
+        interface_name: eth1
+      switch_controller:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br switch_13
+      ovs-vsctl set-fail-mode switch_13 secure
+      ovs-vsctl add-port switch_13 eth0
+      ip link set eth1 up
+      ovs-vsctl add-port switch_13 eth1
+      ip addr add 20.0.0.14/24 dev eth2
+      ovs-vsctl set-controller switch_13 tcp:20.0.0.100:6633
+      sleep infinity
+      '
+  switch_14:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: switch_14
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_14_switch_14:
+        interface_name: eth0
+      switch_0_switch_14:
+        interface_name: eth1
+      switch_controller:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br switch_14
+      ovs-vsctl set-fail-mode switch_14 secure
+      ovs-vsctl add-port switch_14 eth0
+      ip link set eth1 up
+      ovs-vsctl add-port switch_14 eth1
+      ip addr add 20.0.0.15/24 dev eth2
+      ovs-vsctl set-controller switch_14 tcp:20.0.0.100:6633
+      sleep infinity
+      '
+  switch_15:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: switch_15
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_15_switch_15:
+        interface_name: eth0
+      switch_0_switch_15:
+        interface_name: eth1
+      switch_controller:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br switch_15
+      ovs-vsctl set-fail-mode switch_15 secure
+      ovs-vsctl add-port switch_15 eth0
+      ip link set eth1 up
+      ovs-vsctl add-port switch_15 eth1
+      ip addr add 20.0.0.16/24 dev eth2
+      ovs-vsctl set-controller switch_15 tcp:20.0.0.100:6633
+      sleep infinity
+      '
+  switch_16:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: switch_16
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_16_switch_16:
+        interface_name: eth0
+      switch_0_switch_16:
+        interface_name: eth1
+      switch_controller:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br switch_16
+      ovs-vsctl set-fail-mode switch_16 secure
+      ovs-vsctl add-port switch_16 eth0
+      ip link set eth1 up
+      ovs-vsctl add-port switch_16 eth1
+      ip addr add 20.0.0.17/24 dev eth2
+      ovs-vsctl set-controller switch_16 tcp:20.0.0.100:6633
+      sleep infinity
+      '
+  host_1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_1
+    cap_add: &id002
+    - NET_ADMIN
+    privileged: true
+    networks:
+      host_1_switch_1:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.1/24 dev eth0
+      sleep infinity
+      '
+  host_2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_2
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_2_switch_2:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.2/24 dev eth0
+      sleep infinity
+      '
+  host_3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_3
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_3_switch_3:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.3/24 dev eth0
+      sleep infinity
+      '
+  host_4:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_4
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_4_switch_4:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.4/24 dev eth0
+      sleep infinity
+      '
+  host_5:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_5
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_5_switch_5:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.5/24 dev eth0
+      sleep infinity
+      '
+  host_6:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_6
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_6_switch_6:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.6/24 dev eth0
+      sleep infinity
+      '
+  host_7:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_7
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_7_switch_7:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.7/24 dev eth0
+      sleep infinity
+      '
+  host_8:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_8
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_8_switch_8:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.8/24 dev eth0
+      sleep infinity
+      '
+  host_9:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_9
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_9_switch_9:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.9/24 dev eth0
+      sleep infinity
+      '
+  host_10:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_10
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_10_switch_10:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.10/24 dev eth0
+      sleep infinity
+      '
+  host_11:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_11
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_11_switch_11:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.11/24 dev eth0
+      sleep infinity
+      '
+  host_12:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_12
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_12_switch_12:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.12/24 dev eth0
+      sleep infinity
+      '
+  host_13:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_13
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_13_switch_13:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.13/24 dev eth0
+      sleep infinity
+      '
+  host_14:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_14
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_14_switch_14:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.14/24 dev eth0
+      sleep infinity
+      '
+  host_15:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_15
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_15_switch_15:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.15/24 dev eth0
+      sleep infinity
+      '
+  host_16:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_16
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_16_switch_16:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.16/24 dev eth0
+      sleep infinity
+      '
+  controller:
+    image: kathara/nika-ryu
+    x-local: true
+    init: true
+    hostname: controller
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      switch_controller:
+        interface_name: eth0
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f ryu-manager
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 20.0.0.100/24 dev eth0
+      ip link set eth0 up
+      ryu-manager ryu.app.simple_switch &
+      sleep infinity
+      '
+networks:
+  host_10_switch_10:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.0/28
+  host_11_switch_11:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.16/28
+  host_12_switch_12:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.32/28
+  host_13_switch_13:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.48/28
+  host_14_switch_14:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.64/28
+  host_15_switch_15:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.80/28
+  host_16_switch_16:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.96/28
+  host_1_switch_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.112/28
+  host_2_switch_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.128/28
+  host_3_switch_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.144/28
+  host_4_switch_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.160/28
+  host_5_switch_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.176/28
+  host_6_switch_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.192/28
+  host_7_switch_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.208/28
+  host_8_switch_8:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.224/28
+  host_9_switch_9:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.240/28
+  switch_0_switch_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.0/28
+  switch_0_switch_10:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.16/28
+  switch_0_switch_11:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.32/28
+  switch_0_switch_12:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.48/28
+  switch_0_switch_13:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.64/28
+  switch_0_switch_14:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.80/28
+  switch_0_switch_15:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.96/28
+  switch_0_switch_16:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.112/28
+  switch_0_switch_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.128/28
+  switch_0_switch_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.144/28
+  switch_0_switch_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.160/28
+  switch_0_switch_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.176/28
+  switch_0_switch_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.192/28
+  switch_0_switch_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.208/28
+  switch_0_switch_8:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.224/28
+  switch_0_switch_9:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.240/28
+  switch_controller:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.0/28

@@ -1,0 +1,7 @@
+ip addr add 172.16.0.3/31 dev eth0
+ip addr add 172.16.0.19/31 dev eth1
+ip addr add 172.16.0.40/31 dev eth2
+ip addr add 172.16.0.42/31 dev eth3
+ip addr add 172.16.0.44/31 dev eth4
+ip addr add 172.16.0.46/31 dev eth5
+service frr start

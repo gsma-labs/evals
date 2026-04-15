@@ -40,6 +40,7 @@ uv run inspect eval src/evals/teleqna/teleqna.py --model openai/gpt-4o --limit 5
 | **TeleQnA** | General telecom knowledge | Baseline capability assessment |
 | **TeleMath** | Mathematical reasoning in telecom | Signal processing, network optimization |
 | **TeleLogs** | Root cause analysis | Network operations, diagnostics |
+| **NIKA (Experimental)** | Agentic troubleshooting in emulated labs | End-to-end detection, localization, and RCA workflows |
 | **3GPP TSG** | Standards document understanding | Technical specification work |
 | **ORANBench** | O-RAN specifications knowledge | O-RAN architecture, interfaces, protocols |
 | **srsRANBench** | srsRAN codebase understanding | Open-source 5G RAN code comprehension |
@@ -79,6 +80,7 @@ Depends on the benchmark, model, and sample count:
 | TeleMath | ~10-20 min | ~2-4 hours |
 | ORANBench | ~2-5 min | ~20-40 min |
 | srsRANBench | ~2-5 min | ~20-40 min |
+| NIKA (Experimental) | ~1-2 hours | ~10-20 hours|
 
 Use `--limit N` to run fewer samples for testing.
 
@@ -118,6 +120,8 @@ uv run inspect eval src/evals/teleqna/teleqna.py \
 - Check your internet connection
 - Use `--limit 10` for initial testing
 - Consider using faster models (e.g., `gpt-4o-mini`)
+- For NIKA (experimental), install extras first: `uv sync --extra nika`
+- Then start with `--limit 1` and a single `task_family` / `variant`
 
 ### Results seem inconsistent
 

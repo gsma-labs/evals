@@ -10,6 +10,7 @@ This page lists all available benchmarks in Open Telco. Each benchmark tests dif
 | [TeleTables](#teletables) | Knowledge | Medium | Table interpretation tasks |
 | [TeleMath](#telemath) | Math Reasoning | Hard | Mathematical/analytical tasks |
 | [TeleLogs](#telelogs) | Operations | Medium | Network diagnostics use cases |
+| [NIKA (Experimental)](#nika-experimental) | Operations | Hard | Agentic troubleshooting in emulated labs |
 | [6G-Bench](#6g-bench) | Standards | Hard | 6G-native telecom reasoning |
 | [3GPP TSG](#3gpp-tsg) | Standards | Medium | Standards document work |
 | [ORANBench](#oranbench) | Standards | Medium | O-RAN architecture and specs |
@@ -73,6 +74,29 @@ uv run inspect eval src/evals/telelogs/telelogs.py --model <model>
 ```
 
 [Paper](https://arxiv.org/abs/2507.21974) | [Dataset](https://huggingface.co/datasets/netop/TeleLogs)
+
+### NIKA (Experimental)
+
+**[NIKA](../src/evals/nika/)** *(Experimental)*: Agentic network troubleshooting in live emulated labs
+
+NIKA evaluates multi-step troubleshooting on realistic sandboxed network environments.
+Models must detect anomalies, localize faulty devices, and provide root cause types.
+
+Install optional runtime dependencies before running NIKA:
+
+```bash
+uv sync --extra nika
+```
+
+```bash
+uv run inspect eval src/evals/nika/nika.py --model <model>
+
+# Filter by task family and variant
+uv run inspect eval src/evals/nika/nika.py --model <model> \
+  -T task_family=network_node_error -T variant=bmv2_down
+```
+
+[Paper](https://arxiv.org/abs/2512.16381) | [Task README](../src/evals/nika/README.md)
 
 ## Network Configuration
 

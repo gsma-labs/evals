@@ -1,0 +1,3 @@
+ip addr add 20.0.2.5/24 dev eth0
+ip route add default via 20.0.2.1
+service apache2 start
