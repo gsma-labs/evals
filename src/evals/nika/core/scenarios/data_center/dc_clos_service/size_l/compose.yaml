@@ -1,0 +1,5629 @@
+# Auto-generated from Kathara lab.conf
+# Machines: super_spine_router_0, super_spine_router_1, super_spine_router_2, super_spine_router_3, spine_router_0_0, spine_router_0_1, spine_router_0_2, spine_router_0_3, spine_router_1_0, spine_router_1_1, spine_router_1_2, spine_router_1_3, spine_router_2_0, spine_router_2_1, spine_router_2_2, spine_router_2_3, spine_router_3_0, spine_router_3_1, spine_router_3_2, spine_router_3_3, leaf_router_0_0, leaf_router_0_1, leaf_router_0_2, leaf_router_0_3, leaf_router_0_4, leaf_router_0_5, leaf_router_0_6, leaf_router_0_7, leaf_router_1_0, leaf_router_1_1, leaf_router_1_2, leaf_router_1_3, leaf_router_1_4, leaf_router_1_5, leaf_router_1_6, leaf_router_1_7, leaf_router_2_0, leaf_router_2_1, leaf_router_2_2, leaf_router_2_3, leaf_router_2_4, leaf_router_2_5, leaf_router_2_6, leaf_router_2_7, leaf_router_3_0, leaf_router_3_1, leaf_router_3_2, leaf_router_3_3, leaf_router_3_4, leaf_router_3_5, leaf_router_3_6, leaf_router_3_7, dns_pod0, dns_pod1, dns_pod2, dns_pod3, webserver0_pod0, webserver1_pod0, webserver2_pod0, webserver3_pod0, webserver4_pod0, webserver5_pod0, webserver6_pod0, webserver0_pod1, webserver1_pod1, webserver2_pod1, webserver3_pod1, webserver4_pod1, webserver5_pod1, webserver6_pod1, webserver0_pod2, webserver1_pod2, webserver2_pod2, webserver3_pod2, webserver4_pod2, webserver5_pod2, webserver6_pod2, webserver0_pod3, webserver1_pod3, webserver2_pod3, webserver3_pod3, webserver4_pod3, webserver5_pod3, webserver6_pod3, client_0, client_1, client_2, client_3
+# Networks: leaf_router_0_0_dns_pod0, leaf_router_0_1_webserver0_pod0, leaf_router_0_2_webserver1_pod0, leaf_router_0_3_webserver2_pod0, leaf_router_0_4_webserver3_pod0, leaf_router_0_5_webserver4_pod0, leaf_router_0_6_webserver5_pod0, leaf_router_0_7_webserver6_pod0, leaf_router_1_0_dns_pod1, leaf_router_1_1_webserver0_pod1, leaf_router_1_2_webserver1_pod1, leaf_router_1_3_webserver2_pod1, leaf_router_1_4_webserver3_pod1, leaf_router_1_5_webserver4_pod1, leaf_router_1_6_webserver5_pod1, leaf_router_1_7_webserver6_pod1, leaf_router_2_0_dns_pod2, leaf_router_2_1_webserver0_pod2, leaf_router_2_2_webserver1_pod2, leaf_router_2_3_webserver2_pod2, leaf_router_2_4_webserver3_pod2, leaf_router_2_5_webserver4_pod2, leaf_router_2_6_webserver5_pod2, leaf_router_2_7_webserver6_pod2, leaf_router_3_0_dns_pod3, leaf_router_3_1_webserver0_pod3, leaf_router_3_2_webserver1_pod3, leaf_router_3_3_webserver2_pod3, leaf_router_3_4_webserver3_pod3, leaf_router_3_5_webserver4_pod3, leaf_router_3_6_webserver5_pod3, leaf_router_3_7_webserver6_pod3, spine_router_0_0_leaf_router_0_0, spine_router_0_0_leaf_router_0_1, spine_router_0_0_leaf_router_0_2, spine_router_0_0_leaf_router_0_3, spine_router_0_0_leaf_router_0_4, spine_router_0_0_leaf_router_0_5, spine_router_0_0_leaf_router_0_6, spine_router_0_0_leaf_router_0_7, spine_router_0_1_leaf_router_0_0, spine_router_0_1_leaf_router_0_1, spine_router_0_1_leaf_router_0_2, spine_router_0_1_leaf_router_0_3, spine_router_0_1_leaf_router_0_4, spine_router_0_1_leaf_router_0_5, spine_router_0_1_leaf_router_0_6, spine_router_0_1_leaf_router_0_7, spine_router_0_2_leaf_router_0_0, spine_router_0_2_leaf_router_0_1, spine_router_0_2_leaf_router_0_2, spine_router_0_2_leaf_router_0_3, spine_router_0_2_leaf_router_0_4, spine_router_0_2_leaf_router_0_5, spine_router_0_2_leaf_router_0_6, spine_router_0_2_leaf_router_0_7, spine_router_0_3_leaf_router_0_0, spine_router_0_3_leaf_router_0_1, spine_router_0_3_leaf_router_0_2, spine_router_0_3_leaf_router_0_3, spine_router_0_3_leaf_router_0_4, spine_router_0_3_leaf_router_0_5, spine_router_0_3_leaf_router_0_6, spine_router_0_3_leaf_router_0_7, spine_router_1_0_leaf_router_1_0, spine_router_1_0_leaf_router_1_1, spine_router_1_0_leaf_router_1_2, spine_router_1_0_leaf_router_1_3, spine_router_1_0_leaf_router_1_4, spine_router_1_0_leaf_router_1_5, spine_router_1_0_leaf_router_1_6, spine_router_1_0_leaf_router_1_7, spine_router_1_1_leaf_router_1_0, spine_router_1_1_leaf_router_1_1, spine_router_1_1_leaf_router_1_2, spine_router_1_1_leaf_router_1_3, spine_router_1_1_leaf_router_1_4, spine_router_1_1_leaf_router_1_5, spine_router_1_1_leaf_router_1_6, spine_router_1_1_leaf_router_1_7, spine_router_1_2_leaf_router_1_0, spine_router_1_2_leaf_router_1_1, spine_router_1_2_leaf_router_1_2, spine_router_1_2_leaf_router_1_3, spine_router_1_2_leaf_router_1_4, spine_router_1_2_leaf_router_1_5, spine_router_1_2_leaf_router_1_6, spine_router_1_2_leaf_router_1_7, spine_router_1_3_leaf_router_1_0, spine_router_1_3_leaf_router_1_1, spine_router_1_3_leaf_router_1_2, spine_router_1_3_leaf_router_1_3, spine_router_1_3_leaf_router_1_4, spine_router_1_3_leaf_router_1_5, spine_router_1_3_leaf_router_1_6, spine_router_1_3_leaf_router_1_7, spine_router_2_0_leaf_router_2_0, spine_router_2_0_leaf_router_2_1, spine_router_2_0_leaf_router_2_2, spine_router_2_0_leaf_router_2_3, spine_router_2_0_leaf_router_2_4, spine_router_2_0_leaf_router_2_5, spine_router_2_0_leaf_router_2_6, spine_router_2_0_leaf_router_2_7, spine_router_2_1_leaf_router_2_0, spine_router_2_1_leaf_router_2_1, spine_router_2_1_leaf_router_2_2, spine_router_2_1_leaf_router_2_3, spine_router_2_1_leaf_router_2_4, spine_router_2_1_leaf_router_2_5, spine_router_2_1_leaf_router_2_6, spine_router_2_1_leaf_router_2_7, spine_router_2_2_leaf_router_2_0, spine_router_2_2_leaf_router_2_1, spine_router_2_2_leaf_router_2_2, spine_router_2_2_leaf_router_2_3, spine_router_2_2_leaf_router_2_4, spine_router_2_2_leaf_router_2_5, spine_router_2_2_leaf_router_2_6, spine_router_2_2_leaf_router_2_7, spine_router_2_3_leaf_router_2_0, spine_router_2_3_leaf_router_2_1, spine_router_2_3_leaf_router_2_2, spine_router_2_3_leaf_router_2_3, spine_router_2_3_leaf_router_2_4, spine_router_2_3_leaf_router_2_5, spine_router_2_3_leaf_router_2_6, spine_router_2_3_leaf_router_2_7, spine_router_3_0_leaf_router_3_0, spine_router_3_0_leaf_router_3_1, spine_router_3_0_leaf_router_3_2, spine_router_3_0_leaf_router_3_3, spine_router_3_0_leaf_router_3_4, spine_router_3_0_leaf_router_3_5, spine_router_3_0_leaf_router_3_6, spine_router_3_0_leaf_router_3_7, spine_router_3_1_leaf_router_3_0, spine_router_3_1_leaf_router_3_1, spine_router_3_1_leaf_router_3_2, spine_router_3_1_leaf_router_3_3, spine_router_3_1_leaf_router_3_4, spine_router_3_1_leaf_router_3_5, spine_router_3_1_leaf_router_3_6, spine_router_3_1_leaf_router_3_7, spine_router_3_2_leaf_router_3_0, spine_router_3_2_leaf_router_3_1, spine_router_3_2_leaf_router_3_2, spine_router_3_2_leaf_router_3_3, spine_router_3_2_leaf_router_3_4, spine_router_3_2_leaf_router_3_5, spine_router_3_2_leaf_router_3_6, spine_router_3_2_leaf_router_3_7, spine_router_3_3_leaf_router_3_0, spine_router_3_3_leaf_router_3_1, spine_router_3_3_leaf_router_3_2, spine_router_3_3_leaf_router_3_3, spine_router_3_3_leaf_router_3_4, spine_router_3_3_leaf_router_3_5, spine_router_3_3_leaf_router_3_6, spine_router_3_3_leaf_router_3_7, super_spine_router_0_client_0, super_spine_router_0_spine_router_0_0, super_spine_router_0_spine_router_0_1, super_spine_router_0_spine_router_0_2, super_spine_router_0_spine_router_0_3, super_spine_router_0_spine_router_1_0, super_spine_router_0_spine_router_1_1, super_spine_router_0_spine_router_1_2, super_spine_router_0_spine_router_1_3, super_spine_router_0_spine_router_2_0, super_spine_router_0_spine_router_2_1, super_spine_router_0_spine_router_2_2, super_spine_router_0_spine_router_2_3, super_spine_router_0_spine_router_3_0, super_spine_router_0_spine_router_3_1, super_spine_router_0_spine_router_3_2, super_spine_router_0_spine_router_3_3, super_spine_router_1_client_1, super_spine_router_1_spine_router_0_0, super_spine_router_1_spine_router_0_1, super_spine_router_1_spine_router_0_2, super_spine_router_1_spine_router_0_3, super_spine_router_1_spine_router_1_0, super_spine_router_1_spine_router_1_1, super_spine_router_1_spine_router_1_2, super_spine_router_1_spine_router_1_3, super_spine_router_1_spine_router_2_0, super_spine_router_1_spine_router_2_1, super_spine_router_1_spine_router_2_2, super_spine_router_1_spine_router_2_3, super_spine_router_1_spine_router_3_0, super_spine_router_1_spine_router_3_1, super_spine_router_1_spine_router_3_2, super_spine_router_1_spine_router_3_3, super_spine_router_2_client_2, super_spine_router_2_spine_router_0_0, super_spine_router_2_spine_router_0_1, super_spine_router_2_spine_router_0_2, super_spine_router_2_spine_router_0_3, super_spine_router_2_spine_router_1_0, super_spine_router_2_spine_router_1_1, super_spine_router_2_spine_router_1_2, super_spine_router_2_spine_router_1_3, super_spine_router_2_spine_router_2_0, super_spine_router_2_spine_router_2_1, super_spine_router_2_spine_router_2_2, super_spine_router_2_spine_router_2_3, super_spine_router_2_spine_router_3_0, super_spine_router_2_spine_router_3_1, super_spine_router_2_spine_router_3_2, super_spine_router_2_spine_router_3_3, super_spine_router_3_client_3, super_spine_router_3_spine_router_0_0, super_spine_router_3_spine_router_0_1, super_spine_router_3_spine_router_0_2, super_spine_router_3_spine_router_0_3, super_spine_router_3_spine_router_1_0, super_spine_router_3_spine_router_1_1, super_spine_router_3_spine_router_1_2, super_spine_router_3_spine_router_1_3, super_spine_router_3_spine_router_2_0, super_spine_router_3_spine_router_2_1, super_spine_router_3_spine_router_2_2, super_spine_router_3_spine_router_2_3, super_spine_router_3_spine_router_3_0, super_spine_router_3_spine_router_3_1, super_spine_router_3_spine_router_3_2, super_spine_router_3_spine_router_3_3
+# Per-network x-interface-name = eth0, eth1, ... (from lab.conf machine[0], machine[1], ...)
+
+services:
+  default:
+    image: kathara/base
+    x-local: true
+    init: true
+    hostname: default
+    cap_add: &id001
+    - NET_ADMIN
+    - SYS_ADMIN
+    command: sleep infinity
+  super_spine_router_0:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: super_spine_router_0
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_0_spine_router_0_0:
+        interface_name: eth0
+      super_spine_router_0_spine_router_0_1:
+        interface_name: eth1
+      super_spine_router_0_spine_router_0_2:
+        interface_name: eth2
+      super_spine_router_0_spine_router_0_3:
+        interface_name: eth3
+      super_spine_router_0_spine_router_1_0:
+        interface_name: eth4
+      super_spine_router_0_spine_router_1_1:
+        interface_name: eth5
+      super_spine_router_0_spine_router_1_2:
+        interface_name: eth6
+      super_spine_router_0_spine_router_1_3:
+        interface_name: eth7
+      super_spine_router_0_spine_router_2_0:
+        interface_name: eth8
+      super_spine_router_0_spine_router_2_1:
+        interface_name: eth9
+      super_spine_router_0_spine_router_2_2:
+        interface_name: eth10
+      super_spine_router_0_spine_router_2_3:
+        interface_name: eth11
+      super_spine_router_0_spine_router_3_0:
+        interface_name: eth12
+      super_spine_router_0_spine_router_3_1:
+        interface_name: eth13
+      super_spine_router_0_spine_router_3_2:
+        interface_name: eth14
+      super_spine_router_0_spine_router_3_3:
+        interface_name: eth15
+      super_spine_router_0_client_0:
+        interface_name: eth16
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/super_spine_router_0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.0/31 dev eth0
+      ip addr add 172.16.0.2/31 dev eth1
+      ip addr add 172.16.0.4/31 dev eth2
+      ip addr add 172.16.0.6/31 dev eth3
+      ip addr add 172.16.0.8/31 dev eth4
+      ip addr add 172.16.0.10/31 dev eth5
+      ip addr add 172.16.0.12/31 dev eth6
+      ip addr add 172.16.0.14/31 dev eth7
+      ip addr add 172.16.0.16/31 dev eth8
+      ip addr add 172.16.0.18/31 dev eth9
+      ip addr add 172.16.0.20/31 dev eth10
+      ip addr add 172.16.0.22/31 dev eth11
+      ip addr add 172.16.0.24/31 dev eth12
+      ip addr add 172.16.0.26/31 dev eth13
+      ip addr add 172.16.0.28/31 dev eth14
+      ip addr add 172.16.0.30/31 dev eth15
+      ip addr add 192.168.0.1/24 dev eth16
+      service frr start
+      sleep infinity
+      '
+  super_spine_router_1:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: super_spine_router_1
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_1_spine_router_0_0:
+        interface_name: eth0
+      super_spine_router_1_spine_router_0_1:
+        interface_name: eth1
+      super_spine_router_1_spine_router_0_2:
+        interface_name: eth2
+      super_spine_router_1_spine_router_0_3:
+        interface_name: eth3
+      super_spine_router_1_spine_router_1_0:
+        interface_name: eth4
+      super_spine_router_1_spine_router_1_1:
+        interface_name: eth5
+      super_spine_router_1_spine_router_1_2:
+        interface_name: eth6
+      super_spine_router_1_spine_router_1_3:
+        interface_name: eth7
+      super_spine_router_1_spine_router_2_0:
+        interface_name: eth8
+      super_spine_router_1_spine_router_2_1:
+        interface_name: eth9
+      super_spine_router_1_spine_router_2_2:
+        interface_name: eth10
+      super_spine_router_1_spine_router_2_3:
+        interface_name: eth11
+      super_spine_router_1_spine_router_3_0:
+        interface_name: eth12
+      super_spine_router_1_spine_router_3_1:
+        interface_name: eth13
+      super_spine_router_1_spine_router_3_2:
+        interface_name: eth14
+      super_spine_router_1_spine_router_3_3:
+        interface_name: eth15
+      super_spine_router_1_client_1:
+        interface_name: eth16
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/super_spine_router_1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.32/31 dev eth0
+      ip addr add 172.16.0.34/31 dev eth1
+      ip addr add 172.16.0.36/31 dev eth2
+      ip addr add 172.16.0.38/31 dev eth3
+      ip addr add 172.16.0.40/31 dev eth4
+      ip addr add 172.16.0.42/31 dev eth5
+      ip addr add 172.16.0.44/31 dev eth6
+      ip addr add 172.16.0.46/31 dev eth7
+      ip addr add 172.16.0.48/31 dev eth8
+      ip addr add 172.16.0.50/31 dev eth9
+      ip addr add 172.16.0.52/31 dev eth10
+      ip addr add 172.16.0.54/31 dev eth11
+      ip addr add 172.16.0.56/31 dev eth12
+      ip addr add 172.16.0.58/31 dev eth13
+      ip addr add 172.16.0.60/31 dev eth14
+      ip addr add 172.16.0.62/31 dev eth15
+      ip addr add 192.168.1.1/24 dev eth16
+      service frr start
+      sleep infinity
+      '
+  super_spine_router_2:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: super_spine_router_2
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_2_spine_router_0_0:
+        interface_name: eth0
+      super_spine_router_2_spine_router_0_1:
+        interface_name: eth1
+      super_spine_router_2_spine_router_0_2:
+        interface_name: eth2
+      super_spine_router_2_spine_router_0_3:
+        interface_name: eth3
+      super_spine_router_2_spine_router_1_0:
+        interface_name: eth4
+      super_spine_router_2_spine_router_1_1:
+        interface_name: eth5
+      super_spine_router_2_spine_router_1_2:
+        interface_name: eth6
+      super_spine_router_2_spine_router_1_3:
+        interface_name: eth7
+      super_spine_router_2_spine_router_2_0:
+        interface_name: eth8
+      super_spine_router_2_spine_router_2_1:
+        interface_name: eth9
+      super_spine_router_2_spine_router_2_2:
+        interface_name: eth10
+      super_spine_router_2_spine_router_2_3:
+        interface_name: eth11
+      super_spine_router_2_spine_router_3_0:
+        interface_name: eth12
+      super_spine_router_2_spine_router_3_1:
+        interface_name: eth13
+      super_spine_router_2_spine_router_3_2:
+        interface_name: eth14
+      super_spine_router_2_spine_router_3_3:
+        interface_name: eth15
+      super_spine_router_2_client_2:
+        interface_name: eth16
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/super_spine_router_2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.64/31 dev eth0
+      ip addr add 172.16.0.66/31 dev eth1
+      ip addr add 172.16.0.68/31 dev eth2
+      ip addr add 172.16.0.70/31 dev eth3
+      ip addr add 172.16.0.72/31 dev eth4
+      ip addr add 172.16.0.74/31 dev eth5
+      ip addr add 172.16.0.76/31 dev eth6
+      ip addr add 172.16.0.78/31 dev eth7
+      ip addr add 172.16.0.80/31 dev eth8
+      ip addr add 172.16.0.82/31 dev eth9
+      ip addr add 172.16.0.84/31 dev eth10
+      ip addr add 172.16.0.86/31 dev eth11
+      ip addr add 172.16.0.88/31 dev eth12
+      ip addr add 172.16.0.90/31 dev eth13
+      ip addr add 172.16.0.92/31 dev eth14
+      ip addr add 172.16.0.94/31 dev eth15
+      ip addr add 192.168.2.1/24 dev eth16
+      service frr start
+      sleep infinity
+      '
+  super_spine_router_3:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: super_spine_router_3
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_3_spine_router_0_0:
+        interface_name: eth0
+      super_spine_router_3_spine_router_0_1:
+        interface_name: eth1
+      super_spine_router_3_spine_router_0_2:
+        interface_name: eth2
+      super_spine_router_3_spine_router_0_3:
+        interface_name: eth3
+      super_spine_router_3_spine_router_1_0:
+        interface_name: eth4
+      super_spine_router_3_spine_router_1_1:
+        interface_name: eth5
+      super_spine_router_3_spine_router_1_2:
+        interface_name: eth6
+      super_spine_router_3_spine_router_1_3:
+        interface_name: eth7
+      super_spine_router_3_spine_router_2_0:
+        interface_name: eth8
+      super_spine_router_3_spine_router_2_1:
+        interface_name: eth9
+      super_spine_router_3_spine_router_2_2:
+        interface_name: eth10
+      super_spine_router_3_spine_router_2_3:
+        interface_name: eth11
+      super_spine_router_3_spine_router_3_0:
+        interface_name: eth12
+      super_spine_router_3_spine_router_3_1:
+        interface_name: eth13
+      super_spine_router_3_spine_router_3_2:
+        interface_name: eth14
+      super_spine_router_3_spine_router_3_3:
+        interface_name: eth15
+      super_spine_router_3_client_3:
+        interface_name: eth16
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/super_spine_router_3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.96/31 dev eth0
+      ip addr add 172.16.0.98/31 dev eth1
+      ip addr add 172.16.0.100/31 dev eth2
+      ip addr add 172.16.0.102/31 dev eth3
+      ip addr add 172.16.0.104/31 dev eth4
+      ip addr add 172.16.0.106/31 dev eth5
+      ip addr add 172.16.0.108/31 dev eth6
+      ip addr add 172.16.0.110/31 dev eth7
+      ip addr add 172.16.0.112/31 dev eth8
+      ip addr add 172.16.0.114/31 dev eth9
+      ip addr add 172.16.0.116/31 dev eth10
+      ip addr add 172.16.0.118/31 dev eth11
+      ip addr add 172.16.0.120/31 dev eth12
+      ip addr add 172.16.0.122/31 dev eth13
+      ip addr add 172.16.0.124/31 dev eth14
+      ip addr add 172.16.0.126/31 dev eth15
+      ip addr add 192.168.3.1/24 dev eth16
+      service frr start
+      sleep infinity
+      '
+  spine_router_0_0:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: spine_router_0_0
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_0_spine_router_0_0:
+        interface_name: eth0
+      super_spine_router_1_spine_router_0_0:
+        interface_name: eth1
+      super_spine_router_2_spine_router_0_0:
+        interface_name: eth2
+      super_spine_router_3_spine_router_0_0:
+        interface_name: eth3
+      spine_router_0_0_leaf_router_0_0:
+        interface_name: eth4
+      spine_router_0_0_leaf_router_0_1:
+        interface_name: eth5
+      spine_router_0_0_leaf_router_0_2:
+        interface_name: eth6
+      spine_router_0_0_leaf_router_0_3:
+        interface_name: eth7
+      spine_router_0_0_leaf_router_0_4:
+        interface_name: eth8
+      spine_router_0_0_leaf_router_0_5:
+        interface_name: eth9
+      spine_router_0_0_leaf_router_0_6:
+        interface_name: eth10
+      spine_router_0_0_leaf_router_0_7:
+        interface_name: eth11
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine_router_0_0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.1/31 dev eth0
+      ip addr add 172.16.0.33/31 dev eth1
+      ip addr add 172.16.0.65/31 dev eth2
+      ip addr add 172.16.0.97/31 dev eth3
+      ip addr add 172.16.0.128/31 dev eth4
+      ip addr add 172.16.0.130/31 dev eth5
+      ip addr add 172.16.0.132/31 dev eth6
+      ip addr add 172.16.0.134/31 dev eth7
+      ip addr add 172.16.0.136/31 dev eth8
+      ip addr add 172.16.0.138/31 dev eth9
+      ip addr add 172.16.0.140/31 dev eth10
+      ip addr add 172.16.0.142/31 dev eth11
+      service frr start
+      sleep infinity
+      '
+  spine_router_0_1:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: spine_router_0_1
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_0_spine_router_0_1:
+        interface_name: eth0
+      super_spine_router_1_spine_router_0_1:
+        interface_name: eth1
+      super_spine_router_2_spine_router_0_1:
+        interface_name: eth2
+      super_spine_router_3_spine_router_0_1:
+        interface_name: eth3
+      spine_router_0_1_leaf_router_0_0:
+        interface_name: eth4
+      spine_router_0_1_leaf_router_0_1:
+        interface_name: eth5
+      spine_router_0_1_leaf_router_0_2:
+        interface_name: eth6
+      spine_router_0_1_leaf_router_0_3:
+        interface_name: eth7
+      spine_router_0_1_leaf_router_0_4:
+        interface_name: eth8
+      spine_router_0_1_leaf_router_0_5:
+        interface_name: eth9
+      spine_router_0_1_leaf_router_0_6:
+        interface_name: eth10
+      spine_router_0_1_leaf_router_0_7:
+        interface_name: eth11
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine_router_0_1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.3/31 dev eth0
+      ip addr add 172.16.0.35/31 dev eth1
+      ip addr add 172.16.0.67/31 dev eth2
+      ip addr add 172.16.0.99/31 dev eth3
+      ip addr add 172.16.0.144/31 dev eth4
+      ip addr add 172.16.0.146/31 dev eth5
+      ip addr add 172.16.0.148/31 dev eth6
+      ip addr add 172.16.0.150/31 dev eth7
+      ip addr add 172.16.0.152/31 dev eth8
+      ip addr add 172.16.0.154/31 dev eth9
+      ip addr add 172.16.0.156/31 dev eth10
+      ip addr add 172.16.0.158/31 dev eth11
+      service frr start
+      sleep infinity
+      '
+  spine_router_0_2:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: spine_router_0_2
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_0_spine_router_0_2:
+        interface_name: eth0
+      super_spine_router_1_spine_router_0_2:
+        interface_name: eth1
+      super_spine_router_2_spine_router_0_2:
+        interface_name: eth2
+      super_spine_router_3_spine_router_0_2:
+        interface_name: eth3
+      spine_router_0_2_leaf_router_0_0:
+        interface_name: eth4
+      spine_router_0_2_leaf_router_0_1:
+        interface_name: eth5
+      spine_router_0_2_leaf_router_0_2:
+        interface_name: eth6
+      spine_router_0_2_leaf_router_0_3:
+        interface_name: eth7
+      spine_router_0_2_leaf_router_0_4:
+        interface_name: eth8
+      spine_router_0_2_leaf_router_0_5:
+        interface_name: eth9
+      spine_router_0_2_leaf_router_0_6:
+        interface_name: eth10
+      spine_router_0_2_leaf_router_0_7:
+        interface_name: eth11
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine_router_0_2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.5/31 dev eth0
+      ip addr add 172.16.0.37/31 dev eth1
+      ip addr add 172.16.0.69/31 dev eth2
+      ip addr add 172.16.0.101/31 dev eth3
+      ip addr add 172.16.0.160/31 dev eth4
+      ip addr add 172.16.0.162/31 dev eth5
+      ip addr add 172.16.0.164/31 dev eth6
+      ip addr add 172.16.0.166/31 dev eth7
+      ip addr add 172.16.0.168/31 dev eth8
+      ip addr add 172.16.0.170/31 dev eth9
+      ip addr add 172.16.0.172/31 dev eth10
+      ip addr add 172.16.0.174/31 dev eth11
+      service frr start
+      sleep infinity
+      '
+  spine_router_0_3:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: spine_router_0_3
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_0_spine_router_0_3:
+        interface_name: eth0
+      super_spine_router_1_spine_router_0_3:
+        interface_name: eth1
+      super_spine_router_2_spine_router_0_3:
+        interface_name: eth2
+      super_spine_router_3_spine_router_0_3:
+        interface_name: eth3
+      spine_router_0_3_leaf_router_0_0:
+        interface_name: eth4
+      spine_router_0_3_leaf_router_0_1:
+        interface_name: eth5
+      spine_router_0_3_leaf_router_0_2:
+        interface_name: eth6
+      spine_router_0_3_leaf_router_0_3:
+        interface_name: eth7
+      spine_router_0_3_leaf_router_0_4:
+        interface_name: eth8
+      spine_router_0_3_leaf_router_0_5:
+        interface_name: eth9
+      spine_router_0_3_leaf_router_0_6:
+        interface_name: eth10
+      spine_router_0_3_leaf_router_0_7:
+        interface_name: eth11
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine_router_0_3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.7/31 dev eth0
+      ip addr add 172.16.0.39/31 dev eth1
+      ip addr add 172.16.0.71/31 dev eth2
+      ip addr add 172.16.0.103/31 dev eth3
+      ip addr add 172.16.0.176/31 dev eth4
+      ip addr add 172.16.0.178/31 dev eth5
+      ip addr add 172.16.0.180/31 dev eth6
+      ip addr add 172.16.0.182/31 dev eth7
+      ip addr add 172.16.0.184/31 dev eth8
+      ip addr add 172.16.0.186/31 dev eth9
+      ip addr add 172.16.0.188/31 dev eth10
+      ip addr add 172.16.0.190/31 dev eth11
+      service frr start
+      sleep infinity
+      '
+  spine_router_1_0:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: spine_router_1_0
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_0_spine_router_1_0:
+        interface_name: eth0
+      super_spine_router_1_spine_router_1_0:
+        interface_name: eth1
+      super_spine_router_2_spine_router_1_0:
+        interface_name: eth2
+      super_spine_router_3_spine_router_1_0:
+        interface_name: eth3
+      spine_router_1_0_leaf_router_1_0:
+        interface_name: eth4
+      spine_router_1_0_leaf_router_1_1:
+        interface_name: eth5
+      spine_router_1_0_leaf_router_1_2:
+        interface_name: eth6
+      spine_router_1_0_leaf_router_1_3:
+        interface_name: eth7
+      spine_router_1_0_leaf_router_1_4:
+        interface_name: eth8
+      spine_router_1_0_leaf_router_1_5:
+        interface_name: eth9
+      spine_router_1_0_leaf_router_1_6:
+        interface_name: eth10
+      spine_router_1_0_leaf_router_1_7:
+        interface_name: eth11
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine_router_1_0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.9/31 dev eth0
+      ip addr add 172.16.0.41/31 dev eth1
+      ip addr add 172.16.0.73/31 dev eth2
+      ip addr add 172.16.0.105/31 dev eth3
+      ip addr add 172.16.0.192/31 dev eth4
+      ip addr add 172.16.0.194/31 dev eth5
+      ip addr add 172.16.0.196/31 dev eth6
+      ip addr add 172.16.0.198/31 dev eth7
+      ip addr add 172.16.0.200/31 dev eth8
+      ip addr add 172.16.0.202/31 dev eth9
+      ip addr add 172.16.0.204/31 dev eth10
+      ip addr add 172.16.0.206/31 dev eth11
+      service frr start
+      sleep infinity
+      '
+  spine_router_1_1:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: spine_router_1_1
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_0_spine_router_1_1:
+        interface_name: eth0
+      super_spine_router_1_spine_router_1_1:
+        interface_name: eth1
+      super_spine_router_2_spine_router_1_1:
+        interface_name: eth2
+      super_spine_router_3_spine_router_1_1:
+        interface_name: eth3
+      spine_router_1_1_leaf_router_1_0:
+        interface_name: eth4
+      spine_router_1_1_leaf_router_1_1:
+        interface_name: eth5
+      spine_router_1_1_leaf_router_1_2:
+        interface_name: eth6
+      spine_router_1_1_leaf_router_1_3:
+        interface_name: eth7
+      spine_router_1_1_leaf_router_1_4:
+        interface_name: eth8
+      spine_router_1_1_leaf_router_1_5:
+        interface_name: eth9
+      spine_router_1_1_leaf_router_1_6:
+        interface_name: eth10
+      spine_router_1_1_leaf_router_1_7:
+        interface_name: eth11
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine_router_1_1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.11/31 dev eth0
+      ip addr add 172.16.0.43/31 dev eth1
+      ip addr add 172.16.0.75/31 dev eth2
+      ip addr add 172.16.0.107/31 dev eth3
+      ip addr add 172.16.0.208/31 dev eth4
+      ip addr add 172.16.0.210/31 dev eth5
+      ip addr add 172.16.0.212/31 dev eth6
+      ip addr add 172.16.0.214/31 dev eth7
+      ip addr add 172.16.0.216/31 dev eth8
+      ip addr add 172.16.0.218/31 dev eth9
+      ip addr add 172.16.0.220/31 dev eth10
+      ip addr add 172.16.0.222/31 dev eth11
+      service frr start
+      sleep infinity
+      '
+  spine_router_1_2:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: spine_router_1_2
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_0_spine_router_1_2:
+        interface_name: eth0
+      super_spine_router_1_spine_router_1_2:
+        interface_name: eth1
+      super_spine_router_2_spine_router_1_2:
+        interface_name: eth2
+      super_spine_router_3_spine_router_1_2:
+        interface_name: eth3
+      spine_router_1_2_leaf_router_1_0:
+        interface_name: eth4
+      spine_router_1_2_leaf_router_1_1:
+        interface_name: eth5
+      spine_router_1_2_leaf_router_1_2:
+        interface_name: eth6
+      spine_router_1_2_leaf_router_1_3:
+        interface_name: eth7
+      spine_router_1_2_leaf_router_1_4:
+        interface_name: eth8
+      spine_router_1_2_leaf_router_1_5:
+        interface_name: eth9
+      spine_router_1_2_leaf_router_1_6:
+        interface_name: eth10
+      spine_router_1_2_leaf_router_1_7:
+        interface_name: eth11
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine_router_1_2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.13/31 dev eth0
+      ip addr add 172.16.0.45/31 dev eth1
+      ip addr add 172.16.0.77/31 dev eth2
+      ip addr add 172.16.0.109/31 dev eth3
+      ip addr add 172.16.0.224/31 dev eth4
+      ip addr add 172.16.0.226/31 dev eth5
+      ip addr add 172.16.0.228/31 dev eth6
+      ip addr add 172.16.0.230/31 dev eth7
+      ip addr add 172.16.0.232/31 dev eth8
+      ip addr add 172.16.0.234/31 dev eth9
+      ip addr add 172.16.0.236/31 dev eth10
+      ip addr add 172.16.0.238/31 dev eth11
+      service frr start
+      sleep infinity
+      '
+  spine_router_1_3:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: spine_router_1_3
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_0_spine_router_1_3:
+        interface_name: eth0
+      super_spine_router_1_spine_router_1_3:
+        interface_name: eth1
+      super_spine_router_2_spine_router_1_3:
+        interface_name: eth2
+      super_spine_router_3_spine_router_1_3:
+        interface_name: eth3
+      spine_router_1_3_leaf_router_1_0:
+        interface_name: eth4
+      spine_router_1_3_leaf_router_1_1:
+        interface_name: eth5
+      spine_router_1_3_leaf_router_1_2:
+        interface_name: eth6
+      spine_router_1_3_leaf_router_1_3:
+        interface_name: eth7
+      spine_router_1_3_leaf_router_1_4:
+        interface_name: eth8
+      spine_router_1_3_leaf_router_1_5:
+        interface_name: eth9
+      spine_router_1_3_leaf_router_1_6:
+        interface_name: eth10
+      spine_router_1_3_leaf_router_1_7:
+        interface_name: eth11
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine_router_1_3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.15/31 dev eth0
+      ip addr add 172.16.0.47/31 dev eth1
+      ip addr add 172.16.0.79/31 dev eth2
+      ip addr add 172.16.0.111/31 dev eth3
+      ip addr add 172.16.0.240/31 dev eth4
+      ip addr add 172.16.0.242/31 dev eth5
+      ip addr add 172.16.0.244/31 dev eth6
+      ip addr add 172.16.0.246/31 dev eth7
+      ip addr add 172.16.0.248/31 dev eth8
+      ip addr add 172.16.0.250/31 dev eth9
+      ip addr add 172.16.0.252/31 dev eth10
+      ip addr add 172.16.0.254/31 dev eth11
+      service frr start
+      sleep infinity
+      '
+  spine_router_2_0:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: spine_router_2_0
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_0_spine_router_2_0:
+        interface_name: eth0
+      super_spine_router_1_spine_router_2_0:
+        interface_name: eth1
+      super_spine_router_2_spine_router_2_0:
+        interface_name: eth2
+      super_spine_router_3_spine_router_2_0:
+        interface_name: eth3
+      spine_router_2_0_leaf_router_2_0:
+        interface_name: eth4
+      spine_router_2_0_leaf_router_2_1:
+        interface_name: eth5
+      spine_router_2_0_leaf_router_2_2:
+        interface_name: eth6
+      spine_router_2_0_leaf_router_2_3:
+        interface_name: eth7
+      spine_router_2_0_leaf_router_2_4:
+        interface_name: eth8
+      spine_router_2_0_leaf_router_2_5:
+        interface_name: eth9
+      spine_router_2_0_leaf_router_2_6:
+        interface_name: eth10
+      spine_router_2_0_leaf_router_2_7:
+        interface_name: eth11
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine_router_2_0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.17/31 dev eth0
+      ip addr add 172.16.0.49/31 dev eth1
+      ip addr add 172.16.0.81/31 dev eth2
+      ip addr add 172.16.0.113/31 dev eth3
+      ip addr add 172.16.1.0/31 dev eth4
+      ip addr add 172.16.1.2/31 dev eth5
+      ip addr add 172.16.1.4/31 dev eth6
+      ip addr add 172.16.1.6/31 dev eth7
+      ip addr add 172.16.1.8/31 dev eth8
+      ip addr add 172.16.1.10/31 dev eth9
+      ip addr add 172.16.1.12/31 dev eth10
+      ip addr add 172.16.1.14/31 dev eth11
+      service frr start
+      sleep infinity
+      '
+  spine_router_2_1:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: spine_router_2_1
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_0_spine_router_2_1:
+        interface_name: eth0
+      super_spine_router_1_spine_router_2_1:
+        interface_name: eth1
+      super_spine_router_2_spine_router_2_1:
+        interface_name: eth2
+      super_spine_router_3_spine_router_2_1:
+        interface_name: eth3
+      spine_router_2_1_leaf_router_2_0:
+        interface_name: eth4
+      spine_router_2_1_leaf_router_2_1:
+        interface_name: eth5
+      spine_router_2_1_leaf_router_2_2:
+        interface_name: eth6
+      spine_router_2_1_leaf_router_2_3:
+        interface_name: eth7
+      spine_router_2_1_leaf_router_2_4:
+        interface_name: eth8
+      spine_router_2_1_leaf_router_2_5:
+        interface_name: eth9
+      spine_router_2_1_leaf_router_2_6:
+        interface_name: eth10
+      spine_router_2_1_leaf_router_2_7:
+        interface_name: eth11
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine_router_2_1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.19/31 dev eth0
+      ip addr add 172.16.0.51/31 dev eth1
+      ip addr add 172.16.0.83/31 dev eth2
+      ip addr add 172.16.0.115/31 dev eth3
+      ip addr add 172.16.1.16/31 dev eth4
+      ip addr add 172.16.1.18/31 dev eth5
+      ip addr add 172.16.1.20/31 dev eth6
+      ip addr add 172.16.1.22/31 dev eth7
+      ip addr add 172.16.1.24/31 dev eth8
+      ip addr add 172.16.1.26/31 dev eth9
+      ip addr add 172.16.1.28/31 dev eth10
+      ip addr add 172.16.1.30/31 dev eth11
+      service frr start
+      sleep infinity
+      '
+  spine_router_2_2:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: spine_router_2_2
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_0_spine_router_2_2:
+        interface_name: eth0
+      super_spine_router_1_spine_router_2_2:
+        interface_name: eth1
+      super_spine_router_2_spine_router_2_2:
+        interface_name: eth2
+      super_spine_router_3_spine_router_2_2:
+        interface_name: eth3
+      spine_router_2_2_leaf_router_2_0:
+        interface_name: eth4
+      spine_router_2_2_leaf_router_2_1:
+        interface_name: eth5
+      spine_router_2_2_leaf_router_2_2:
+        interface_name: eth6
+      spine_router_2_2_leaf_router_2_3:
+        interface_name: eth7
+      spine_router_2_2_leaf_router_2_4:
+        interface_name: eth8
+      spine_router_2_2_leaf_router_2_5:
+        interface_name: eth9
+      spine_router_2_2_leaf_router_2_6:
+        interface_name: eth10
+      spine_router_2_2_leaf_router_2_7:
+        interface_name: eth11
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine_router_2_2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.21/31 dev eth0
+      ip addr add 172.16.0.53/31 dev eth1
+      ip addr add 172.16.0.85/31 dev eth2
+      ip addr add 172.16.0.117/31 dev eth3
+      ip addr add 172.16.1.32/31 dev eth4
+      ip addr add 172.16.1.34/31 dev eth5
+      ip addr add 172.16.1.36/31 dev eth6
+      ip addr add 172.16.1.38/31 dev eth7
+      ip addr add 172.16.1.40/31 dev eth8
+      ip addr add 172.16.1.42/31 dev eth9
+      ip addr add 172.16.1.44/31 dev eth10
+      ip addr add 172.16.1.46/31 dev eth11
+      service frr start
+      sleep infinity
+      '
+  spine_router_2_3:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: spine_router_2_3
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_0_spine_router_2_3:
+        interface_name: eth0
+      super_spine_router_1_spine_router_2_3:
+        interface_name: eth1
+      super_spine_router_2_spine_router_2_3:
+        interface_name: eth2
+      super_spine_router_3_spine_router_2_3:
+        interface_name: eth3
+      spine_router_2_3_leaf_router_2_0:
+        interface_name: eth4
+      spine_router_2_3_leaf_router_2_1:
+        interface_name: eth5
+      spine_router_2_3_leaf_router_2_2:
+        interface_name: eth6
+      spine_router_2_3_leaf_router_2_3:
+        interface_name: eth7
+      spine_router_2_3_leaf_router_2_4:
+        interface_name: eth8
+      spine_router_2_3_leaf_router_2_5:
+        interface_name: eth9
+      spine_router_2_3_leaf_router_2_6:
+        interface_name: eth10
+      spine_router_2_3_leaf_router_2_7:
+        interface_name: eth11
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine_router_2_3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.23/31 dev eth0
+      ip addr add 172.16.0.55/31 dev eth1
+      ip addr add 172.16.0.87/31 dev eth2
+      ip addr add 172.16.0.119/31 dev eth3
+      ip addr add 172.16.1.48/31 dev eth4
+      ip addr add 172.16.1.50/31 dev eth5
+      ip addr add 172.16.1.52/31 dev eth6
+      ip addr add 172.16.1.54/31 dev eth7
+      ip addr add 172.16.1.56/31 dev eth8
+      ip addr add 172.16.1.58/31 dev eth9
+      ip addr add 172.16.1.60/31 dev eth10
+      ip addr add 172.16.1.62/31 dev eth11
+      service frr start
+      sleep infinity
+      '
+  spine_router_3_0:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: spine_router_3_0
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_0_spine_router_3_0:
+        interface_name: eth0
+      super_spine_router_1_spine_router_3_0:
+        interface_name: eth1
+      super_spine_router_2_spine_router_3_0:
+        interface_name: eth2
+      super_spine_router_3_spine_router_3_0:
+        interface_name: eth3
+      spine_router_3_0_leaf_router_3_0:
+        interface_name: eth4
+      spine_router_3_0_leaf_router_3_1:
+        interface_name: eth5
+      spine_router_3_0_leaf_router_3_2:
+        interface_name: eth6
+      spine_router_3_0_leaf_router_3_3:
+        interface_name: eth7
+      spine_router_3_0_leaf_router_3_4:
+        interface_name: eth8
+      spine_router_3_0_leaf_router_3_5:
+        interface_name: eth9
+      spine_router_3_0_leaf_router_3_6:
+        interface_name: eth10
+      spine_router_3_0_leaf_router_3_7:
+        interface_name: eth11
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine_router_3_0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.25/31 dev eth0
+      ip addr add 172.16.0.57/31 dev eth1
+      ip addr add 172.16.0.89/31 dev eth2
+      ip addr add 172.16.0.121/31 dev eth3
+      ip addr add 172.16.1.64/31 dev eth4
+      ip addr add 172.16.1.66/31 dev eth5
+      ip addr add 172.16.1.68/31 dev eth6
+      ip addr add 172.16.1.70/31 dev eth7
+      ip addr add 172.16.1.72/31 dev eth8
+      ip addr add 172.16.1.74/31 dev eth9
+      ip addr add 172.16.1.76/31 dev eth10
+      ip addr add 172.16.1.78/31 dev eth11
+      service frr start
+      sleep infinity
+      '
+  spine_router_3_1:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: spine_router_3_1
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_0_spine_router_3_1:
+        interface_name: eth0
+      super_spine_router_1_spine_router_3_1:
+        interface_name: eth1
+      super_spine_router_2_spine_router_3_1:
+        interface_name: eth2
+      super_spine_router_3_spine_router_3_1:
+        interface_name: eth3
+      spine_router_3_1_leaf_router_3_0:
+        interface_name: eth4
+      spine_router_3_1_leaf_router_3_1:
+        interface_name: eth5
+      spine_router_3_1_leaf_router_3_2:
+        interface_name: eth6
+      spine_router_3_1_leaf_router_3_3:
+        interface_name: eth7
+      spine_router_3_1_leaf_router_3_4:
+        interface_name: eth8
+      spine_router_3_1_leaf_router_3_5:
+        interface_name: eth9
+      spine_router_3_1_leaf_router_3_6:
+        interface_name: eth10
+      spine_router_3_1_leaf_router_3_7:
+        interface_name: eth11
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine_router_3_1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.27/31 dev eth0
+      ip addr add 172.16.0.59/31 dev eth1
+      ip addr add 172.16.0.91/31 dev eth2
+      ip addr add 172.16.0.123/31 dev eth3
+      ip addr add 172.16.1.80/31 dev eth4
+      ip addr add 172.16.1.82/31 dev eth5
+      ip addr add 172.16.1.84/31 dev eth6
+      ip addr add 172.16.1.86/31 dev eth7
+      ip addr add 172.16.1.88/31 dev eth8
+      ip addr add 172.16.1.90/31 dev eth9
+      ip addr add 172.16.1.92/31 dev eth10
+      ip addr add 172.16.1.94/31 dev eth11
+      service frr start
+      sleep infinity
+      '
+  spine_router_3_2:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: spine_router_3_2
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_0_spine_router_3_2:
+        interface_name: eth0
+      super_spine_router_1_spine_router_3_2:
+        interface_name: eth1
+      super_spine_router_2_spine_router_3_2:
+        interface_name: eth2
+      super_spine_router_3_spine_router_3_2:
+        interface_name: eth3
+      spine_router_3_2_leaf_router_3_0:
+        interface_name: eth4
+      spine_router_3_2_leaf_router_3_1:
+        interface_name: eth5
+      spine_router_3_2_leaf_router_3_2:
+        interface_name: eth6
+      spine_router_3_2_leaf_router_3_3:
+        interface_name: eth7
+      spine_router_3_2_leaf_router_3_4:
+        interface_name: eth8
+      spine_router_3_2_leaf_router_3_5:
+        interface_name: eth9
+      spine_router_3_2_leaf_router_3_6:
+        interface_name: eth10
+      spine_router_3_2_leaf_router_3_7:
+        interface_name: eth11
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine_router_3_2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.29/31 dev eth0
+      ip addr add 172.16.0.61/31 dev eth1
+      ip addr add 172.16.0.93/31 dev eth2
+      ip addr add 172.16.0.125/31 dev eth3
+      ip addr add 172.16.1.96/31 dev eth4
+      ip addr add 172.16.1.98/31 dev eth5
+      ip addr add 172.16.1.100/31 dev eth6
+      ip addr add 172.16.1.102/31 dev eth7
+      ip addr add 172.16.1.104/31 dev eth8
+      ip addr add 172.16.1.106/31 dev eth9
+      ip addr add 172.16.1.108/31 dev eth10
+      ip addr add 172.16.1.110/31 dev eth11
+      service frr start
+      sleep infinity
+      '
+  spine_router_3_3:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: spine_router_3_3
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      super_spine_router_0_spine_router_3_3:
+        interface_name: eth0
+      super_spine_router_1_spine_router_3_3:
+        interface_name: eth1
+      super_spine_router_2_spine_router_3_3:
+        interface_name: eth2
+      super_spine_router_3_spine_router_3_3:
+        interface_name: eth3
+      spine_router_3_3_leaf_router_3_0:
+        interface_name: eth4
+      spine_router_3_3_leaf_router_3_1:
+        interface_name: eth5
+      spine_router_3_3_leaf_router_3_2:
+        interface_name: eth6
+      spine_router_3_3_leaf_router_3_3:
+        interface_name: eth7
+      spine_router_3_3_leaf_router_3_4:
+        interface_name: eth8
+      spine_router_3_3_leaf_router_3_5:
+        interface_name: eth9
+      spine_router_3_3_leaf_router_3_6:
+        interface_name: eth10
+      spine_router_3_3_leaf_router_3_7:
+        interface_name: eth11
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine_router_3_3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.31/31 dev eth0
+      ip addr add 172.16.0.63/31 dev eth1
+      ip addr add 172.16.0.95/31 dev eth2
+      ip addr add 172.16.0.127/31 dev eth3
+      ip addr add 172.16.1.112/31 dev eth4
+      ip addr add 172.16.1.114/31 dev eth5
+      ip addr add 172.16.1.116/31 dev eth6
+      ip addr add 172.16.1.118/31 dev eth7
+      ip addr add 172.16.1.120/31 dev eth8
+      ip addr add 172.16.1.122/31 dev eth9
+      ip addr add 172.16.1.124/31 dev eth10
+      ip addr add 172.16.1.126/31 dev eth11
+      service frr start
+      sleep infinity
+      '
+  leaf_router_0_0:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_0_0
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_0_0_leaf_router_0_0:
+        interface_name: eth0
+      spine_router_0_1_leaf_router_0_0:
+        interface_name: eth1
+      spine_router_0_2_leaf_router_0_0:
+        interface_name: eth2
+      spine_router_0_3_leaf_router_0_0:
+        interface_name: eth3
+      leaf_router_0_0_dns_pod0:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_0_0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.129/31 dev eth0
+      ip addr add 172.16.0.145/31 dev eth1
+      ip addr add 172.16.0.161/31 dev eth2
+      ip addr add 172.16.0.177/31 dev eth3
+      ip addr add 10.0.0.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_0_1:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_0_1
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_0_0_leaf_router_0_1:
+        interface_name: eth0
+      spine_router_0_1_leaf_router_0_1:
+        interface_name: eth1
+      spine_router_0_2_leaf_router_0_1:
+        interface_name: eth2
+      spine_router_0_3_leaf_router_0_1:
+        interface_name: eth3
+      leaf_router_0_1_webserver0_pod0:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_0_1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.131/31 dev eth0
+      ip addr add 172.16.0.147/31 dev eth1
+      ip addr add 172.16.0.163/31 dev eth2
+      ip addr add 172.16.0.179/31 dev eth3
+      ip addr add 10.0.1.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_0_2:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_0_2
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_0_0_leaf_router_0_2:
+        interface_name: eth0
+      spine_router_0_1_leaf_router_0_2:
+        interface_name: eth1
+      spine_router_0_2_leaf_router_0_2:
+        interface_name: eth2
+      spine_router_0_3_leaf_router_0_2:
+        interface_name: eth3
+      leaf_router_0_2_webserver1_pod0:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_0_2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.133/31 dev eth0
+      ip addr add 172.16.0.149/31 dev eth1
+      ip addr add 172.16.0.165/31 dev eth2
+      ip addr add 172.16.0.181/31 dev eth3
+      ip addr add 10.0.2.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_0_3:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_0_3
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_0_0_leaf_router_0_3:
+        interface_name: eth0
+      spine_router_0_1_leaf_router_0_3:
+        interface_name: eth1
+      spine_router_0_2_leaf_router_0_3:
+        interface_name: eth2
+      spine_router_0_3_leaf_router_0_3:
+        interface_name: eth3
+      leaf_router_0_3_webserver2_pod0:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_0_3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.135/31 dev eth0
+      ip addr add 172.16.0.151/31 dev eth1
+      ip addr add 172.16.0.167/31 dev eth2
+      ip addr add 172.16.0.183/31 dev eth3
+      ip addr add 10.0.3.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_0_4:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_0_4
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_0_0_leaf_router_0_4:
+        interface_name: eth0
+      spine_router_0_1_leaf_router_0_4:
+        interface_name: eth1
+      spine_router_0_2_leaf_router_0_4:
+        interface_name: eth2
+      spine_router_0_3_leaf_router_0_4:
+        interface_name: eth3
+      leaf_router_0_4_webserver3_pod0:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_0_4:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.137/31 dev eth0
+      ip addr add 172.16.0.153/31 dev eth1
+      ip addr add 172.16.0.169/31 dev eth2
+      ip addr add 172.16.0.185/31 dev eth3
+      ip addr add 10.0.4.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_0_5:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_0_5
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_0_0_leaf_router_0_5:
+        interface_name: eth0
+      spine_router_0_1_leaf_router_0_5:
+        interface_name: eth1
+      spine_router_0_2_leaf_router_0_5:
+        interface_name: eth2
+      spine_router_0_3_leaf_router_0_5:
+        interface_name: eth3
+      leaf_router_0_5_webserver4_pod0:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_0_5:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.139/31 dev eth0
+      ip addr add 172.16.0.155/31 dev eth1
+      ip addr add 172.16.0.171/31 dev eth2
+      ip addr add 172.16.0.187/31 dev eth3
+      ip addr add 10.0.5.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_0_6:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_0_6
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_0_0_leaf_router_0_6:
+        interface_name: eth0
+      spine_router_0_1_leaf_router_0_6:
+        interface_name: eth1
+      spine_router_0_2_leaf_router_0_6:
+        interface_name: eth2
+      spine_router_0_3_leaf_router_0_6:
+        interface_name: eth3
+      leaf_router_0_6_webserver5_pod0:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_0_6:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.141/31 dev eth0
+      ip addr add 172.16.0.157/31 dev eth1
+      ip addr add 172.16.0.173/31 dev eth2
+      ip addr add 172.16.0.189/31 dev eth3
+      ip addr add 10.0.6.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_0_7:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_0_7
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_0_0_leaf_router_0_7:
+        interface_name: eth0
+      spine_router_0_1_leaf_router_0_7:
+        interface_name: eth1
+      spine_router_0_2_leaf_router_0_7:
+        interface_name: eth2
+      spine_router_0_3_leaf_router_0_7:
+        interface_name: eth3
+      leaf_router_0_7_webserver6_pod0:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_0_7:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.143/31 dev eth0
+      ip addr add 172.16.0.159/31 dev eth1
+      ip addr add 172.16.0.175/31 dev eth2
+      ip addr add 172.16.0.191/31 dev eth3
+      ip addr add 10.0.7.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_1_0:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_1_0
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_1_0_leaf_router_1_0:
+        interface_name: eth0
+      spine_router_1_1_leaf_router_1_0:
+        interface_name: eth1
+      spine_router_1_2_leaf_router_1_0:
+        interface_name: eth2
+      spine_router_1_3_leaf_router_1_0:
+        interface_name: eth3
+      leaf_router_1_0_dns_pod1:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_1_0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.193/31 dev eth0
+      ip addr add 172.16.0.209/31 dev eth1
+      ip addr add 172.16.0.225/31 dev eth2
+      ip addr add 172.16.0.241/31 dev eth3
+      ip addr add 10.1.0.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_1_1:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_1_1
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_1_0_leaf_router_1_1:
+        interface_name: eth0
+      spine_router_1_1_leaf_router_1_1:
+        interface_name: eth1
+      spine_router_1_2_leaf_router_1_1:
+        interface_name: eth2
+      spine_router_1_3_leaf_router_1_1:
+        interface_name: eth3
+      leaf_router_1_1_webserver0_pod1:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_1_1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.195/31 dev eth0
+      ip addr add 172.16.0.211/31 dev eth1
+      ip addr add 172.16.0.227/31 dev eth2
+      ip addr add 172.16.0.243/31 dev eth3
+      ip addr add 10.1.1.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_1_2:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_1_2
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_1_0_leaf_router_1_2:
+        interface_name: eth0
+      spine_router_1_1_leaf_router_1_2:
+        interface_name: eth1
+      spine_router_1_2_leaf_router_1_2:
+        interface_name: eth2
+      spine_router_1_3_leaf_router_1_2:
+        interface_name: eth3
+      leaf_router_1_2_webserver1_pod1:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_1_2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.197/31 dev eth0
+      ip addr add 172.16.0.213/31 dev eth1
+      ip addr add 172.16.0.229/31 dev eth2
+      ip addr add 172.16.0.245/31 dev eth3
+      ip addr add 10.1.2.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_1_3:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_1_3
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_1_0_leaf_router_1_3:
+        interface_name: eth0
+      spine_router_1_1_leaf_router_1_3:
+        interface_name: eth1
+      spine_router_1_2_leaf_router_1_3:
+        interface_name: eth2
+      spine_router_1_3_leaf_router_1_3:
+        interface_name: eth3
+      leaf_router_1_3_webserver2_pod1:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_1_3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.199/31 dev eth0
+      ip addr add 172.16.0.215/31 dev eth1
+      ip addr add 172.16.0.231/31 dev eth2
+      ip addr add 172.16.0.247/31 dev eth3
+      ip addr add 10.1.3.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_1_4:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_1_4
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_1_0_leaf_router_1_4:
+        interface_name: eth0
+      spine_router_1_1_leaf_router_1_4:
+        interface_name: eth1
+      spine_router_1_2_leaf_router_1_4:
+        interface_name: eth2
+      spine_router_1_3_leaf_router_1_4:
+        interface_name: eth3
+      leaf_router_1_4_webserver3_pod1:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_1_4:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.201/31 dev eth0
+      ip addr add 172.16.0.217/31 dev eth1
+      ip addr add 172.16.0.233/31 dev eth2
+      ip addr add 172.16.0.249/31 dev eth3
+      ip addr add 10.1.4.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_1_5:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_1_5
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_1_0_leaf_router_1_5:
+        interface_name: eth0
+      spine_router_1_1_leaf_router_1_5:
+        interface_name: eth1
+      spine_router_1_2_leaf_router_1_5:
+        interface_name: eth2
+      spine_router_1_3_leaf_router_1_5:
+        interface_name: eth3
+      leaf_router_1_5_webserver4_pod1:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_1_5:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.203/31 dev eth0
+      ip addr add 172.16.0.219/31 dev eth1
+      ip addr add 172.16.0.235/31 dev eth2
+      ip addr add 172.16.0.251/31 dev eth3
+      ip addr add 10.1.5.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_1_6:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_1_6
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_1_0_leaf_router_1_6:
+        interface_name: eth0
+      spine_router_1_1_leaf_router_1_6:
+        interface_name: eth1
+      spine_router_1_2_leaf_router_1_6:
+        interface_name: eth2
+      spine_router_1_3_leaf_router_1_6:
+        interface_name: eth3
+      leaf_router_1_6_webserver5_pod1:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_1_6:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.205/31 dev eth0
+      ip addr add 172.16.0.221/31 dev eth1
+      ip addr add 172.16.0.237/31 dev eth2
+      ip addr add 172.16.0.253/31 dev eth3
+      ip addr add 10.1.6.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_1_7:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_1_7
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_1_0_leaf_router_1_7:
+        interface_name: eth0
+      spine_router_1_1_leaf_router_1_7:
+        interface_name: eth1
+      spine_router_1_2_leaf_router_1_7:
+        interface_name: eth2
+      spine_router_1_3_leaf_router_1_7:
+        interface_name: eth3
+      leaf_router_1_7_webserver6_pod1:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_1_7:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.0.207/31 dev eth0
+      ip addr add 172.16.0.223/31 dev eth1
+      ip addr add 172.16.0.239/31 dev eth2
+      ip addr add 172.16.0.255/31 dev eth3
+      ip addr add 10.1.7.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_2_0:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_2_0
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_2_0_leaf_router_2_0:
+        interface_name: eth0
+      spine_router_2_1_leaf_router_2_0:
+        interface_name: eth1
+      spine_router_2_2_leaf_router_2_0:
+        interface_name: eth2
+      spine_router_2_3_leaf_router_2_0:
+        interface_name: eth3
+      leaf_router_2_0_dns_pod2:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_2_0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.1.1/31 dev eth0
+      ip addr add 172.16.1.17/31 dev eth1
+      ip addr add 172.16.1.33/31 dev eth2
+      ip addr add 172.16.1.49/31 dev eth3
+      ip addr add 10.2.0.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_2_1:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_2_1
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_2_0_leaf_router_2_1:
+        interface_name: eth0
+      spine_router_2_1_leaf_router_2_1:
+        interface_name: eth1
+      spine_router_2_2_leaf_router_2_1:
+        interface_name: eth2
+      spine_router_2_3_leaf_router_2_1:
+        interface_name: eth3
+      leaf_router_2_1_webserver0_pod2:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_2_1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.1.3/31 dev eth0
+      ip addr add 172.16.1.19/31 dev eth1
+      ip addr add 172.16.1.35/31 dev eth2
+      ip addr add 172.16.1.51/31 dev eth3
+      ip addr add 10.2.1.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_2_2:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_2_2
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_2_0_leaf_router_2_2:
+        interface_name: eth0
+      spine_router_2_1_leaf_router_2_2:
+        interface_name: eth1
+      spine_router_2_2_leaf_router_2_2:
+        interface_name: eth2
+      spine_router_2_3_leaf_router_2_2:
+        interface_name: eth3
+      leaf_router_2_2_webserver1_pod2:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_2_2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.1.5/31 dev eth0
+      ip addr add 172.16.1.21/31 dev eth1
+      ip addr add 172.16.1.37/31 dev eth2
+      ip addr add 172.16.1.53/31 dev eth3
+      ip addr add 10.2.2.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_2_3:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_2_3
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_2_0_leaf_router_2_3:
+        interface_name: eth0
+      spine_router_2_1_leaf_router_2_3:
+        interface_name: eth1
+      spine_router_2_2_leaf_router_2_3:
+        interface_name: eth2
+      spine_router_2_3_leaf_router_2_3:
+        interface_name: eth3
+      leaf_router_2_3_webserver2_pod2:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_2_3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.1.7/31 dev eth0
+      ip addr add 172.16.1.23/31 dev eth1
+      ip addr add 172.16.1.39/31 dev eth2
+      ip addr add 172.16.1.55/31 dev eth3
+      ip addr add 10.2.3.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_2_4:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_2_4
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_2_0_leaf_router_2_4:
+        interface_name: eth0
+      spine_router_2_1_leaf_router_2_4:
+        interface_name: eth1
+      spine_router_2_2_leaf_router_2_4:
+        interface_name: eth2
+      spine_router_2_3_leaf_router_2_4:
+        interface_name: eth3
+      leaf_router_2_4_webserver3_pod2:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_2_4:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.1.9/31 dev eth0
+      ip addr add 172.16.1.25/31 dev eth1
+      ip addr add 172.16.1.41/31 dev eth2
+      ip addr add 172.16.1.57/31 dev eth3
+      ip addr add 10.2.4.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_2_5:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_2_5
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_2_0_leaf_router_2_5:
+        interface_name: eth0
+      spine_router_2_1_leaf_router_2_5:
+        interface_name: eth1
+      spine_router_2_2_leaf_router_2_5:
+        interface_name: eth2
+      spine_router_2_3_leaf_router_2_5:
+        interface_name: eth3
+      leaf_router_2_5_webserver4_pod2:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_2_5:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.1.11/31 dev eth0
+      ip addr add 172.16.1.27/31 dev eth1
+      ip addr add 172.16.1.43/31 dev eth2
+      ip addr add 172.16.1.59/31 dev eth3
+      ip addr add 10.2.5.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_2_6:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_2_6
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_2_0_leaf_router_2_6:
+        interface_name: eth0
+      spine_router_2_1_leaf_router_2_6:
+        interface_name: eth1
+      spine_router_2_2_leaf_router_2_6:
+        interface_name: eth2
+      spine_router_2_3_leaf_router_2_6:
+        interface_name: eth3
+      leaf_router_2_6_webserver5_pod2:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_2_6:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.1.13/31 dev eth0
+      ip addr add 172.16.1.29/31 dev eth1
+      ip addr add 172.16.1.45/31 dev eth2
+      ip addr add 172.16.1.61/31 dev eth3
+      ip addr add 10.2.6.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_2_7:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_2_7
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_2_0_leaf_router_2_7:
+        interface_name: eth0
+      spine_router_2_1_leaf_router_2_7:
+        interface_name: eth1
+      spine_router_2_2_leaf_router_2_7:
+        interface_name: eth2
+      spine_router_2_3_leaf_router_2_7:
+        interface_name: eth3
+      leaf_router_2_7_webserver6_pod2:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_2_7:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.1.15/31 dev eth0
+      ip addr add 172.16.1.31/31 dev eth1
+      ip addr add 172.16.1.47/31 dev eth2
+      ip addr add 172.16.1.63/31 dev eth3
+      ip addr add 10.2.7.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_3_0:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_3_0
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_3_0_leaf_router_3_0:
+        interface_name: eth0
+      spine_router_3_1_leaf_router_3_0:
+        interface_name: eth1
+      spine_router_3_2_leaf_router_3_0:
+        interface_name: eth2
+      spine_router_3_3_leaf_router_3_0:
+        interface_name: eth3
+      leaf_router_3_0_dns_pod3:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_3_0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.1.65/31 dev eth0
+      ip addr add 172.16.1.81/31 dev eth1
+      ip addr add 172.16.1.97/31 dev eth2
+      ip addr add 172.16.1.113/31 dev eth3
+      ip addr add 10.3.0.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_3_1:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_3_1
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_3_0_leaf_router_3_1:
+        interface_name: eth0
+      spine_router_3_1_leaf_router_3_1:
+        interface_name: eth1
+      spine_router_3_2_leaf_router_3_1:
+        interface_name: eth2
+      spine_router_3_3_leaf_router_3_1:
+        interface_name: eth3
+      leaf_router_3_1_webserver0_pod3:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_3_1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.1.67/31 dev eth0
+      ip addr add 172.16.1.83/31 dev eth1
+      ip addr add 172.16.1.99/31 dev eth2
+      ip addr add 172.16.1.115/31 dev eth3
+      ip addr add 10.3.1.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_3_2:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_3_2
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_3_0_leaf_router_3_2:
+        interface_name: eth0
+      spine_router_3_1_leaf_router_3_2:
+        interface_name: eth1
+      spine_router_3_2_leaf_router_3_2:
+        interface_name: eth2
+      spine_router_3_3_leaf_router_3_2:
+        interface_name: eth3
+      leaf_router_3_2_webserver1_pod3:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_3_2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.1.69/31 dev eth0
+      ip addr add 172.16.1.85/31 dev eth1
+      ip addr add 172.16.1.101/31 dev eth2
+      ip addr add 172.16.1.117/31 dev eth3
+      ip addr add 10.3.2.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_3_3:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_3_3
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_3_0_leaf_router_3_3:
+        interface_name: eth0
+      spine_router_3_1_leaf_router_3_3:
+        interface_name: eth1
+      spine_router_3_2_leaf_router_3_3:
+        interface_name: eth2
+      spine_router_3_3_leaf_router_3_3:
+        interface_name: eth3
+      leaf_router_3_3_webserver2_pod3:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_3_3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.1.71/31 dev eth0
+      ip addr add 172.16.1.87/31 dev eth1
+      ip addr add 172.16.1.103/31 dev eth2
+      ip addr add 172.16.1.119/31 dev eth3
+      ip addr add 10.3.3.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_3_4:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_3_4
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_3_0_leaf_router_3_4:
+        interface_name: eth0
+      spine_router_3_1_leaf_router_3_4:
+        interface_name: eth1
+      spine_router_3_2_leaf_router_3_4:
+        interface_name: eth2
+      spine_router_3_3_leaf_router_3_4:
+        interface_name: eth3
+      leaf_router_3_4_webserver3_pod3:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_3_4:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.1.73/31 dev eth0
+      ip addr add 172.16.1.89/31 dev eth1
+      ip addr add 172.16.1.105/31 dev eth2
+      ip addr add 172.16.1.121/31 dev eth3
+      ip addr add 10.3.4.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_3_5:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_3_5
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_3_0_leaf_router_3_5:
+        interface_name: eth0
+      spine_router_3_1_leaf_router_3_5:
+        interface_name: eth1
+      spine_router_3_2_leaf_router_3_5:
+        interface_name: eth2
+      spine_router_3_3_leaf_router_3_5:
+        interface_name: eth3
+      leaf_router_3_5_webserver4_pod3:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_3_5:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.1.75/31 dev eth0
+      ip addr add 172.16.1.91/31 dev eth1
+      ip addr add 172.16.1.107/31 dev eth2
+      ip addr add 172.16.1.123/31 dev eth3
+      ip addr add 10.3.5.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_3_6:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_3_6
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_3_0_leaf_router_3_6:
+        interface_name: eth0
+      spine_router_3_1_leaf_router_3_6:
+        interface_name: eth1
+      spine_router_3_2_leaf_router_3_6:
+        interface_name: eth2
+      spine_router_3_3_leaf_router_3_6:
+        interface_name: eth3
+      leaf_router_3_6_webserver5_pod3:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_3_6:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.1.77/31 dev eth0
+      ip addr add 172.16.1.93/31 dev eth1
+      ip addr add 172.16.1.109/31 dev eth2
+      ip addr add 172.16.1.125/31 dev eth3
+      ip addr add 10.3.6.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  leaf_router_3_7:
+    image: kathara/nika-frr
+    x-local: true
+    init: true
+    hostname: leaf_router_3_7
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_router_3_0_leaf_router_3_7:
+        interface_name: eth0
+      spine_router_3_1_leaf_router_3_7:
+        interface_name: eth1
+      spine_router_3_2_leaf_router_3_7:
+        interface_name: eth2
+      spine_router_3_3_leaf_router_3_7:
+        interface_name: eth3
+      leaf_router_3_7_webserver6_pod3:
+        interface_name: eth4
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf_router_3_7:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 172.16.1.79/31 dev eth0
+      ip addr add 172.16.1.95/31 dev eth1
+      ip addr add 172.16.1.111/31 dev eth2
+      ip addr add 172.16.1.127/31 dev eth3
+      ip addr add 10.3.7.1/24 dev eth4
+      service frr start
+      sleep infinity
+      '
+  dns_pod0:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: dns_pod0
+    cap_add: &id002
+    - NET_ADMIN
+    privileged: true
+    networks:
+      leaf_router_0_0_dns_pod0:
+        interface_name: eth0
+    volumes:
+    - ./topology/dns_pod0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.0.0.2/24 dev eth0
+      ip route add default via 10.0.0.1 dev eth0
+      systemctl start named
+      sleep infinity
+      '
+  dns_pod1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: dns_pod1
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_1_0_dns_pod1:
+        interface_name: eth0
+    volumes:
+    - ./topology/dns_pod1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.1.0.2/24 dev eth0
+      ip route add default via 10.1.0.1 dev eth0
+      systemctl start named
+      sleep infinity
+      '
+  dns_pod2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: dns_pod2
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_2_0_dns_pod2:
+        interface_name: eth0
+    volumes:
+    - ./topology/dns_pod2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.2.0.2/24 dev eth0
+      ip route add default via 10.2.0.1 dev eth0
+      systemctl start named
+      sleep infinity
+      '
+  dns_pod3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: dns_pod3
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_3_0_dns_pod3:
+        interface_name: eth0
+    volumes:
+    - ./topology/dns_pod3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.3.0.2/24 dev eth0
+      ip route add default via 10.3.0.1 dev eth0
+      systemctl start named
+      sleep infinity
+      '
+  webserver0_pod0:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver0_pod0
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_0_1_webserver0_pod0:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver0_pod0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.0.1.2/24 dev eth0
+      ip route add default via 10.0.1.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver1_pod0:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver1_pod0
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_0_2_webserver1_pod0:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver1_pod0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.0.2.2/24 dev eth0
+      ip route add default via 10.0.2.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver2_pod0:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver2_pod0
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_0_3_webserver2_pod0:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver2_pod0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.0.3.2/24 dev eth0
+      ip route add default via 10.0.3.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver3_pod0:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver3_pod0
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_0_4_webserver3_pod0:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver3_pod0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.0.4.2/24 dev eth0
+      ip route add default via 10.0.4.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver4_pod0:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver4_pod0
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_0_5_webserver4_pod0:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver4_pod0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.0.5.2/24 dev eth0
+      ip route add default via 10.0.5.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver5_pod0:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver5_pod0
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_0_6_webserver5_pod0:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver5_pod0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.0.6.2/24 dev eth0
+      ip route add default via 10.0.6.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver6_pod0:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver6_pod0
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_0_7_webserver6_pod0:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver6_pod0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.0.7.2/24 dev eth0
+      ip route add default via 10.0.7.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver0_pod1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver0_pod1
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_1_1_webserver0_pod1:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver0_pod1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.1.1.2/24 dev eth0
+      ip route add default via 10.1.1.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver1_pod1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver1_pod1
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_1_2_webserver1_pod1:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver1_pod1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.1.2.2/24 dev eth0
+      ip route add default via 10.1.2.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver2_pod1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver2_pod1
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_1_3_webserver2_pod1:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver2_pod1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.1.3.2/24 dev eth0
+      ip route add default via 10.1.3.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver3_pod1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver3_pod1
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_1_4_webserver3_pod1:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver3_pod1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.1.4.2/24 dev eth0
+      ip route add default via 10.1.4.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver4_pod1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver4_pod1
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_1_5_webserver4_pod1:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver4_pod1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.1.5.2/24 dev eth0
+      ip route add default via 10.1.5.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver5_pod1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver5_pod1
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_1_6_webserver5_pod1:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver5_pod1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.1.6.2/24 dev eth0
+      ip route add default via 10.1.6.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver6_pod1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver6_pod1
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_1_7_webserver6_pod1:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver6_pod1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.1.7.2/24 dev eth0
+      ip route add default via 10.1.7.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver0_pod2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver0_pod2
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_2_1_webserver0_pod2:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver0_pod2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.2.1.2/24 dev eth0
+      ip route add default via 10.2.1.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver1_pod2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver1_pod2
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_2_2_webserver1_pod2:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver1_pod2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.2.2.2/24 dev eth0
+      ip route add default via 10.2.2.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver2_pod2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver2_pod2
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_2_3_webserver2_pod2:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver2_pod2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.2.3.2/24 dev eth0
+      ip route add default via 10.2.3.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver3_pod2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver3_pod2
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_2_4_webserver3_pod2:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver3_pod2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.2.4.2/24 dev eth0
+      ip route add default via 10.2.4.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver4_pod2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver4_pod2
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_2_5_webserver4_pod2:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver4_pod2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.2.5.2/24 dev eth0
+      ip route add default via 10.2.5.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver5_pod2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver5_pod2
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_2_6_webserver5_pod2:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver5_pod2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.2.6.2/24 dev eth0
+      ip route add default via 10.2.6.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver6_pod2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver6_pod2
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_2_7_webserver6_pod2:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver6_pod2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.2.7.2/24 dev eth0
+      ip route add default via 10.2.7.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver0_pod3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver0_pod3
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_3_1_webserver0_pod3:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver0_pod3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.3.1.2/24 dev eth0
+      ip route add default via 10.3.1.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver1_pod3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver1_pod3
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_3_2_webserver1_pod3:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver1_pod3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.3.2.2/24 dev eth0
+      ip route add default via 10.3.2.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver2_pod3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver2_pod3
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_3_3_webserver2_pod3:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver2_pod3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.3.3.2/24 dev eth0
+      ip route add default via 10.3.3.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver3_pod3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver3_pod3
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_3_4_webserver3_pod3:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver3_pod3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.3.4.2/24 dev eth0
+      ip route add default via 10.3.4.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver4_pod3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver4_pod3
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_3_5_webserver4_pod3:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver4_pod3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.3.5.2/24 dev eth0
+      ip route add default via 10.3.5.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver5_pod3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver5_pod3
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_3_6_webserver5_pod3:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver5_pod3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.3.6.2/24 dev eth0
+      ip route add default via 10.3.6.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  webserver6_pod3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: webserver6_pod3
+    cap_add: *id002
+    privileged: true
+    networks:
+      leaf_router_3_7_webserver6_pod3:
+        interface_name: eth0
+    volumes:
+    - ./topology/webserver6_pod3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.3.7.2/24 dev eth0
+      ip route add default via 10.3.7.1 dev eth0
+      systemctl daemon-reload
+      systemctl enable web_server
+      systemctl start web_server
+      sleep infinity
+      '
+  client_0:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: client_0
+    cap_add: *id002
+    privileged: true
+    networks:
+      super_spine_router_0_client_0:
+        interface_name: eth0
+    volumes:
+    - ./topology/client_0:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 192.168.0.2/24 dev eth0
+      ip route add default via 192.168.0.1 dev eth0
+      sleep infinity
+      '
+  client_1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: client_1
+    cap_add: *id002
+    privileged: true
+    networks:
+      super_spine_router_1_client_1:
+        interface_name: eth0
+    volumes:
+    - ./topology/client_1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 192.168.1.2/24 dev eth0
+      ip route add default via 192.168.1.1 dev eth0
+      sleep infinity
+      '
+  client_2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: client_2
+    cap_add: *id002
+    privileged: true
+    networks:
+      super_spine_router_2_client_2:
+        interface_name: eth0
+    volumes:
+    - ./topology/client_2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 192.168.2.2/24 dev eth0
+      ip route add default via 192.168.2.1 dev eth0
+      sleep infinity
+      '
+  client_3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: client_3
+    cap_add: *id002
+    privileged: true
+    networks:
+      super_spine_router_3_client_3:
+        interface_name: eth0
+    volumes:
+    - ./topology/client_3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 192.168.3.2/24 dev eth0
+      ip route add default via 192.168.3.1 dev eth0
+      sleep infinity
+      '
+networks:
+  leaf_router_0_0_dns_pod0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.0/28
+  leaf_router_0_1_webserver0_pod0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.16/28
+  leaf_router_0_2_webserver1_pod0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.32/28
+  leaf_router_0_3_webserver2_pod0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.48/28
+  leaf_router_0_4_webserver3_pod0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.64/28
+  leaf_router_0_5_webserver4_pod0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.80/28
+  leaf_router_0_6_webserver5_pod0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.96/28
+  leaf_router_0_7_webserver6_pod0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.112/28
+  leaf_router_1_0_dns_pod1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.128/28
+  leaf_router_1_1_webserver0_pod1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.144/28
+  leaf_router_1_2_webserver1_pod1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.160/28
+  leaf_router_1_3_webserver2_pod1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.176/28
+  leaf_router_1_4_webserver3_pod1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.192/28
+  leaf_router_1_5_webserver4_pod1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.208/28
+  leaf_router_1_6_webserver5_pod1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.224/28
+  leaf_router_1_7_webserver6_pod1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.240/28
+  leaf_router_2_0_dns_pod2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.0/28
+  leaf_router_2_1_webserver0_pod2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.16/28
+  leaf_router_2_2_webserver1_pod2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.32/28
+  leaf_router_2_3_webserver2_pod2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.48/28
+  leaf_router_2_4_webserver3_pod2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.64/28
+  leaf_router_2_5_webserver4_pod2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.80/28
+  leaf_router_2_6_webserver5_pod2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.96/28
+  leaf_router_2_7_webserver6_pod2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.112/28
+  leaf_router_3_0_dns_pod3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.128/28
+  leaf_router_3_1_webserver0_pod3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.144/28
+  leaf_router_3_2_webserver1_pod3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.160/28
+  leaf_router_3_3_webserver2_pod3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.176/28
+  leaf_router_3_4_webserver3_pod3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.192/28
+  leaf_router_3_5_webserver4_pod3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.208/28
+  leaf_router_3_6_webserver5_pod3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.224/28
+  leaf_router_3_7_webserver6_pod3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.240/28
+  spine_router_0_0_leaf_router_0_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.0/28
+  spine_router_0_0_leaf_router_0_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.16/28
+  spine_router_0_0_leaf_router_0_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.32/28
+  spine_router_0_0_leaf_router_0_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.48/28
+  spine_router_0_0_leaf_router_0_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.64/28
+  spine_router_0_0_leaf_router_0_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.80/28
+  spine_router_0_0_leaf_router_0_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.96/28
+  spine_router_0_0_leaf_router_0_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.112/28
+  spine_router_0_1_leaf_router_0_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.128/28
+  spine_router_0_1_leaf_router_0_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.144/28
+  spine_router_0_1_leaf_router_0_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.160/28
+  spine_router_0_1_leaf_router_0_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.176/28
+  spine_router_0_1_leaf_router_0_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.192/28
+  spine_router_0_1_leaf_router_0_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.208/28
+  spine_router_0_1_leaf_router_0_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.224/28
+  spine_router_0_1_leaf_router_0_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.240/28
+  spine_router_0_2_leaf_router_0_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.0/28
+  spine_router_0_2_leaf_router_0_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.16/28
+  spine_router_0_2_leaf_router_0_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.32/28
+  spine_router_0_2_leaf_router_0_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.48/28
+  spine_router_0_2_leaf_router_0_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.64/28
+  spine_router_0_2_leaf_router_0_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.80/28
+  spine_router_0_2_leaf_router_0_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.96/28
+  spine_router_0_2_leaf_router_0_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.112/28
+  spine_router_0_3_leaf_router_0_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.128/28
+  spine_router_0_3_leaf_router_0_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.144/28
+  spine_router_0_3_leaf_router_0_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.160/28
+  spine_router_0_3_leaf_router_0_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.176/28
+  spine_router_0_3_leaf_router_0_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.192/28
+  spine_router_0_3_leaf_router_0_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.208/28
+  spine_router_0_3_leaf_router_0_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.224/28
+  spine_router_0_3_leaf_router_0_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.240/28
+  spine_router_1_0_leaf_router_1_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.0/28
+  spine_router_1_0_leaf_router_1_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.16/28
+  spine_router_1_0_leaf_router_1_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.32/28
+  spine_router_1_0_leaf_router_1_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.48/28
+  spine_router_1_0_leaf_router_1_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.64/28
+  spine_router_1_0_leaf_router_1_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.80/28
+  spine_router_1_0_leaf_router_1_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.96/28
+  spine_router_1_0_leaf_router_1_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.112/28
+  spine_router_1_1_leaf_router_1_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.128/28
+  spine_router_1_1_leaf_router_1_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.144/28
+  spine_router_1_1_leaf_router_1_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.160/28
+  spine_router_1_1_leaf_router_1_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.176/28
+  spine_router_1_1_leaf_router_1_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.192/28
+  spine_router_1_1_leaf_router_1_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.208/28
+  spine_router_1_1_leaf_router_1_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.224/28
+  spine_router_1_1_leaf_router_1_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.240/28
+  spine_router_1_2_leaf_router_1_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.0/28
+  spine_router_1_2_leaf_router_1_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.16/28
+  spine_router_1_2_leaf_router_1_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.32/28
+  spine_router_1_2_leaf_router_1_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.48/28
+  spine_router_1_2_leaf_router_1_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.64/28
+  spine_router_1_2_leaf_router_1_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.80/28
+  spine_router_1_2_leaf_router_1_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.96/28
+  spine_router_1_2_leaf_router_1_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.112/28
+  spine_router_1_3_leaf_router_1_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.128/28
+  spine_router_1_3_leaf_router_1_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.144/28
+  spine_router_1_3_leaf_router_1_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.160/28
+  spine_router_1_3_leaf_router_1_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.176/28
+  spine_router_1_3_leaf_router_1_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.192/28
+  spine_router_1_3_leaf_router_1_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.208/28
+  spine_router_1_3_leaf_router_1_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.224/28
+  spine_router_1_3_leaf_router_1_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.240/28
+  spine_router_2_0_leaf_router_2_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.6.0/28
+  spine_router_2_0_leaf_router_2_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.6.16/28
+  spine_router_2_0_leaf_router_2_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.6.32/28
+  spine_router_2_0_leaf_router_2_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.6.48/28
+  spine_router_2_0_leaf_router_2_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.6.64/28
+  spine_router_2_0_leaf_router_2_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.6.80/28
+  spine_router_2_0_leaf_router_2_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.6.96/28
+  spine_router_2_0_leaf_router_2_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.6.112/28
+  spine_router_2_1_leaf_router_2_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.6.128/28
+  spine_router_2_1_leaf_router_2_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.6.144/28
+  spine_router_2_1_leaf_router_2_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.6.160/28
+  spine_router_2_1_leaf_router_2_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.6.176/28
+  spine_router_2_1_leaf_router_2_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.6.192/28
+  spine_router_2_1_leaf_router_2_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.6.208/28
+  spine_router_2_1_leaf_router_2_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.6.224/28
+  spine_router_2_1_leaf_router_2_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.6.240/28
+  spine_router_2_2_leaf_router_2_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.7.0/28
+  spine_router_2_2_leaf_router_2_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.7.16/28
+  spine_router_2_2_leaf_router_2_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.7.32/28
+  spine_router_2_2_leaf_router_2_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.7.48/28
+  spine_router_2_2_leaf_router_2_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.7.64/28
+  spine_router_2_2_leaf_router_2_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.7.80/28
+  spine_router_2_2_leaf_router_2_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.7.96/28
+  spine_router_2_2_leaf_router_2_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.7.112/28
+  spine_router_2_3_leaf_router_2_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.7.128/28
+  spine_router_2_3_leaf_router_2_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.7.144/28
+  spine_router_2_3_leaf_router_2_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.7.160/28
+  spine_router_2_3_leaf_router_2_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.7.176/28
+  spine_router_2_3_leaf_router_2_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.7.192/28
+  spine_router_2_3_leaf_router_2_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.7.208/28
+  spine_router_2_3_leaf_router_2_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.7.224/28
+  spine_router_2_3_leaf_router_2_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.7.240/28
+  spine_router_3_0_leaf_router_3_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.8.0/28
+  spine_router_3_0_leaf_router_3_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.8.16/28
+  spine_router_3_0_leaf_router_3_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.8.32/28
+  spine_router_3_0_leaf_router_3_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.8.48/28
+  spine_router_3_0_leaf_router_3_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.8.64/28
+  spine_router_3_0_leaf_router_3_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.8.80/28
+  spine_router_3_0_leaf_router_3_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.8.96/28
+  spine_router_3_0_leaf_router_3_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.8.112/28
+  spine_router_3_1_leaf_router_3_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.8.128/28
+  spine_router_3_1_leaf_router_3_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.8.144/28
+  spine_router_3_1_leaf_router_3_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.8.160/28
+  spine_router_3_1_leaf_router_3_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.8.176/28
+  spine_router_3_1_leaf_router_3_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.8.192/28
+  spine_router_3_1_leaf_router_3_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.8.208/28
+  spine_router_3_1_leaf_router_3_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.8.224/28
+  spine_router_3_1_leaf_router_3_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.8.240/28
+  spine_router_3_2_leaf_router_3_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.9.0/28
+  spine_router_3_2_leaf_router_3_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.9.16/28
+  spine_router_3_2_leaf_router_3_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.9.32/28
+  spine_router_3_2_leaf_router_3_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.9.48/28
+  spine_router_3_2_leaf_router_3_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.9.64/28
+  spine_router_3_2_leaf_router_3_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.9.80/28
+  spine_router_3_2_leaf_router_3_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.9.96/28
+  spine_router_3_2_leaf_router_3_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.9.112/28
+  spine_router_3_3_leaf_router_3_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.9.128/28
+  spine_router_3_3_leaf_router_3_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.9.144/28
+  spine_router_3_3_leaf_router_3_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.9.160/28
+  spine_router_3_3_leaf_router_3_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.9.176/28
+  spine_router_3_3_leaf_router_3_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.9.192/28
+  spine_router_3_3_leaf_router_3_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.9.208/28
+  spine_router_3_3_leaf_router_3_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.9.224/28
+  spine_router_3_3_leaf_router_3_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.9.240/28
+  super_spine_router_0_client_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.10.0/28
+  super_spine_router_0_spine_router_0_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.10.16/28
+  super_spine_router_0_spine_router_0_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.10.32/28
+  super_spine_router_0_spine_router_0_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.10.48/28
+  super_spine_router_0_spine_router_0_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.10.64/28
+  super_spine_router_0_spine_router_1_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.10.80/28
+  super_spine_router_0_spine_router_1_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.10.96/28
+  super_spine_router_0_spine_router_1_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.10.112/28
+  super_spine_router_0_spine_router_1_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.10.128/28
+  super_spine_router_0_spine_router_2_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.10.144/28
+  super_spine_router_0_spine_router_2_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.10.160/28
+  super_spine_router_0_spine_router_2_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.10.176/28
+  super_spine_router_0_spine_router_2_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.10.192/28
+  super_spine_router_0_spine_router_3_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.10.208/28
+  super_spine_router_0_spine_router_3_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.10.224/28
+  super_spine_router_0_spine_router_3_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.10.240/28
+  super_spine_router_0_spine_router_3_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.11.0/28
+  super_spine_router_1_client_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.11.16/28
+  super_spine_router_1_spine_router_0_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.11.32/28
+  super_spine_router_1_spine_router_0_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.11.48/28
+  super_spine_router_1_spine_router_0_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.11.64/28
+  super_spine_router_1_spine_router_0_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.11.80/28
+  super_spine_router_1_spine_router_1_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.11.96/28
+  super_spine_router_1_spine_router_1_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.11.112/28
+  super_spine_router_1_spine_router_1_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.11.128/28
+  super_spine_router_1_spine_router_1_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.11.144/28
+  super_spine_router_1_spine_router_2_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.11.160/28
+  super_spine_router_1_spine_router_2_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.11.176/28
+  super_spine_router_1_spine_router_2_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.11.192/28
+  super_spine_router_1_spine_router_2_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.11.208/28
+  super_spine_router_1_spine_router_3_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.11.224/28
+  super_spine_router_1_spine_router_3_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.11.240/28
+  super_spine_router_1_spine_router_3_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.12.0/28
+  super_spine_router_1_spine_router_3_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.12.16/28
+  super_spine_router_2_client_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.12.32/28
+  super_spine_router_2_spine_router_0_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.12.48/28
+  super_spine_router_2_spine_router_0_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.12.64/28
+  super_spine_router_2_spine_router_0_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.12.80/28
+  super_spine_router_2_spine_router_0_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.12.96/28
+  super_spine_router_2_spine_router_1_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.12.112/28
+  super_spine_router_2_spine_router_1_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.12.128/28
+  super_spine_router_2_spine_router_1_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.12.144/28
+  super_spine_router_2_spine_router_1_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.12.160/28
+  super_spine_router_2_spine_router_2_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.12.176/28
+  super_spine_router_2_spine_router_2_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.12.192/28
+  super_spine_router_2_spine_router_2_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.12.208/28
+  super_spine_router_2_spine_router_2_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.12.224/28
+  super_spine_router_2_spine_router_3_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.12.240/28
+  super_spine_router_2_spine_router_3_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.13.0/28
+  super_spine_router_2_spine_router_3_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.13.16/28
+  super_spine_router_2_spine_router_3_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.13.32/28
+  super_spine_router_3_client_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.13.48/28
+  super_spine_router_3_spine_router_0_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.13.64/28
+  super_spine_router_3_spine_router_0_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.13.80/28
+  super_spine_router_3_spine_router_0_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.13.96/28
+  super_spine_router_3_spine_router_0_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.13.112/28
+  super_spine_router_3_spine_router_1_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.13.128/28
+  super_spine_router_3_spine_router_1_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.13.144/28
+  super_spine_router_3_spine_router_1_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.13.160/28
+  super_spine_router_3_spine_router_1_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.13.176/28
+  super_spine_router_3_spine_router_2_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.13.192/28
+  super_spine_router_3_spine_router_2_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.13.208/28
+  super_spine_router_3_spine_router_2_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.13.224/28
+  super_spine_router_3_spine_router_2_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.13.240/28
+  super_spine_router_3_spine_router_3_0:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.14.0/28
+  super_spine_router_3_spine_router_3_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.14.16/28
+  super_spine_router_3_spine_router_3_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.14.32/28
+  super_spine_router_3_spine_router_3_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.14.48/28

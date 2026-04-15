@@ -1,0 +1,402 @@
+# Auto-generated from Kathara lab.conf
+# Machines: router1, router2, gateway_router, external_router_1, host_1, host_2, vpn_server_1, web_server_1_1, web_server_1_2
+# Networks: external_router_1_gateway_router, external_router_1_vpn_server_1, external_router_1_web_server_1_1, external_router_1_web_server_1_2, router1_gateway_router, router1_host_1, router1_router2, router2_gateway_router, router2_host_2
+# Per-network x-interface-name = eth0, eth1, ... (from lab.conf machine[0], machine[1], ...)
+
+services:
+  default:
+    image: kathara/base
+    x-local: true
+    init: true
+    hostname: default
+    cap_add: &id001
+    - NET_ADMIN
+    - SYS_ADMIN
+    command: sleep infinity
+  router1:
+    image: kathara/frr
+    x-local: true
+    init: true
+    hostname: router1
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      router1_router2:
+        interface_name: eth0
+      router1_gateway_router:
+        interface_name: eth1
+      router1_host_1:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/router1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 192.168.0.0/31 dev eth0
+      ip addr add 192.168.0.2/31 dev eth1
+      ip addr add 10.0.0.1/24 dev eth2
+      service frr start
+      sleep infinity
+      '
+  router2:
+    image: kathara/frr
+    x-local: true
+    init: true
+    hostname: router2
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      router1_router2:
+        interface_name: eth0
+      router2_gateway_router:
+        interface_name: eth1
+      router2_host_2:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/router2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 192.168.0.1/31 dev eth0
+      ip addr add 192.168.0.4/31 dev eth1
+      ip addr add 10.0.1.1/24 dev eth2
+      service frr start
+      sleep infinity
+      '
+  gateway_router:
+    image: kathara/frr
+    x-local: true
+    init: true
+    hostname: gateway_router
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      router1_gateway_router:
+        interface_name: eth0
+      router2_gateway_router:
+        interface_name: eth1
+      external_router_1_gateway_router:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/gateway_router:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 192.168.0.3/31 dev eth0
+      ip addr add 192.168.0.5/31 dev eth1
+      ip addr add 192.168.0.7/31 dev eth2
+      service frr start
+      sleep infinity
+      '
+  external_router_1:
+    image: kathara/frr
+    x-local: true
+    init: true
+    hostname: external_router_1
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      external_router_1_gateway_router:
+        interface_name: eth0
+      external_router_1_vpn_server_1:
+        interface_name: eth1
+      external_router_1_web_server_1_1:
+        interface_name: eth2
+      external_router_1_web_server_1_2:
+        interface_name: eth3
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f frr
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/external_router_1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 192.168.0.6/31 dev eth0
+      brctl addbr br0
+      ip link set dev br0 up
+      ip addr add 20.0.0.1/24 dev br0
+      brctl addif br0 eth1
+      brctl addif br0 eth2
+      brctl addif br0 eth3
+      service frr start
+      sleep infinity
+      '
+  host_1:
+    image: kathara/nika-wireguard
+    x-local: true
+    init: true
+    hostname: host_1
+    cap_add: &id002
+    - NET_ADMIN
+    privileged: true
+    networks:
+      router1_host_1:
+        interface_name: eth0
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f wireguard
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/host_1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 10.0.0.2/24 dev eth0
+      ip route add default via 10.0.0.1
+      wg-quick up wg0
+      sleep infinity
+      '
+  host_2:
+    image: kathara/nika-wireguard
+    x-local: true
+    init: true
+    hostname: host_2
+    cap_add: *id002
+    privileged: true
+    networks:
+      router2_host_2:
+        interface_name: eth0
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f wireguard
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.1.2/24 dev eth0
+      ip route add default via 10.0.1.1
+      sleep infinity
+      '
+  vpn_server_1:
+    image: kathara/nika-wireguard
+    x-local: true
+    init: true
+    hostname: vpn_server_1
+    cap_add: *id002
+    privileged: true
+    networks:
+      external_router_1_vpn_server_1:
+        interface_name: eth0
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f wireguard
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/vpn_server_1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 20.0.0.2/24 dev eth0
+      ip route add default via 20.0.0.1
+      wg-quick up wg0
+      sleep infinity
+      '
+  web_server_1_1:
+    image: kathara/nika-wireguard
+    x-local: true
+    init: true
+    hostname: web_server_1_1
+    cap_add: *id002
+    privileged: true
+    networks:
+      external_router_1_web_server_1_1:
+        interface_name: eth0
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f wireguard
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/web_server_1_1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 20.0.0.3/24 dev eth0
+      ip route add default via 20.0.0.1
+      wg-quick up wg0
+      ping -c 3 172.16.1.1
+      service apache2 start
+      sleep infinity
+      '
+  web_server_1_2:
+    image: kathara/nika-wireguard
+    x-local: true
+    init: true
+    hostname: web_server_1_2
+    cap_add: *id002
+    privileged: true
+    networks:
+      external_router_1_web_server_1_2:
+        interface_name: eth0
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f wireguard
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/web_server_1_2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip addr add 20.0.0.4/24 dev eth0
+      ip route add default via 20.0.0.1
+      wg-quick up wg0
+      ping -c 3 172.16.1.1
+      service apache2 start
+      sleep infinity
+      '
+networks:
+  external_router_1_gateway_router:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.0/28
+  external_router_1_vpn_server_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.16/28
+  external_router_1_web_server_1_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.32/28
+  external_router_1_web_server_1_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.48/28
+  router1_gateway_router:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.64/28
+  router1_host_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.80/28
+  router1_router2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.96/28
+  router2_gateway_router:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.112/28
+  router2_host_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.128/28

@@ -1,0 +1,16 @@
+/usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+ovs-vsctl add-br spine_2
+ovs-vsctl set-fail-mode spine_2 secure
+ovs-vsctl set bridge spine_2 stp_enable=true
+ovs-vsctl add-port spine_2 eth0
+ovs-vsctl add-port spine_2 eth1
+ovs-vsctl add-port spine_2 eth2
+ovs-vsctl add-port spine_2 eth3
+ovs-vsctl add-port spine_2 eth4
+ovs-vsctl add-port spine_2 eth5
+ovs-vsctl add-port spine_2 eth6
+ovs-vsctl add-port spine_2 eth7
+ip addr add 20.0.0.2/24 dev eth8
+ip link set eth8 up
+ovs-vsctl set-controller spine_2 tcp:20.0.0.100:6633
+ovs-vsctl set bridge spine_2 stp_enable=true

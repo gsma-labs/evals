@@ -35,6 +35,11 @@ uv run inspect eval src/evals/telemath/telemath.py --model openai/gpt-4o --limit
 # Run multiple epochs (for majority voting metrics)
 uv run inspect eval src/evals/telelogs/telelogs.py --model openai/gpt-4o -T 4
 
+# NIKA (Experimental): install extra, then filter by task family and failure variant
+uv sync --extra nika
+uv run inspect eval src/evals/nika/nika.py --model openai/gpt-4o \
+  -T task_family=network_node_error -T variant=bmv2_down --limit 1
+
 # View logs in browser
 uv run inspect view
 ```
@@ -85,6 +90,7 @@ uv run inspect eval-set src/evals/teleqna/teleqna.py src/evals/telemath/telemath
 | 3GPP TSG | 100 | 2,000 |
 | ORANBench | 150 | 1,500 |
 | srsRANBench | 150 | 1,502 |
+| NIKA | 59 | 221 |
 
 ---
 

@@ -1,0 +1,877 @@
+# NIKA Failure Catalog
+#
+# Base file for defining fault types and their injection commands.
+# Used as reference for building build_images/datasets/dataset.yaml.
+# Setup commands use placeholders (e.g. {device}, {interface}); replace with
+# concrete values per topology when generating dataset samples.
+#
+# Placeholder conventions:
+#   {device}       - Kathara container name (e.g. leaf_router_0_0, dns_0)
+#   {interface}    - Interface name (e.g. eth0, eth4)
+#   {prefix}       - IP prefix (e.g. 10.0.0.2/32, 10.0.1.0/24)
+#   {asn}          - BGP AS number
+#   {rate},{burst},{limit} - tc tbf parameters
+#   {delay}        - netem delay (e.g. 1000ms, 20ms)
+#   {percent}      - netem corrupt percentage
+#   {mac}          - MAC address (e.g. 02:00:00:00:00:01)
+#   {ip}           - IP address with prefix (e.g. 10.0.1.2/24)
+#   {gateway}      - Default gateway IP (e.g. 10.0.1.1)
+#   {correct_area} - OSPF area from running-config (for ospf_area_misconfig)
+#   {wrong_area}   - Wrong OSPF area to inject (e.g. 66 or 99)
+#   {bridge}       - OVS bridge name (e.g. leaf_1, switch_1); for sdn_flow_drop
+#   {bridge_0},{bridge_1},{port_0},{port_1} - For sdn_forwarding_loop (two switches)
+#   {table_name}   - P4 table name (e.g. dmac_forward, ipv4_lpm); for p4_empty_forwarding_table
+#   {p4_name}      - P4 source base name without .p4 (e.g. bloom_filter); for p4_misaligned_sketch_threshold
+#   {mismatched_port} - OpenFlow listen port not used by switches (e.g. 6634); for southbound_port_unreachable
+#   {duration}      - Stress duration in seconds (e.g. 300); for stress_* faults
+#   {spoofed_ip},{rogue_gateway},{rogue_dns} - For dhcp_spoofing (rogue DHCP outcome)
+#   {target_ip},{wrong_mac} - For arp_cache_poisoning (victim's poisoned ARP entry)
+
+failures:
+  # ---------------------------------------------------------------------------
+  # link_failure
+  # ---------------------------------------------------------------------------
+
+  - id: link_down
+    task_family: link_failure
+    description: "Interface administratively down; complete loss of connectivity on the link."
+    symptom: |
+      Users report that connectivity to part of the network is completely down.
+      Some destinations or paths are unreachable.
+    setup_template: "ip link set {interface} down"
+    placeholders:
+      - name: interface
+        description: "Interface to bring down (e.g. eth0, eth4)."
+    difficulty: easy
+    typical_sandbox: "data_center/dc_clos_worker/size_s/compose.yaml"
+    notes: "Target device is the router/host where the interface lives."
+
+  - id: link_flap
+    task_family: link_failure
+    description: "Interface oscillating UP/DOWN; intermittent connectivity and timeouts."
+    symptom: |
+      Users report that connections sometimes work and sometimes don't,
+      with random timeouts or drops, then recovery.
+    setup_template: "while true; do ip link set {interface} down; sleep 1; ip link set {interface} up; sleep 1; done &"
+    placeholders:
+      - name: interface
+        description: "Interface to flap (e.g. eth1)."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_worker/size_s/compose.yaml"
+    notes: "Runs in background; agent sees intermittent failures."
+
+  - id: link_detach
+    task_family: link_failure
+    description: "Interface removed from system; host unreachable from affected paths."
+    symptom: |
+      Users report that a server or host is unreachable from anywhere on the network.
+    setup_template: "ip link del {interface}"
+    placeholders:
+      - name: interface
+        description: "Interface to delete (e.g. eth4)."
+    difficulty: easy
+    typical_sandbox: "data_center/dc_clos_worker/size_s/compose.yaml"
+
+  - id: link_fragmentation_disabled
+    task_family: link_failure
+    description: "Large packets dropped (no fragmentation); small packets work, large transfers fail."
+    symptom: |
+      Users report that small requests or pings work, but large file transfers
+      or bulk data moves fail or hang.
+    setup_template: "iptables -A OUTPUT -m length --length 10:65535 -j DROP"
+    placeholders: []
+    difficulty: hard
+    typical_sandbox: "data_center/dc_clos_worker/size_s/compose.yaml"
+    notes: "No interface placeholder; command runs on target device. Length range 10:65535 drops large frames."
+
+  - id: link_crc_errors
+    task_family: link_failure
+    description: "Faulty cable CRC errors; corrupted frames on the link."
+    symptom: |
+      Users report unreliable connections: data often corrupts, transfers fail,
+      or they have to retry repeatedly. No single device or app stands out.
+    setup_template: "tc qdisc add dev {interface} root netem corrupt {percent}%"
+    placeholders:
+      - name: interface
+        description: "Interface to apply corruption (e.g. eth0, eth4)."
+      - name: percent
+        description: "Corruption percentage (e.g. 30, 60)."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_worker/size_s/compose.yaml"
+    notes: "Simulates bad cable / physical layer; agent may see retransmissions and errors."
+
+  - id: mac_address_conflict
+    task_family: link_failure
+    description: "Same MAC seen on multiple ports; MAC flapping logs."
+    symptom: |
+      Users report unstable connectivity in one area of the network.
+      Equipment logs show repeated port or address changes; behavior is inconsistent.
+    setup_template: "ip link set dev {interface_1} address {mac} && ip link set dev {interface_2} address {mac}"
+    placeholders:
+      - name: interface_1
+        description: "First interface to set to duplicate MAC (e.g. eth0)."
+      - name: interface_2
+        description: "Second interface to set to same MAC (e.g. eth1); same device or peer."
+      - name: mac
+        description: "MAC address used on both (e.g. 02:00:00:00:00:01)."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_worker/size_s/compose.yaml"
+    notes: "Run on one device with two interfaces to same L2 domain, or coordinate two devices. Causes switch to see same MAC on two ports."
+
+  # ---------------------------------------------------------------------------
+  # end_host_failure
+  # ---------------------------------------------------------------------------
+
+  - id: vpn_server_down
+    task_family: end_host_failure
+    description: "VPN tunnel interface or daemon stopped; tunnel unavailable, services over tunnel unreachable."
+    symptom: |
+      Users report that they can no longer reach a set of internal or remote services
+      that used to work; connection attempts hang or time out.
+    setup_template: "wg-quick down wg0"
+    placeholders: []
+    difficulty: medium
+    typical_sandbox: "isp/isp_rip_vpn/size_s/compose.yaml"
+    notes: "Execute on VPN server container (e.g. vpn_server_1). Brings down WireGuard interface wg0."
+
+  - id: vpn_membership_removed
+    task_family: end_host_failure
+    description: "One peer commented out in VPN server config; that host loses tunnel access, others may still work."
+    symptom: |
+      Users report that one specific endpoint or group can no longer reach internal services
+      that other endpoints can still reach.
+    setup_template: >
+      sed -i '/# {target_host}/{n; s/^/# /; n; s/^/# /; n; s/^/# /;}' /etc/wireguard/wg0.conf
+      && wg-quick down wg0 && wg-quick up wg0
+    placeholders:
+      - name: target_host
+        description: "Peer name as comment in wg0.conf (e.g. host_1, web_server_1_1)."
+    difficulty: medium
+    typical_sandbox: "isp/isp_rip_vpn/size_s/compose.yaml"
+    notes: "Execute on VPN server container (e.g. vpn_server_1). Comments out the peer block for target_host then restarts wg0."
+
+  - id: dns_server_down
+    task_family: end_host_failure
+    description: "DNS server process stopped; DNS resolution failures for all domains."
+    symptom: |
+      Users report they cannot open anything by name or URL across the network.
+      Typing a hostname or address often fails; "cannot resolve" or timeouts are common.
+    setup_template: "pkill -9 named"
+    placeholders: []
+    difficulty: easy
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on DNS server container (e.g. dns_0, dns_1)."
+
+  - id: web_server_down
+    task_family: end_host_failure
+    description: "HTTP server process stopped; HTTP requests time out to that server."
+    symptom: "Users report that a specific site or service does not respond; requests hang or time out."
+    # Stop any common web server: systemd web_server unit, Python http.server, or Apache.
+    setup_template: >
+      systemctl stop web_server 2>/dev/null;
+      pkill -9 -f http.server 2>/dev/null;
+      systemctl stop apache2 2>/dev/null;
+      pkill -9 apache2 2>/dev/null;
+      true
+    placeholders: []
+    difficulty: easy
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on web server container (e.g. web_0_0, web_1_2)."
+  
+  - id: dhcp_server_down
+    task_family: end_host_failure
+    description: "DHCP server process stopped; DHCP leases are no longer issued."
+    symptom: "Users report that new or rebooted devices cannot get on the network; they never receive an IP address."
+    setup_template: "systemctl stop isc-dhcp-server"
+    placeholders: []
+    difficulty: easy
+    typical_sandbox: "data_center/campus/campus_dhcp/size_s/compose.yaml"
+    notes: "Execute on DHCP server container (e.g. dhcp_0). DHCP server is typically isc-dhcp-server. Network devices are not getting IP addresses."
+
+  - id: missing_ip
+    task_family: end_host_failure
+    description: "IP address removed from interface; host loses connectivity on that link."
+    symptom: |
+      Users report that a host or endpoint is unreachable or has lost connectivity
+      on the network.
+    setup_template: "ip addr del {ip} dev {interface}"
+    placeholders:
+      - name: ip
+        description: "Current IP with prefix to remove (e.g. 10.0.1.2/24)."
+      - name: interface
+        description: "Interface to remove address from (e.g. eth0)."
+    difficulty: easy
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on the faulty host. For recovery, backup ip and gateway to /tmp/removed_ip.txt if needed."
+
+  # ---------------------------------------------------------------------------
+  # misconfiguration
+  # ---------------------------------------------------------------------------
+
+  - id: bgp_asn_misconfig
+    task_family: misconfiguration
+    description: "Wrong BGP ASN; peering failures and intermittent routing."
+    symptom: "Users report connectivity that comes and goes; some paths or times work, others fail without an obvious pattern."
+    setup_template: |
+      vtysh -c "conf t" -c "no router bgp {asn_original}" -c "router bgp {asn_wrong}" -c "neighbor {neighbor_1} remote-as {remote_as_1}" -c "neighbor {neighbor_2} remote-as {remote_as_2}" -c "network {network}"
+    placeholders:
+      - name: asn_original
+        description: "Original BGP ASN to remove (e.g. 65200, 65101)."
+      - name: asn_wrong
+        description: "Wrong ASN to configure (e.g. 65999, 65888)."
+      - name: neighbor_1
+        description: "Neighbor IP (repeat -c neighbor ... as needed)."
+      - name: remote_as_1
+        description: "Remote AS for neighbor."
+      - name: neighbor_2
+        description: "Second neighbor IP (topology-dependent)."
+      - name: remote_as_2
+        description: "Remote AS for second neighbor."
+      - name: network
+        description: "Network to advertise (e.g. 10.0.0.0/24)."
+    difficulty: hard
+    typical_sandbox: "data_center/dc_clos_worker/size_s/compose.yaml"
+    notes: "Leaf has 4 spine neighbors + network; spine may only need 'router bgp {asn_wrong}'."
+
+  - id: bgp_missing_route_advertisement
+    task_family: misconfiguration
+    description: "BGP network statement removed; prefix not advertised, so unreachable."
+    symptom: "Users report that certain destinations or parts of the network are unreachable from elsewhere."
+    setup_template: 'vtysh -c "conf t" -c "router bgp {asn}" -c "no network {prefix}"'
+    placeholders:
+      - name: asn
+        description: "BGP ASN of the router (e.g. 65201, 65206)."
+      - name: prefix
+        description: "Prefix to stop advertising (e.g. 10.0.1.0/24, 10.1.2.0/24)."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_worker/size_s/compose.yaml"
+
+  - id: bgp_blackhole_route_leak
+    task_family: misconfiguration
+    description: "Blackhole route advertised via BGP; traffic to prefix silently dropped."
+    symptom: "Users report that traffic to certain destinations never completes; no error message, just no response."
+    setup_template: 'ip route add {prefix} blackhole && vtysh -c "conf t" -c "router bgp {asn}" -c "network {prefix}"'
+    placeholders:
+      - name: prefix
+        description: "Prefix to blackhole and advertise (e.g. 10.0.2.0/30)."
+      - name: asn
+        description: "BGP ASN of the router (e.g. 65202)."
+    difficulty: hard
+    typical_sandbox: "data_center/dc_clos_worker/size_s/compose.yaml"
+    notes: "First add blackhole route, then advertise it in BGP."
+
+  - id: host_static_blackhole
+    task_family: misconfiguration
+    description: "Blackhole route for a host prefix; traffic to destination silently dropped."
+    symptom: "Users report that traffic to certain destinations never gets a response; no error, just no reply."
+    setup_template: "ip route add blackhole {prefix}"
+    placeholders:
+      - name: prefix
+        description: "Prefix to blackhole (e.g. 10.0.0.2/32, 10.1.1.2/32)."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_worker/size_s/compose.yaml"
+    notes: "Execute on the leaf (or router) that would forward to that prefix."
+
+  - id: ospf_area_misconfig
+    task_family: misconfiguration
+    description: "OSPF interface in wrong area; adjacency or path failures."
+    symptom: |
+      Users report connectivity that comes and goes, or that certain paths
+      or destinations are unreachable; OSPF neighbors may not form or routes may be missing.
+    setup_template: >
+      vtysh -c 'show running-config' | sed -E 's/(area )({correct_area})$/\\1{wrong_area}/' > /etc/frr/frr.conf
+      && systemctl restart frr
+    placeholders:
+      - name: correct_area
+        description: "Current OSPF area from running-config (e.g. 0, 1)."
+      - name: wrong_area
+        description: "Wrong area to inject (e.g. 66 if correct is not 66, else 99)."
+    difficulty: hard
+    typical_sandbox: "data_center/dc_clos_worker/size_s/compose.yaml"
+    notes: "Dataset generator must run vtysh on faulty device to get correct_area; set wrong_area to 66 or 99."
+
+  - id: ospf_neighbor_missing
+    task_family: misconfiguration
+    description: "OSPF network/area statement commented out; neighbor never forms, routes missing."
+    symptom: |
+      Users report that certain destinations or paths are unreachable;
+      OSPF may show fewer neighbors or missing routes on the affected router.
+    setup_template: >
+      sed -i.bak -E 's|^([[:space:]]*)network[[:space:]]+[^[:space:]]+[[:space:]]+area|\1# &|' /etc/frr/frr.conf
+      && systemctl restart frr
+    placeholders: []
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_worker/size_s/compose.yaml"
+    notes: "Execute on faulty router; comments out network/area line(s) in FRR config."
+
+  - id: sdn_flow_drop
+    task_family: misconfiguration
+    description: "OVS flow rule with high priority drops all traffic; switch acts as blackhole."
+    symptom: |
+      Users report that traffic through a specific switch or path is completely dropped;
+      no connectivity through that device, as if it were offline for forwarding.
+    setup_template: "ovs-ofctl add-flow {bridge} 'priority=100,actions=drop'"
+    placeholders:
+      - name: bridge
+        description: "OVS bridge name (typically same as device name, e.g. leaf_1, switch_1)."
+    difficulty: medium
+    typical_sandbox: "sdn/sdn_clos/size_s/compose.yaml"
+    notes: "Execute on the faulty OVS switch. High-priority rule shadows normal forwarding and drops all."
+
+  - id: sdn_forwarding_loop
+    task_family: misconfiguration
+    description: "OVS flow rules on two switches send traffic back out the link; forwarding loop between two ports."
+    symptom: |
+      Users report severe degradation, packet loss, or timeouts on paths that traverse
+      a specific pair of switches; control plane or links may appear saturated.
+    setup_template: |
+      ovs-ofctl add-flow {bridge_0} 'in_port={port_0},actions=output:{port_0}'
+      ovs-ofctl add-flow {bridge_1} 'in_port={port_1},actions=output:{port_1}'
+    placeholders:
+      - name: bridge_0
+        description: "OVS bridge on first switch (e.g. leaf_1)."
+      - name: port_0
+        description: "Port on first switch that connects to second (e.g. eth0)."
+      - name: bridge_1
+        description: "OVS bridge on second switch (e.g. leaf_2)."
+      - name: port_1
+        description: "Port on second switch that connects to first (e.g. eth1)."
+    difficulty: hard
+    typical_sandbox: "sdn/sdn_clos/size_s/compose.yaml"
+    notes: "Run first command on faulty_devices[0], second on faulty_devices[1]. The two ports must be the link between the two switches."
+
+  - id: sdn_default_drop
+    task_family: misconfiguration
+    description: "OVS table-miss or default action is drop; traffic not matching any rule is dropped."
+    symptom: |
+      Users report that traffic through a specific switch is dropped or unreachable
+      unless it matches explicit rules; default forwarding is missing.
+    setup_template: "ovs-ofctl add-flow {bridge} 'priority=0,actions=drop'"
+    placeholders:
+      - name: bridge
+        description: "OVS bridge name (typically same as device name, e.g. leaf_1, switch_1)."
+    difficulty: medium
+    typical_sandbox: "sdn/sdn_clos/size_m/compose.yaml"
+    notes: "Execute on the faulty OVS switch. Priority 0 makes table-miss/default action drop."
+
+  - id: p4_empty_forwarding_table
+    task_family: misconfiguration
+    description: "P4 forwarding table is empty (all entries cleared); traffic hits default action (typically drop)."
+    symptom: |
+      Users report that traffic through a specific P4 switch is dropped or unreachable;
+      the switch no longer forwards any traffic as if the forwarding table were missing.
+    setup_template: "simple_switch_CLI <<< 'table_clear {table_name}'"
+    placeholders:
+      - name: table_name
+        description: "P4 forwarding table name to clear (e.g. dmac_forward, ipv4_lpm)."
+    difficulty: medium
+    typical_sandbox: "p4/p4_int/compose.yaml"
+    notes: "Execute on the faulty P4/BMv2 switch. Clears all table entries; default entry (e.g. drop) is kept, so table is effectively empty."
+
+  - id: dns_misconfiguration
+    task_family: misconfiguration
+    description: "DNS zone/record wrong; some queries return wrong or no results."
+    symptom: "Users report that some hostnames or URLs work while others fail or point to the wrong place."
+    # BIND/named: replace A record IP for given name in zone file, then restart named.
+    setup_template: >
+      sed -i 's/^\({name}[[:space:]]\+IN[[:space:]]\+A[[:space:]]\+\)[0-9.]\+/\1{new_ip}/' /etc/bind/db.{domain}
+      && systemctl restart named
+    placeholders:
+      - name: name
+        description: "Record name in zone (e.g. web0, webserver0)."
+      - name: new_ip
+        description: "Wrong IP to inject (e.g. 10.0.1.99)."
+      - name: domain
+        description: "Zone name for zone file /etc/bind/db.{domain} (e.g. pod0)."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on DNS container (e.g. dns_0). Zone file path is /etc/bind/db.{domain}."
+
+  - id: web_server_misconfiguration
+    task_family: misconfiguration
+    description: "HTTP server on wrong port or wrong content; 4xx/5xx or connection issues."
+    symptom: "Users report errors or 'cannot connect' when opening a specific site that used to work."
+    # Environment-dependent: server may be Apache, Python http.server, or systemd. Option A: stop
+    # default server and start Python on wrong port. Option B (Apache): change Listen and restart.
+    setup_template: >
+      (systemctl stop web_server 2>/dev/null; pkill -f http.server 2>/dev/null;
+       systemctl stop apache2 2>/dev/null; pkill -9 apache2 2>/dev/null; true);
+      (sed -i 's/^Listen .*/Listen {port}/' /etc/apache2/ports.conf 2>/dev/null && systemctl restart apache2 2>/dev/null)
+      || (cd /var/www/html 2>/dev/null || cd /tmp; nohup python3 -m http.server {port} > /dev/null 2>&1 &)
+    placeholders:
+      - name: port
+        description: "Wrong port (e.g. 8080); clients expect 80."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on web server container. Tries Apache (Listen in ports.conf) first, else starts Python http.server on non-standard port."
+
+  - id: ip_duplicate
+    task_family: misconfiguration
+    description: "One host's interface set to the same IP as another host; IP conflict and unpredictable connectivity."
+    symptom: |
+      Users report unpredictable connectivity or that traffic to or from a certain
+      host goes to the wrong place or fails intermittently.
+    setup_template: >
+      ip addr del {old_ip} dev {interface} && ip addr add {new_ip} dev {interface}
+      && ip route replace default via {gateway}
+    placeholders:
+      - name: old_ip
+        description: "Current IP with prefix on the target host (e.g. 10.0.1.3/24)."
+      - name: new_ip
+        description: "IP to assign (duplicate of another host, e.g. 10.0.1.2/24)."
+      - name: interface
+        description: "Interface to change (e.g. eth0)."
+      - name: gateway
+        description: "Default gateway IP for the new IP (e.g. 10.0.1.1)."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on the host that will get the duplicate IP; new_ip and gateway typically come from the other host."
+
+  - id: host_wrong_ip
+    task_family: misconfiguration
+    description: "Host configured with wrong static IP and gateway; unreachable or wrong segment."
+    symptom: "Users report that a host is unreachable or cannot reach the rest of the network."
+    setup_template: >
+      ip addr del {old_ip} dev {interface} && ip addr add {wrong_ip} dev {interface}
+      && ip route replace default via {wrong_gateway}
+    placeholders:
+      - name: old_ip
+        description: "Current IP with prefix (e.g. 10.0.1.2/24)."
+      - name: wrong_ip
+        description: "Incorrect IP to inject (e.g. 10.2.1.50/24)."
+      - name: interface
+        description: "Interface (e.g. eth0)."
+      - name: wrong_gateway
+        description: "Incorrect default gateway (e.g. 10.2.1.1)."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on the faulty host; wrong_ip and wrong_gateway can be from a non-existent or wrong segment."
+
+  - id: host_wrong_prefix
+    task_family: misconfiguration
+    description: "Host interface with wrong subnet prefix length (e.g. /8 instead of /24); routing or reachability issues."
+    symptom: "Users report that a host cannot reach others or is unreachable; connectivity is limited or broken."
+    setup_template: "ip addr del {old_ip} dev {interface} && ip addr add {wrong_prefix_ip} dev {interface}"
+    placeholders:
+      - name: old_ip
+        description: "Current IP with prefix (e.g. 10.0.1.2/24)."
+      - name: wrong_prefix_ip
+        description: "Same address with wrong prefix (e.g. 10.0.1.2/8)."
+      - name: interface
+        description: "Interface (e.g. eth0)."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on the faulty host. Wrong prefix causes incorrect subnet assumption and routing."
+
+  - id: acl_bgp_block
+    task_family: misconfiguration
+    description: "ACL rules block BGP (TCP port 179) on the device; peering fails, routing broken."
+    symptom: |
+      Users report that BGP sessions do not come up or drop; routing updates stop,
+      and connectivity that depends on BGP is lost.
+    setup_template: |
+      nft add rule inet filter input tcp dport 179 drop
+      nft add rule inet filter input tcp sport 179 drop
+    placeholders: []
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_worker/size_m/compose.yaml"
+    notes: "Execute on the faulty router. Requires nftables table 'filter' with chain 'input'. Blocks BGP in both directions."
+
+  - id: acl_ospf_block
+    task_family: misconfiguration
+    description: "ACL rules block OSPF (IP protocol 89) on the device; adjacency fails, routes missing."
+    symptom: |
+      Users report that OSPF neighbors do not form or drop; routes learned via OSPF
+      disappear and connectivity is affected.
+    setup_template: "nft add rule inet filter input ip protocol 89 drop"
+    placeholders: []
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_worker/size_m/compose.yaml"
+    notes: "Execute on the faulty router. Blocks OSPF (protocol 89) in the input path."
+
+  - id: acl_arp_block
+    task_family: misconfiguration
+    description: "ACL drops all ARP traffic and ARP cache is flushed; L2 resolution fails, connectivity lost."
+    symptom: |
+      Users report that hosts or routers cannot resolve MAC addresses; connectivity
+      to directly connected or same-LAN devices fails; ARP table appears empty.
+    setup_template: |
+      nft add table arp filter 2>/dev/null || true
+      nft add chain arp filter input '{ type filter hook input priority 0 ; }' 2>/dev/null || true
+      nft add rule arp filter input drop
+      ip neigh flush all
+    placeholders: []
+    difficulty: hard
+    typical_sandbox: "data_center/dc_clos_worker/size_m/compose.yaml"
+    notes: "Execute on the faulty device. Creates arp filter table/chain if needed, then drops ARP and flushes neighbour table."
+
+  - id: acl_icmp_block
+    task_family: misconfiguration
+    description: "ACL blocks ICMP on the device; ping and ICMP-based checks fail."
+    symptom: |
+      Users report that ping to or from a specific device fails; ICMP-based
+      monitoring or path MTU discovery may be broken.
+    setup_template: "nft add rule ip filter input ip protocol icmp drop"
+    placeholders: []
+    difficulty: easy
+    typical_sandbox: "data_center/dc_clos_worker/size_m/compose.yaml"
+    notes: "Execute on the faulty device. Requires ip table 'filter' with chain 'input'."
+
+  - id: acl_http_block
+    task_family: misconfiguration
+    description: "ACL blocks HTTP (TCP port 80) on the device; web service unreachable."
+    symptom: "Users report that HTTP traffic to or through the device does not work; port 80 is unreachable."
+    setup_template: "nft add rule inet filter input tcp dport 80 drop"
+    placeholders: []
+    difficulty: easy
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on the device that should accept HTTP (e.g. web server or router in path)."
+
+  - id: acl_dns_block
+    task_family: misconfiguration
+    description: "ACL blocks DNS (TCP and UDP port 53) on the device; name resolution fails."
+    symptom: |
+      Users report that DNS lookups fail or time out; hostnames cannot be resolved;
+      other traffic may still work.
+    setup_template: |
+      nft add rule inet filter input tcp dport 53 drop
+      nft add rule inet filter input udp dport 53 drop
+    placeholders: []
+    difficulty: easy
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on the device that should accept DNS (e.g. DNS server or router in path)."
+
+  # ---------------------------------------------------------------------------
+  # resource_contention
+  # ---------------------------------------------------------------------------
+
+  - id: link_bandwidth_throttling
+    task_family: resource_contention
+    description: "Bandwidth limit on interface; severely degraded throughput."
+    symptom: "Users report that speed is much lower than expected; the network feels very slow in one direction or path."
+    setup_template: "tc qdisc add dev {interface} root tbf rate {rate} burst {burst} limit {limit}"
+    placeholders:
+      - name: interface
+        description: "Interface to throttle (e.g. eth0, eth4)."
+      - name: rate
+        description: "Rate limit (e.g. 30kbit)."
+      - name: burst
+        description: "Burst size (e.g. 64kb)."
+      - name: limit
+        description: "Queue limit (e.g. 500kb)."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Example: rate 30kbit burst 64kb limit 500kb. Harder when applied on router vs host."
+
+  - id: dns_lookup_latency
+    task_family: resource_contention
+    description: "High latency on DNS server interface; slow DNS responses and timeouts."
+    symptom: |
+      Users report that looking up names or opening URLs is very slow;
+      applications often time out before the first response.
+    setup_template: "tc qdisc add dev {interface} root netem delay {delay}"
+    placeholders:
+      - name: interface
+        description: "Interface on DNS server (e.g. eth0)."
+      - name: delay
+        description: "Delay (e.g. 1000ms)."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on DNS server container (dns_0, dns_1)."
+
+  - id: incast_traffic_limitation
+    task_family: resource_contention
+    description: "Delay + bandwidth limit on server; performance degradation under load."
+    symptom: "Users report that a service is slow or times out when many users or requests hit it at once."
+    setup_template: "tc qdisc add dev {interface} root handle 1: netem delay {delay} && tc qdisc add dev {interface} parent 1:1 handle 10: tbf rate {rate} burst {burst} limit {limit}"
+    placeholders:
+      - name: interface
+        description: "Interface on web server (e.g. eth0)."
+      - name: delay
+        description: "Netem delay (e.g. 20ms)."
+      - name: rate
+        description: "TBF rate (e.g. 1mbit)."
+      - name: burst
+        description: "TBF burst (e.g. 500kb)."
+      - name: limit
+        description: "TBF limit (e.g. 500kb)."
+    difficulty: hard
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Typically applied on web server (web_0_0, web_1_1, etc.)."
+
+  - id: stress_load_balancer
+    task_family: resource_contention
+    description: "High CPU, memory, and I/O stress on load balancer; forwarding and health checks degrade."
+    symptom: |
+      Users report that the load balancer is slow or drops connections; health checks
+      fail or time out; traffic distribution becomes uneven or stalls.
+    setup_template: "stress-ng --cpu 0 --cpu-load 100 --iomix 0 --sock 0 --hdd 2 --vm 0 --vm-bytes 75% --timeout {duration} &"
+    placeholders:
+      - name: duration
+        description: "Stress duration in seconds (e.g. 300)."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on the load balancer host. Runs stress-ng in background; requires stress-ng installed."
+
+  - id: stress_sender
+    task_family: resource_contention
+    description: "High CPU, memory, and I/O stress on sender host; send rate and responsiveness degrade."
+    symptom: |
+      Users report that the sender or client host is slow; traffic from that host
+      drops or becomes bursty; applications on the sender time out or stall.
+    setup_template: "stress-ng --cpu 0 --cpu-load 100 --iomix 0 --sock 0 --hdd 2 --vm 0 --vm-bytes 75% --timeout {duration} &"
+    placeholders:
+      - name: duration
+        description: "Stress duration in seconds (e.g. 300)."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on the sender/client host. Runs stress-ng in background; requires stress-ng installed."
+
+  - id: stress_receiver
+    task_family: resource_contention
+    description: "High CPU, memory, and I/O stress on receiver host; receive rate and processing degrade."
+    symptom: |
+      Users report that the receiver or server host is slow; it stops accepting
+      or processing traffic normally; applications on the receiver time out or stall.
+    setup_template: "stress-ng --cpu 0 --cpu-load 100 --iomix 0 --sock 0 --hdd 2 --vm 0 --vm-bytes 75% --timeout {duration} &"
+    placeholders:
+      - name: duration
+        description: "Stress duration in seconds (e.g. 300)."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on the receiver/server host. Runs stress-ng in background; requires stress-ng installed."
+
+  # ---------------------------------------------------------------------------
+  # network_under_attack
+  # ---------------------------------------------------------------------------
+
+  - id: dns_hijacking
+    task_family: network_under_attack
+    description: "Client DNS pointed to attacker-controlled nameserver; hostnames resolve to wrong or malicious addresses."
+    symptom: |
+      Users report that when they visit certain sites they are sent to wrong or unexpected pages;
+      hostnames resolve to the wrong addresses, as if DNS were tampered with.
+    setup_template: "echo 'nameserver {fake_dns_ip}' > /etc/resolv.conf"
+    placeholders:
+      - name: fake_dns_ip
+        description: "Rogue or attacker-controlled nameserver IP (e.g. 8.8.8.8 or a malicious server)."
+    difficulty: easy
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on the client host; overwriting resolv.conf simulates DNS hijacking so that host uses the rogue DNS."
+
+  - id: p4_misaligned_sketch_threshold
+    task_family: network_under_attack
+    description: "P4 sketch threshold altered (e.g. PACKET_THRESHOLD); misaligned thresholds trigger false-positive cardinality alerts (e.g. DoS) and packet drops."
+    symptom: |
+      Users report false-positive cardinality or DoS alerts, unexpected packet drops,
+      or sketch-based monitoring triggering incorrectly; behavior suggests threshold tampering.
+    setup_template: >
+      cp {p4_name}.p4 {p4_name}.p4.bak
+      && rm -f {p4_name}.json
+      && sed -Ei 's/#define PACKET_THRESHOLD 1000/#define PACKET_THRESHOLD 100/g' {p4_name}.p4
+      && pkill -f simple_switch || true
+      && ./hostlab/{device}.startup
+    placeholders:
+      - name: p4_name
+        description: "P4 source file base name without .p4 (e.g. bloom_filter)."
+      - name: device
+        description: "Kathara device name for startup script (e.g. switch_1)."
+    difficulty: hard
+    typical_sandbox: "p4/p4_bloom_filter/compose.yaml"
+    notes: "Execute on the faulty P4 switch. Backs up .p4, removes compiled .json, changes PACKET_THRESHOLD 1000→100, restarts simple_switch and runs device startup."
+
+  - id: bgp_hijacking
+    task_family: network_under_attack
+    description: "Router advertises prefix it does not own; traffic misdirected."
+    symptom: |
+      Users report that when they try to reach a known host or service,
+      they end up at a different or wrong destination.
+    setup_template: 'vtysh -c "conf t" -c "router bgp {asn}" -c "network {prefix}"'
+    placeholders:
+      - name: asn
+        description: "BGP ASN of the hijacking router (e.g. 65100, 65203)."
+      - name: prefix
+        description: "Prefix to hijack (e.g. 10.1.0.0/24, 10.1.1.0/24)."
+    difficulty: hard
+    typical_sandbox: "data_center/dc_clos_worker/size_s/compose.yaml"
+    notes: "Prefix should belong to another router in the topology."
+
+  - id: rate_limit_excessive
+    task_family: network_under_attack
+    description: "Over‑aggressive connection or rate limit (e.g. post‑attack mitigation) blocks normal traffic."
+    symptom: |
+      Users report that after a recent security change or "attack mitigation",
+      legitimate traffic is being dropped or heavily limited; services are unusable.
+    setup_template: "iptables -A INPUT -p tcp --dport {port} -m connlimit --connlimit-above {limit} -j DROP"
+    placeholders:
+      - name: port
+        description: "TCP port to limit (e.g. 80)."
+      - name: limit
+        description: "Max concurrent connections allowed (e.g. 2)."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on the server; low connlimit-above (e.g. 2) simulates excessive mitigation."
+
+  - id: dhcp_spoofing
+    task_family: network_under_attack
+    description: "DHCP clients received spoofed configurations (IP, gateway, DNS, etc.); traffic sent to attacker or wrong destination."
+    symptom: |
+      Users report that clients get wrong IPs, wrong gateway, or wrong DNS; connectivity
+      fails or traffic goes to unexpected hosts as if a rogue DHCP server had responded.
+    setup_template: >
+      ip addr replace {spoofed_ip} dev {interface}
+      && ip route replace default via {rogue_gateway}
+      && echo 'nameserver {rogue_dns}' > /etc/resolv.conf
+    placeholders:
+      - name: spoofed_ip
+        description: "IP with prefix assigned by rogue DHCP (e.g. 10.0.1.99/24)."
+      - name: interface
+        description: "Interface to apply spoofed config (e.g. eth0)."
+      - name: rogue_gateway
+        description: "Gateway from rogue DHCP (e.g. attacker or wrong router)."
+      - name: rogue_dns
+        description: "DNS server from rogue DHCP (e.g. attacker or malicious server)."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on the victim client. Simulates outcome of DHCP spoofing by applying spoofed IP, gateway, and DNS."
+
+  - id: arp_cache_poisoning
+    task_family: network_under_attack
+    description: "ARP cache poisoned; victim has wrong IP-to-MAC mapping, leading to abnormal traffic redirection."
+    symptom: |
+      Users report that traffic to a known IP goes to the wrong host or is lost;
+      connectivity to gateway or servers is redirected or fails; behavior suggests ARP spoofing.
+    setup_template: "ip neigh replace {target_ip} lladdr {wrong_mac} dev {interface}"
+    placeholders:
+      - name: target_ip
+        description: "IP that victim intends to reach (e.g. gateway 10.0.1.1 or server)."
+      - name: wrong_mac
+        description: "MAC address to inject (e.g. attacker MAC or wrong host)."
+      - name: interface
+        description: "Interface on victim (e.g. eth0)."
+    difficulty: medium
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Execute on the victim host. Overwrites ARP entry so traffic to target_ip is sent to wrong_mac."
+
+  # ---------------------------------------------------------------------------
+  # network_node_error
+  # ---------------------------------------------------------------------------
+
+  - id: mpls_label_limit_exceeded
+    task_family: network_node_error
+    description: "MPLS P4 program replaced with lower label limit (CONST_MAX_LABELS); deep label stacks exceed limit and are dropped."
+    symptom: |
+      Users report that MPLS traffic with many labels fails or is dropped on a specific switch;
+      shallow stacks may work while deeper ones do not; behavior suggests a label depth limit.
+    setup_template: >
+      cp {p4_name}.p4 {p4_name}.p4.bak
+      && rm -f {p4_name}.json
+      && sed -Ei 's/#define[[:space:]]+CONST_MAX_LABELS[[:space:]]+10/#define CONST_MAX_LABELS 2/g' {p4_name}.p4
+      && pkill -f simple_switch || true
+      && ./hostlab/{device}.startup
+    placeholders:
+      - name: p4_name
+        description: "P4 source base name without .p4 (e.g. mpls)."
+      - name: device
+        description: "Kathara device name for startup script (e.g. switch_1)."
+    difficulty: hard
+    typical_sandbox: "p4/p4_mpls/compose.yaml"
+    notes: "Execute on the faulty P4/MPLS switch. Reduces CONST_MAX_LABELS from 10 to 2, recompiles and restarts simple_switch via device startup."
+
+  - id: bmv2_down
+    task_family: network_node_error
+    description: "BMv2 simple_switch process killed on the P4 switch; data plane stops, no forwarding."
+    symptom: |
+      Users report that a P4 switch stops forwarding traffic; the device may still be reachable
+      but no packets are switched; control or management may still respond.
+    setup_template: "pkill simple_switch"
+    placeholders: []
+    difficulty: easy
+    typical_sandbox: "p4/p4_int/compose.yaml"
+    notes: "Execute on the faulty P4/BMv2 switch. Stops the simple_switch process."
+  
+  - id: frr_down
+    task_family: network_node_error
+    description: "FRR (routing daemon) stopped on the router; routing protocols and forwarding fail."
+    symptom: |
+      Users report that a router stops advertising or learning routes; BGP/OSPF/RIP
+      sessions drop and connectivity through that device is lost or degraded.
+    setup_template: "systemctl stop frr"
+    placeholders: []
+    difficulty: easy
+    typical_sandbox: "data_center/dc_clos_worker/size_m/compose.yaml"
+    notes: "Execute on the faulty router. Stops the FRR routing daemon."
+
+  - id: ovs_down
+    task_family: network_node_error
+    description: "Open vSwitch daemon stopped on the switch; no forwarding, SDN data plane down."
+    symptom: |
+      Users report that an SDN switch stops forwarding traffic; the device may be reachable
+      but no packets are switched; controller may lose connection to the switch.
+    setup_template: "/usr/share/openvswitch/scripts/ovs-ctl stop"
+    placeholders: []
+    difficulty: easy
+    typical_sandbox: "sdn/sdn_clos/size_m/compose.yaml"
+    notes: "Execute on the faulty OVS switch. Stops ovs-vswitchd and ovsdb-server."
+
+  - id: controller_down
+    task_family: network_node_error
+    description: "SDN controller process killed; switches lose controller, flow updates stop."
+    symptom: |
+      Users report that SDN switches stop getting new flow rules or lose connectivity;
+      behavior may depend on fail-mode (e.g. secure = drop, standalone = legacy).
+    setup_template: "pkill -f ryu-manager"
+    placeholders: []
+    difficulty: easy
+    typical_sandbox: "sdn/sdn_clos/size_m/compose.yaml"
+    notes: "Execute on the controller container (e.g. controller). Stops Ryu SDN controller."
+
+  - id: southbound_port_unreachable
+    task_family: network_node_error
+    description: "SDN controller restarted on a different OpenFlow port; switches cannot reach controller (southbound port unreachable)."
+    symptom: |
+      Users report that SDN switches lose connection to the controller or never connect;
+      controller is running but switches are configured for a different port (e.g. 6633).
+    setup_template: |
+      pkill -f ryu-manager
+      ryu-manager --ofp-tcp-listen-port {mismatched_port} ryu.app.simple_switch &
+    placeholders:
+      - name: mismatched_port
+        description: "OpenFlow listen port other than the one switches use (e.g. 6634 when switches use 6633)."
+    difficulty: medium
+    typical_sandbox: "sdn/sdn_clos/size_m/compose.yaml"
+    notes: "Execute on the controller container. Restarts Ryu on wrong port so southbound (switch-to-controller) is unreachable."
+
+  # ---------------------------------------------------------------------------
+  # multiple_faults
+  # ---------------------------------------------------------------------------
+
+  - id: multiple_faults_compound
+    task_family: multiple_faults
+    selectable: false
+    description: "Multiple independent failures occur at the same time, creating overlapping symptoms."
+    symptom: |
+      Users report broad and inconsistent network issues: some services time out,
+      some routes fail, and symptoms seem to point to more than one device or cause.
+      A single root cause is unlikely.
+    setup_template: null
+    placeholders: []
+    difficulty: hard
+    typical_sandbox: "data_center/dc_clos_service/size_s/compose.yaml"
+    notes: "Use metadata.faults in dataset samples to inject several failures in one scenario."
+
+  # ---------------------------------------------------------------------------
+  # baseline / no fault (for reference only; no setup)
+  # ---------------------------------------------------------------------------
+
+  - id: baseline
+    task_family: "*"
+    description: "No fault; baseline health check."
+    symptom: |
+      Network operations wants a baseline health check.
+      Please verify all connectivity is working as expected.
+    setup_template: null
+    placeholders: []
+    difficulty: easy
+    typical_sandbox: "Any"
+    notes: "No setup command; used for healthy samples in each family."

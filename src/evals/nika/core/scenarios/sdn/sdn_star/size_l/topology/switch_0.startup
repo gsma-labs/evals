@@ -1,0 +1,37 @@
+/usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+ovs-vsctl add-br switch_0
+ovs-vsctl set-fail-mode switch_0 secure
+ip link set eth0 up
+ovs-vsctl add-port switch_0 eth0
+ip link set eth1 up
+ovs-vsctl add-port switch_0 eth1
+ip link set eth2 up
+ovs-vsctl add-port switch_0 eth2
+ip link set eth3 up
+ovs-vsctl add-port switch_0 eth3
+ip link set eth4 up
+ovs-vsctl add-port switch_0 eth4
+ip link set eth5 up
+ovs-vsctl add-port switch_0 eth5
+ip link set eth6 up
+ovs-vsctl add-port switch_0 eth6
+ip link set eth7 up
+ovs-vsctl add-port switch_0 eth7
+ip link set eth8 up
+ovs-vsctl add-port switch_0 eth8
+ip link set eth9 up
+ovs-vsctl add-port switch_0 eth9
+ip link set eth10 up
+ovs-vsctl add-port switch_0 eth10
+ip link set eth11 up
+ovs-vsctl add-port switch_0 eth11
+ip link set eth12 up
+ovs-vsctl add-port switch_0 eth12
+ip link set eth13 up
+ovs-vsctl add-port switch_0 eth13
+ip link set eth14 up
+ovs-vsctl add-port switch_0 eth14
+ip link set eth15 up
+ovs-vsctl add-port switch_0 eth15
+ip addr add 20.0.0.1/24 dev eth16
+ovs-vsctl set-controller switch_0 tcp:20.0.0.100:6633

@@ -51,6 +51,7 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "**/{tests}/*" = ["PLR2004"]  # Allow magic numbers in tests
+"src/evals/nika/core/scenarios/**/*.py" = ["D", "E", "F", "I", "PLR", "PLW"]  # Vendored/generated scenario scripts
 
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
@@ -108,7 +109,7 @@ name = "evals"
 description = "Open Telco Initiative Benchmarks"
 authors = [{ name = "Open Telco Initiative" }]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.14"
 license = "MIT"
 dynamic = ["version"]
 classifiers = [
@@ -125,14 +126,18 @@ classifiers = [
 dependencies = [
     "datasets>=4.0.0",
     "inspect_ai>=0.3.153",
-    "numpy>=1.26.0",
+    "numpy>=1.26.0,!=2.4.0",
     "pydantic>=2.10.0",
+    "pyyaml>=6.0",
     "requests>=2.32.0",
     "scipy>=1.11.0",
     "toml>=0.10.2",
     "jinja2",
     "python-dotenv",
 ]
+
+[project.optional-dependencies]
+nika = ["inspect-kathara"]
 
 [project.urls]
 "Source Code" = "https://github.com/otelcos/evals"
@@ -157,6 +162,9 @@ dev = [
     "types-PyYAML",
     "types-requests",
 ]
+
+[tool.uv.sources]
+inspect-kathara = { git = "https://github.com/otelcos/inspect-kathara" }
 
 [tool.uv]
 environments = [

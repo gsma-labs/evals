@@ -1,0 +1,20 @@
+[Unit]
+Description=Web Server
+After=network.target
+StartLimitIntervalSec=0
+StartLimitBurst=0
+
+[Service]
+Type=simple
+WorkingDirectory=/
+ExecStart=/usr/bin/python3 /root/web_server.py
+
+Restart=always
+RestartSec=1
+
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

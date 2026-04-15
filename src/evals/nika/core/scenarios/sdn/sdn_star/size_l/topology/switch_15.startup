@@ -1,0 +1,8 @@
+/usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+ovs-vsctl add-br switch_15
+ovs-vsctl set-fail-mode switch_15 secure
+ovs-vsctl add-port switch_15 eth0
+ip link set eth1 up
+ovs-vsctl add-port switch_15 eth1
+ip addr add 20.0.0.16/24 dev eth2
+ovs-vsctl set-controller switch_15 tcp:20.0.0.100:6633

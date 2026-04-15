@@ -1,0 +1,18 @@
+/usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+ovs-vsctl add-br leaf_3
+ovs-vsctl set-fail-mode leaf_3 secure
+ovs-vsctl set bridge leaf_3 stp_enable=true
+ovs-vsctl add-port leaf_3 eth0
+ip link set eth0 up
+ovs-vsctl add-port leaf_3 eth1
+ip link set eth1 up
+ovs-vsctl add-port leaf_3 eth2
+ip link set eth2 up
+ovs-vsctl add-port leaf_3 eth3
+ip link set eth3 up
+ovs-vsctl add-port leaf_3 eth4
+ovs-vsctl add-port leaf_3 eth5
+ip addr add 20.0.0.5/24 dev eth6
+ip link set eth6 up
+ovs-vsctl set-controller leaf_3 tcp:20.0.0.100:6633
+ovs-vsctl set bridge leaf_3 stp_enable=true

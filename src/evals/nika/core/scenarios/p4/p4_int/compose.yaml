@@ -1,0 +1,317 @@
+# Auto-generated from Kathara lab.conf
+# Machines: pc1, pc2, collector, spine1, spine2, leaf1, leaf2
+# Networks: A, B, C, D, E, F, G
+# Per-network x-interface-name = eth0, eth1, ... (from lab.conf machine[0], machine[1], ...)
+
+services:
+  default:
+    image: kathara/base
+    x-local: true
+    init: true
+    hostname: default
+    cap_add: &id002
+    - NET_ADMIN
+    - SYS_ADMIN
+    command: sleep infinity
+  pc1:
+    image: kathara/base
+    x-local: true
+    init: true
+    hostname: pc1
+    cap_add: &id001
+    - NET_ADMIN
+    privileged: true
+    networks:
+      A:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      for p in /proc/sys/net/ipv4/conf/*; do iface=$$(basename "$$p"); case "$$iface" in lo|all|default) continue ;; esac; sysctl -w "net.ipv4.conf.$${iface}.arp_ignore=1" || true; done;
+      for p in /proc/sys/net/ipv4/conf/*; do iface=$$(basename "$$p"); case "$$iface" in lo|all|default) continue ;; esac; sysctl -w "net.ipv4.conf.$${iface}.arp_announce=2" || true; done;
+      ip link set eth0 address 00:00:0a:00:00:01
+      ip addr add 10.0.0.1/24 dev eth0
+      arp -s 10.0.0.2 00:00:0a:00:00:02
+      arp -s 10.0.0.3 00:00:0a:00:00:03
+      sleep infinity
+      '
+  pc2:
+    image: kathara/base
+    x-local: true
+    init: true
+    hostname: pc2
+    cap_add: *id001
+    privileged: true
+    networks:
+      D:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      for p in /proc/sys/net/ipv4/conf/*; do iface=$$(basename "$$p"); case "$$iface" in lo|all|default) continue ;; esac; sysctl -w "net.ipv4.conf.$${iface}.arp_ignore=1" || true; done;
+      for p in /proc/sys/net/ipv4/conf/*; do iface=$$(basename "$$p"); case "$$iface" in lo|all|default) continue ;; esac; sysctl -w "net.ipv4.conf.$${iface}.arp_announce=2" || true; done;
+      ip link set eth0 address 00:00:0a:00:00:02
+      ip addr add 10.0.0.2/24 dev eth0
+      arp -s 10.0.0.1 00:00:0a:00:00:01
+      arp -s 10.0.0.3 00:00:0a:00:00:03
+      sleep infinity
+      '
+  collector:
+    image: kathara/nika-influxdb
+    x-local: true
+    init: true
+    hostname: collector
+    cap_add: *id001
+    privileged: true
+    networks:
+      G:
+        interface_name: eth0
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f influx
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/collector:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      for p in /proc/sys/net/ipv4/conf/*; do iface=$$(basename "$$p"); case "$$iface" in lo|all|default) continue ;; esac; sysctl -w "net.ipv4.conf.$${iface}.arp_ignore=1" || true; done;
+      for p in /proc/sys/net/ipv4/conf/*; do iface=$$(basename "$$p"); case "$$iface" in lo|all|default) continue ;; esac; sysctl -w "net.ipv4.conf.$${iface}.arp_announce=2" || true; done;
+      bash collector_src/collector_influxdb.sh
+      ip link set eth0 address 00:00:0a:00:00:03
+      ip addr add 10.0.0.3/24 dev eth0
+      arp -s 10.0.0.1 00:00:0a:00:00:01
+      arp -s 10.0.0.2 00:00:0a:00:00:02
+      python3 collector_src/int_collector.py &> int_collector.log
+      sleep infinity
+      '
+  spine1:
+    image: kathara/p4
+    x-local: true
+    init: true
+    hostname: spine1
+    cap_add: *id002
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      B:
+        interface_name: eth0
+      E:
+        interface_name: eth1
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f simple_switch_grpc
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      for p in /proc/sys/net/ipv4/conf/*; do iface=$$(basename "$$p"); case "$$iface" in lo|all|default) continue ;; esac; sysctl -w "net.ipv4.conf.$${iface}.arp_ignore=1" || true; done;
+      for p in /proc/sys/net/ipv4/conf/*; do iface=$$(basename "$$p"); case "$$iface" in lo|all|default) continue ;; esac; sysctl -w "net.ipv4.conf.$${iface}.arp_announce=2" || true; done;
+      p4c p4_src/int.p4 -o p4_src/
+      simple_switch -i 1@eth0 -i 2@eth1 --log-console p4_src/int.json >> sw.log &
+      while [[ $(pgrep simple_switch) -eq 0 ]]; do sleep 1; done
+      until simple_switch_CLI <<< "help"; do sleep 1; done
+      simple_switch_CLI <<< $(cat commands.txt)
+      sleep infinity
+      '
+  spine2:
+    image: kathara/p4
+    x-local: true
+    init: true
+    hostname: spine2
+    cap_add: *id002
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      C:
+        interface_name: eth0
+      F:
+        interface_name: eth1
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f simple_switch_grpc
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/spine2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      for p in /proc/sys/net/ipv4/conf/*; do iface=$$(basename "$$p"); case "$$iface" in lo|all|default) continue ;; esac; sysctl -w "net.ipv4.conf.$${iface}.arp_ignore=1" || true; done;
+      for p in /proc/sys/net/ipv4/conf/*; do iface=$$(basename "$$p"); case "$$iface" in lo|all|default) continue ;; esac; sysctl -w "net.ipv4.conf.$${iface}.arp_announce=2" || true; done;
+      p4c p4_src/int.p4 -o p4_src/
+      simple_switch -i 1@eth0 -i 2@eth1 --log-console p4_src/int.json >> sw.log &
+      while [[ $(pgrep simple_switch) -eq 0 ]]; do sleep 1; done
+      until simple_switch_CLI <<< "help"; do sleep 1; done
+      simple_switch_CLI <<< $(cat commands.txt)
+      sleep infinity
+      '
+  leaf1:
+    image: kathara/p4
+    x-local: true
+    init: true
+    hostname: leaf1
+    cap_add: *id002
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      A:
+        interface_name: eth0
+      B:
+        interface_name: eth1
+      C:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f simple_switch_grpc
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      for p in /proc/sys/net/ipv4/conf/*; do iface=$$(basename "$$p"); case "$$iface" in lo|all|default) continue ;; esac; sysctl -w "net.ipv4.conf.$${iface}.arp_ignore=1" || true; done;
+      for p in /proc/sys/net/ipv4/conf/*; do iface=$$(basename "$$p"); case "$$iface" in lo|all|default) continue ;; esac; sysctl -w "net.ipv4.conf.$${iface}.arp_announce=2" || true; done;
+      p4c p4_src/int.p4 -o p4_src/
+      simple_switch -i 1@eth0 -i 2@eth1 -i 3@eth2 -i 4@eth3 --log-console p4_src/int.json >> sw.log &
+      while [[ $(pgrep simple_switch) -eq 0 ]]; do sleep 1; done
+      until simple_switch_CLI <<< "help"; do sleep 1; done
+      simple_switch_CLI <<< $(cat commands.txt)
+      sleep infinity
+      '
+  leaf2:
+    image: kathara/p4
+    x-local: true
+    init: true
+    hostname: leaf2
+    cap_add: *id002
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      D:
+        interface_name: eth0
+      E:
+        interface_name: eth1
+      F:
+        interface_name: eth2
+      G:
+        interface_name: eth3
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f simple_switch_grpc
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/leaf2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      for p in /proc/sys/net/ipv4/conf/*; do iface=$$(basename "$$p"); case "$$iface" in lo|all|default) continue ;; esac; sysctl -w "net.ipv4.conf.$${iface}.arp_ignore=1" || true; done;
+      for p in /proc/sys/net/ipv4/conf/*; do iface=$$(basename "$$p"); case "$$iface" in lo|all|default) continue ;; esac; sysctl -w "net.ipv4.conf.$${iface}.arp_announce=2" || true; done;
+      p4c p4_src/int.p4 -o p4_src/
+      simple_switch -i 1@eth0 -i 2@eth1 -i 3@eth2 -i 4@eth3 --log-console p4_src/int.json >> sw.log &
+      while [[ $(pgrep simple_switch) -eq 0 ]]; do sleep 1; done
+      until simple_switch_CLI <<< "help"; do sleep 1; done
+      simple_switch_CLI <<< $(cat commands.txt)
+      sleep infinity
+      '
+networks:
+  A:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.0/28
+  B:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.16/28
+  C:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.32/28
+  D:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.48/28
+  E:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.64/28
+  F:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.80/28
+  G:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.96/28

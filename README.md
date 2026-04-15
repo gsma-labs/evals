@@ -17,7 +17,7 @@ This project is built on [Inspect AI](https://inspect.aisi.org.uk/), we encourag
 
 ## Collaborators
 
-**Tech & Research:** GSMA, Huawei GTS, The Linux Foundation, Khalifa University, Universitat Pompeu Fabra (UPF), University of Texas, and Queen’s University.
+**Tech & Research:** GSMA, Huawei GTS, The Linux Foundation, Khalifa University, Universitat Pompeu Fabra (UPF), University of Texas, Queen’s University, and King Abdullah University of Science and Technology (KAUST).
 
 **Telcos:** AT&T, China Telecom, Deutsche Telekom, du, KDDI, KPN, Liberty Global, Orange, Telefónica, Turkcell, Swisscom, Vodafone.
 

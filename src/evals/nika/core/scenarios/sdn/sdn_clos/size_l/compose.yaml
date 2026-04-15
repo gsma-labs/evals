@@ -1,0 +1,2927 @@
+# Auto-generated from Kathara lab.conf
+# Machines: spine_1, spine_2, spine_3, spine_4, leaf_1, leaf_2, leaf_3, leaf_4, leaf_5, leaf_6, leaf_7, leaf_8, host_1_1, host_1_2, host_1_3, host_1_4, host_1_5, host_1_6, host_1_7, host_1_8, host_2_1, host_2_2, host_2_3, host_2_4, host_2_5, host_2_6, host_2_7, host_2_8, host_3_1, host_3_2, host_3_3, host_3_4, host_3_5, host_3_6, host_3_7, host_3_8, host_4_1, host_4_2, host_4_3, host_4_4, host_4_5, host_4_6, host_4_7, host_4_8, host_5_1, host_5_2, host_5_3, host_5_4, host_5_5, host_5_6, host_5_7, host_5_8, host_6_1, host_6_2, host_6_3, host_6_4, host_6_5, host_6_6, host_6_7, host_6_8, host_7_1, host_7_2, host_7_3, host_7_4, host_7_5, host_7_6, host_7_7, host_7_8, host_8_1, host_8_2, host_8_3, host_8_4, host_8_5, host_8_6, host_8_7, host_8_8, controller
+# Networks: host_1_1_leaf_1, host_1_2_leaf_1, host_1_3_leaf_1, host_1_4_leaf_1, host_1_5_leaf_1, host_1_6_leaf_1, host_1_7_leaf_1, host_1_8_leaf_1, host_2_1_leaf_2, host_2_2_leaf_2, host_2_3_leaf_2, host_2_4_leaf_2, host_2_5_leaf_2, host_2_6_leaf_2, host_2_7_leaf_2, host_2_8_leaf_2, host_3_1_leaf_3, host_3_2_leaf_3, host_3_3_leaf_3, host_3_4_leaf_3, host_3_5_leaf_3, host_3_6_leaf_3, host_3_7_leaf_3, host_3_8_leaf_3, host_4_1_leaf_4, host_4_2_leaf_4, host_4_3_leaf_4, host_4_4_leaf_4, host_4_5_leaf_4, host_4_6_leaf_4, host_4_7_leaf_4, host_4_8_leaf_4, host_5_1_leaf_5, host_5_2_leaf_5, host_5_3_leaf_5, host_5_4_leaf_5, host_5_5_leaf_5, host_5_6_leaf_5, host_5_7_leaf_5, host_5_8_leaf_5, host_6_1_leaf_6, host_6_2_leaf_6, host_6_3_leaf_6, host_6_4_leaf_6, host_6_5_leaf_6, host_6_6_leaf_6, host_6_7_leaf_6, host_6_8_leaf_6, host_7_1_leaf_7, host_7_2_leaf_7, host_7_3_leaf_7, host_7_4_leaf_7, host_7_5_leaf_7, host_7_6_leaf_7, host_7_7_leaf_7, host_7_8_leaf_7, host_8_1_leaf_8, host_8_2_leaf_8, host_8_3_leaf_8, host_8_4_leaf_8, host_8_5_leaf_8, host_8_6_leaf_8, host_8_7_leaf_8, host_8_8_leaf_8, spine_1_leaf_1, spine_1_leaf_2, spine_1_leaf_3, spine_1_leaf_4, spine_1_leaf_5, spine_1_leaf_6, spine_1_leaf_7, spine_1_leaf_8, spine_2_leaf_1, spine_2_leaf_2, spine_2_leaf_3, spine_2_leaf_4, spine_2_leaf_5, spine_2_leaf_6, spine_2_leaf_7, spine_2_leaf_8, spine_3_leaf_1, spine_3_leaf_2, spine_3_leaf_3, spine_3_leaf_4, spine_3_leaf_5, spine_3_leaf_6, spine_3_leaf_7, spine_3_leaf_8, spine_4_leaf_1, spine_4_leaf_2, spine_4_leaf_3, spine_4_leaf_4, spine_4_leaf_5, spine_4_leaf_6, spine_4_leaf_7, spine_4_leaf_8, switch_controller
+# Per-network x-interface-name = eth0, eth1, ... (from lab.conf machine[0], machine[1], ...)
+
+services:
+  default:
+    image: kathara/base
+    x-local: true
+    init: true
+    hostname: default
+    cap_add: &id001
+    - NET_ADMIN
+    - SYS_ADMIN
+    command: sleep infinity
+  spine_1:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: spine_1
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_1_leaf_1:
+        interface_name: eth0
+      spine_1_leaf_2:
+        interface_name: eth1
+      spine_1_leaf_3:
+        interface_name: eth2
+      spine_1_leaf_4:
+        interface_name: eth3
+      spine_1_leaf_5:
+        interface_name: eth4
+      spine_1_leaf_6:
+        interface_name: eth5
+      spine_1_leaf_7:
+        interface_name: eth6
+      spine_1_leaf_8:
+        interface_name: eth7
+      switch_controller:
+        interface_name: eth8
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br spine_1
+      ovs-vsctl set-fail-mode spine_1 secure
+      ovs-vsctl set bridge spine_1 stp_enable=true
+      ovs-vsctl add-port spine_1 eth0
+      ovs-vsctl add-port spine_1 eth1
+      ovs-vsctl add-port spine_1 eth2
+      ovs-vsctl add-port spine_1 eth3
+      ovs-vsctl add-port spine_1 eth4
+      ovs-vsctl add-port spine_1 eth5
+      ovs-vsctl add-port spine_1 eth6
+      ovs-vsctl add-port spine_1 eth7
+      ip addr add 20.0.0.1/24 dev eth8
+      ip link set eth8 up
+      ovs-vsctl set-controller spine_1 tcp:20.0.0.100:6633
+      ovs-vsctl set bridge spine_1 stp_enable=true
+      sleep infinity
+      '
+  spine_2:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: spine_2
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_2_leaf_1:
+        interface_name: eth0
+      spine_2_leaf_2:
+        interface_name: eth1
+      spine_2_leaf_3:
+        interface_name: eth2
+      spine_2_leaf_4:
+        interface_name: eth3
+      spine_2_leaf_5:
+        interface_name: eth4
+      spine_2_leaf_6:
+        interface_name: eth5
+      spine_2_leaf_7:
+        interface_name: eth6
+      spine_2_leaf_8:
+        interface_name: eth7
+      switch_controller:
+        interface_name: eth8
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br spine_2
+      ovs-vsctl set-fail-mode spine_2 secure
+      ovs-vsctl set bridge spine_2 stp_enable=true
+      ovs-vsctl add-port spine_2 eth0
+      ovs-vsctl add-port spine_2 eth1
+      ovs-vsctl add-port spine_2 eth2
+      ovs-vsctl add-port spine_2 eth3
+      ovs-vsctl add-port spine_2 eth4
+      ovs-vsctl add-port spine_2 eth5
+      ovs-vsctl add-port spine_2 eth6
+      ovs-vsctl add-port spine_2 eth7
+      ip addr add 20.0.0.2/24 dev eth8
+      ip link set eth8 up
+      ovs-vsctl set-controller spine_2 tcp:20.0.0.100:6633
+      ovs-vsctl set bridge spine_2 stp_enable=true
+      sleep infinity
+      '
+  spine_3:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: spine_3
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_3_leaf_1:
+        interface_name: eth0
+      spine_3_leaf_2:
+        interface_name: eth1
+      spine_3_leaf_3:
+        interface_name: eth2
+      spine_3_leaf_4:
+        interface_name: eth3
+      spine_3_leaf_5:
+        interface_name: eth4
+      spine_3_leaf_6:
+        interface_name: eth5
+      spine_3_leaf_7:
+        interface_name: eth6
+      spine_3_leaf_8:
+        interface_name: eth7
+      switch_controller:
+        interface_name: eth8
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br spine_3
+      ovs-vsctl set-fail-mode spine_3 secure
+      ovs-vsctl set bridge spine_3 stp_enable=true
+      ovs-vsctl add-port spine_3 eth0
+      ovs-vsctl add-port spine_3 eth1
+      ovs-vsctl add-port spine_3 eth2
+      ovs-vsctl add-port spine_3 eth3
+      ovs-vsctl add-port spine_3 eth4
+      ovs-vsctl add-port spine_3 eth5
+      ovs-vsctl add-port spine_3 eth6
+      ovs-vsctl add-port spine_3 eth7
+      ip addr add 20.0.0.3/24 dev eth8
+      ip link set eth8 up
+      ovs-vsctl set-controller spine_3 tcp:20.0.0.100:6633
+      ovs-vsctl set bridge spine_3 stp_enable=true
+      sleep infinity
+      '
+  spine_4:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: spine_4
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      spine_4_leaf_1:
+        interface_name: eth0
+      spine_4_leaf_2:
+        interface_name: eth1
+      spine_4_leaf_3:
+        interface_name: eth2
+      spine_4_leaf_4:
+        interface_name: eth3
+      spine_4_leaf_5:
+        interface_name: eth4
+      spine_4_leaf_6:
+        interface_name: eth5
+      spine_4_leaf_7:
+        interface_name: eth6
+      spine_4_leaf_8:
+        interface_name: eth7
+      switch_controller:
+        interface_name: eth8
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br spine_4
+      ovs-vsctl set-fail-mode spine_4 secure
+      ovs-vsctl set bridge spine_4 stp_enable=true
+      ovs-vsctl add-port spine_4 eth0
+      ovs-vsctl add-port spine_4 eth1
+      ovs-vsctl add-port spine_4 eth2
+      ovs-vsctl add-port spine_4 eth3
+      ovs-vsctl add-port spine_4 eth4
+      ovs-vsctl add-port spine_4 eth5
+      ovs-vsctl add-port spine_4 eth6
+      ovs-vsctl add-port spine_4 eth7
+      ip addr add 20.0.0.4/24 dev eth8
+      ip link set eth8 up
+      ovs-vsctl set-controller spine_4 tcp:20.0.0.100:6633
+      ovs-vsctl set bridge spine_4 stp_enable=true
+      sleep infinity
+      '
+  leaf_1:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: leaf_1
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_1_1_leaf_1:
+        interface_name: eth0
+      host_1_2_leaf_1:
+        interface_name: eth1
+      host_1_3_leaf_1:
+        interface_name: eth2
+      host_1_4_leaf_1:
+        interface_name: eth3
+      host_1_5_leaf_1:
+        interface_name: eth4
+      host_1_6_leaf_1:
+        interface_name: eth5
+      host_1_7_leaf_1:
+        interface_name: eth6
+      host_1_8_leaf_1:
+        interface_name: eth7
+      spine_1_leaf_1:
+        interface_name: eth8
+      spine_2_leaf_1:
+        interface_name: eth9
+      spine_3_leaf_1:
+        interface_name: eth10
+      spine_4_leaf_1:
+        interface_name: eth11
+      switch_controller:
+        interface_name: eth12
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br leaf_1
+      ovs-vsctl set-fail-mode leaf_1 secure
+      ovs-vsctl set bridge leaf_1 stp_enable=true
+      ovs-vsctl add-port leaf_1 eth0
+      ip link set eth0 up
+      ovs-vsctl add-port leaf_1 eth1
+      ip link set eth1 up
+      ovs-vsctl add-port leaf_1 eth2
+      ip link set eth2 up
+      ovs-vsctl add-port leaf_1 eth3
+      ip link set eth3 up
+      ovs-vsctl add-port leaf_1 eth4
+      ip link set eth4 up
+      ovs-vsctl add-port leaf_1 eth5
+      ip link set eth5 up
+      ovs-vsctl add-port leaf_1 eth6
+      ip link set eth6 up
+      ovs-vsctl add-port leaf_1 eth7
+      ip link set eth7 up
+      ovs-vsctl add-port leaf_1 eth8
+      ovs-vsctl add-port leaf_1 eth9
+      ovs-vsctl add-port leaf_1 eth10
+      ovs-vsctl add-port leaf_1 eth11
+      ip addr add 20.0.0.5/24 dev eth12
+      ip link set eth12 up
+      ovs-vsctl set-controller leaf_1 tcp:20.0.0.100:6633
+      ovs-vsctl set bridge leaf_1 stp_enable=true
+      sleep infinity
+      '
+  leaf_2:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: leaf_2
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_2_1_leaf_2:
+        interface_name: eth0
+      host_2_2_leaf_2:
+        interface_name: eth1
+      host_2_3_leaf_2:
+        interface_name: eth2
+      host_2_4_leaf_2:
+        interface_name: eth3
+      host_2_5_leaf_2:
+        interface_name: eth4
+      host_2_6_leaf_2:
+        interface_name: eth5
+      host_2_7_leaf_2:
+        interface_name: eth6
+      host_2_8_leaf_2:
+        interface_name: eth7
+      spine_1_leaf_2:
+        interface_name: eth8
+      spine_2_leaf_2:
+        interface_name: eth9
+      spine_3_leaf_2:
+        interface_name: eth10
+      spine_4_leaf_2:
+        interface_name: eth11
+      switch_controller:
+        interface_name: eth12
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br leaf_2
+      ovs-vsctl set-fail-mode leaf_2 secure
+      ovs-vsctl set bridge leaf_2 stp_enable=true
+      ovs-vsctl add-port leaf_2 eth0
+      ip link set eth0 up
+      ovs-vsctl add-port leaf_2 eth1
+      ip link set eth1 up
+      ovs-vsctl add-port leaf_2 eth2
+      ip link set eth2 up
+      ovs-vsctl add-port leaf_2 eth3
+      ip link set eth3 up
+      ovs-vsctl add-port leaf_2 eth4
+      ip link set eth4 up
+      ovs-vsctl add-port leaf_2 eth5
+      ip link set eth5 up
+      ovs-vsctl add-port leaf_2 eth6
+      ip link set eth6 up
+      ovs-vsctl add-port leaf_2 eth7
+      ip link set eth7 up
+      ovs-vsctl add-port leaf_2 eth8
+      ovs-vsctl add-port leaf_2 eth9
+      ovs-vsctl add-port leaf_2 eth10
+      ovs-vsctl add-port leaf_2 eth11
+      ip addr add 20.0.0.6/24 dev eth12
+      ip link set eth12 up
+      ovs-vsctl set-controller leaf_2 tcp:20.0.0.100:6633
+      ovs-vsctl set bridge leaf_2 stp_enable=true
+      sleep infinity
+      '
+  leaf_3:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: leaf_3
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_3_1_leaf_3:
+        interface_name: eth0
+      host_3_2_leaf_3:
+        interface_name: eth1
+      host_3_3_leaf_3:
+        interface_name: eth2
+      host_3_4_leaf_3:
+        interface_name: eth3
+      host_3_5_leaf_3:
+        interface_name: eth4
+      host_3_6_leaf_3:
+        interface_name: eth5
+      host_3_7_leaf_3:
+        interface_name: eth6
+      host_3_8_leaf_3:
+        interface_name: eth7
+      spine_1_leaf_3:
+        interface_name: eth8
+      spine_2_leaf_3:
+        interface_name: eth9
+      spine_3_leaf_3:
+        interface_name: eth10
+      spine_4_leaf_3:
+        interface_name: eth11
+      switch_controller:
+        interface_name: eth12
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br leaf_3
+      ovs-vsctl set-fail-mode leaf_3 secure
+      ovs-vsctl set bridge leaf_3 stp_enable=true
+      ovs-vsctl add-port leaf_3 eth0
+      ip link set eth0 up
+      ovs-vsctl add-port leaf_3 eth1
+      ip link set eth1 up
+      ovs-vsctl add-port leaf_3 eth2
+      ip link set eth2 up
+      ovs-vsctl add-port leaf_3 eth3
+      ip link set eth3 up
+      ovs-vsctl add-port leaf_3 eth4
+      ip link set eth4 up
+      ovs-vsctl add-port leaf_3 eth5
+      ip link set eth5 up
+      ovs-vsctl add-port leaf_3 eth6
+      ip link set eth6 up
+      ovs-vsctl add-port leaf_3 eth7
+      ip link set eth7 up
+      ovs-vsctl add-port leaf_3 eth8
+      ovs-vsctl add-port leaf_3 eth9
+      ovs-vsctl add-port leaf_3 eth10
+      ovs-vsctl add-port leaf_3 eth11
+      ip addr add 20.0.0.7/24 dev eth12
+      ip link set eth12 up
+      ovs-vsctl set-controller leaf_3 tcp:20.0.0.100:6633
+      ovs-vsctl set bridge leaf_3 stp_enable=true
+      sleep infinity
+      '
+  leaf_4:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: leaf_4
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_4_1_leaf_4:
+        interface_name: eth0
+      host_4_2_leaf_4:
+        interface_name: eth1
+      host_4_3_leaf_4:
+        interface_name: eth2
+      host_4_4_leaf_4:
+        interface_name: eth3
+      host_4_5_leaf_4:
+        interface_name: eth4
+      host_4_6_leaf_4:
+        interface_name: eth5
+      host_4_7_leaf_4:
+        interface_name: eth6
+      host_4_8_leaf_4:
+        interface_name: eth7
+      spine_1_leaf_4:
+        interface_name: eth8
+      spine_2_leaf_4:
+        interface_name: eth9
+      spine_3_leaf_4:
+        interface_name: eth10
+      spine_4_leaf_4:
+        interface_name: eth11
+      switch_controller:
+        interface_name: eth12
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br leaf_4
+      ovs-vsctl set-fail-mode leaf_4 secure
+      ovs-vsctl set bridge leaf_4 stp_enable=true
+      ovs-vsctl add-port leaf_4 eth0
+      ip link set eth0 up
+      ovs-vsctl add-port leaf_4 eth1
+      ip link set eth1 up
+      ovs-vsctl add-port leaf_4 eth2
+      ip link set eth2 up
+      ovs-vsctl add-port leaf_4 eth3
+      ip link set eth3 up
+      ovs-vsctl add-port leaf_4 eth4
+      ip link set eth4 up
+      ovs-vsctl add-port leaf_4 eth5
+      ip link set eth5 up
+      ovs-vsctl add-port leaf_4 eth6
+      ip link set eth6 up
+      ovs-vsctl add-port leaf_4 eth7
+      ip link set eth7 up
+      ovs-vsctl add-port leaf_4 eth8
+      ovs-vsctl add-port leaf_4 eth9
+      ovs-vsctl add-port leaf_4 eth10
+      ovs-vsctl add-port leaf_4 eth11
+      ip addr add 20.0.0.8/24 dev eth12
+      ip link set eth12 up
+      ovs-vsctl set-controller leaf_4 tcp:20.0.0.100:6633
+      ovs-vsctl set bridge leaf_4 stp_enable=true
+      sleep infinity
+      '
+  leaf_5:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: leaf_5
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_5_1_leaf_5:
+        interface_name: eth0
+      host_5_2_leaf_5:
+        interface_name: eth1
+      host_5_3_leaf_5:
+        interface_name: eth2
+      host_5_4_leaf_5:
+        interface_name: eth3
+      host_5_5_leaf_5:
+        interface_name: eth4
+      host_5_6_leaf_5:
+        interface_name: eth5
+      host_5_7_leaf_5:
+        interface_name: eth6
+      host_5_8_leaf_5:
+        interface_name: eth7
+      spine_1_leaf_5:
+        interface_name: eth8
+      spine_2_leaf_5:
+        interface_name: eth9
+      spine_3_leaf_5:
+        interface_name: eth10
+      spine_4_leaf_5:
+        interface_name: eth11
+      switch_controller:
+        interface_name: eth12
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br leaf_5
+      ovs-vsctl set-fail-mode leaf_5 secure
+      ovs-vsctl set bridge leaf_5 stp_enable=true
+      ovs-vsctl add-port leaf_5 eth0
+      ip link set eth0 up
+      ovs-vsctl add-port leaf_5 eth1
+      ip link set eth1 up
+      ovs-vsctl add-port leaf_5 eth2
+      ip link set eth2 up
+      ovs-vsctl add-port leaf_5 eth3
+      ip link set eth3 up
+      ovs-vsctl add-port leaf_5 eth4
+      ip link set eth4 up
+      ovs-vsctl add-port leaf_5 eth5
+      ip link set eth5 up
+      ovs-vsctl add-port leaf_5 eth6
+      ip link set eth6 up
+      ovs-vsctl add-port leaf_5 eth7
+      ip link set eth7 up
+      ovs-vsctl add-port leaf_5 eth8
+      ovs-vsctl add-port leaf_5 eth9
+      ovs-vsctl add-port leaf_5 eth10
+      ovs-vsctl add-port leaf_5 eth11
+      ip addr add 20.0.0.9/24 dev eth12
+      ip link set eth12 up
+      ovs-vsctl set-controller leaf_5 tcp:20.0.0.100:6633
+      ovs-vsctl set bridge leaf_5 stp_enable=true
+      sleep infinity
+      '
+  leaf_6:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: leaf_6
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_6_1_leaf_6:
+        interface_name: eth0
+      host_6_2_leaf_6:
+        interface_name: eth1
+      host_6_3_leaf_6:
+        interface_name: eth2
+      host_6_4_leaf_6:
+        interface_name: eth3
+      host_6_5_leaf_6:
+        interface_name: eth4
+      host_6_6_leaf_6:
+        interface_name: eth5
+      host_6_7_leaf_6:
+        interface_name: eth6
+      host_6_8_leaf_6:
+        interface_name: eth7
+      spine_1_leaf_6:
+        interface_name: eth8
+      spine_2_leaf_6:
+        interface_name: eth9
+      spine_3_leaf_6:
+        interface_name: eth10
+      spine_4_leaf_6:
+        interface_name: eth11
+      switch_controller:
+        interface_name: eth12
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br leaf_6
+      ovs-vsctl set-fail-mode leaf_6 secure
+      ovs-vsctl set bridge leaf_6 stp_enable=true
+      ovs-vsctl add-port leaf_6 eth0
+      ip link set eth0 up
+      ovs-vsctl add-port leaf_6 eth1
+      ip link set eth1 up
+      ovs-vsctl add-port leaf_6 eth2
+      ip link set eth2 up
+      ovs-vsctl add-port leaf_6 eth3
+      ip link set eth3 up
+      ovs-vsctl add-port leaf_6 eth4
+      ip link set eth4 up
+      ovs-vsctl add-port leaf_6 eth5
+      ip link set eth5 up
+      ovs-vsctl add-port leaf_6 eth6
+      ip link set eth6 up
+      ovs-vsctl add-port leaf_6 eth7
+      ip link set eth7 up
+      ovs-vsctl add-port leaf_6 eth8
+      ovs-vsctl add-port leaf_6 eth9
+      ovs-vsctl add-port leaf_6 eth10
+      ovs-vsctl add-port leaf_6 eth11
+      ip addr add 20.0.0.10/24 dev eth12
+      ip link set eth12 up
+      ovs-vsctl set-controller leaf_6 tcp:20.0.0.100:6633
+      ovs-vsctl set bridge leaf_6 stp_enable=true
+      sleep infinity
+      '
+  leaf_7:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: leaf_7
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_7_1_leaf_7:
+        interface_name: eth0
+      host_7_2_leaf_7:
+        interface_name: eth1
+      host_7_3_leaf_7:
+        interface_name: eth2
+      host_7_4_leaf_7:
+        interface_name: eth3
+      host_7_5_leaf_7:
+        interface_name: eth4
+      host_7_6_leaf_7:
+        interface_name: eth5
+      host_7_7_leaf_7:
+        interface_name: eth6
+      host_7_8_leaf_7:
+        interface_name: eth7
+      spine_1_leaf_7:
+        interface_name: eth8
+      spine_2_leaf_7:
+        interface_name: eth9
+      spine_3_leaf_7:
+        interface_name: eth10
+      spine_4_leaf_7:
+        interface_name: eth11
+      switch_controller:
+        interface_name: eth12
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br leaf_7
+      ovs-vsctl set-fail-mode leaf_7 secure
+      ovs-vsctl set bridge leaf_7 stp_enable=true
+      ovs-vsctl add-port leaf_7 eth0
+      ip link set eth0 up
+      ovs-vsctl add-port leaf_7 eth1
+      ip link set eth1 up
+      ovs-vsctl add-port leaf_7 eth2
+      ip link set eth2 up
+      ovs-vsctl add-port leaf_7 eth3
+      ip link set eth3 up
+      ovs-vsctl add-port leaf_7 eth4
+      ip link set eth4 up
+      ovs-vsctl add-port leaf_7 eth5
+      ip link set eth5 up
+      ovs-vsctl add-port leaf_7 eth6
+      ip link set eth6 up
+      ovs-vsctl add-port leaf_7 eth7
+      ip link set eth7 up
+      ovs-vsctl add-port leaf_7 eth8
+      ovs-vsctl add-port leaf_7 eth9
+      ovs-vsctl add-port leaf_7 eth10
+      ovs-vsctl add-port leaf_7 eth11
+      ip addr add 20.0.0.11/24 dev eth12
+      ip link set eth12 up
+      ovs-vsctl set-controller leaf_7 tcp:20.0.0.100:6633
+      ovs-vsctl set bridge leaf_7 stp_enable=true
+      sleep infinity
+      '
+  leaf_8:
+    image: kathara/sdn
+    x-local: true
+    init: true
+    hostname: leaf_8
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_8_1_leaf_8:
+        interface_name: eth0
+      host_8_2_leaf_8:
+        interface_name: eth1
+      host_8_3_leaf_8:
+        interface_name: eth2
+      host_8_4_leaf_8:
+        interface_name: eth3
+      host_8_5_leaf_8:
+        interface_name: eth4
+      host_8_6_leaf_8:
+        interface_name: eth5
+      host_8_7_leaf_8:
+        interface_name: eth6
+      host_8_8_leaf_8:
+        interface_name: eth7
+      spine_1_leaf_8:
+        interface_name: eth8
+      spine_2_leaf_8:
+        interface_name: eth9
+      spine_3_leaf_8:
+        interface_name: eth10
+      spine_4_leaf_8:
+        interface_name: eth11
+      switch_controller:
+        interface_name: eth12
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f openvswitch-switch
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      /usr/share/openvswitch/scripts/ovs-ctl --system-id=random start
+      ovs-vsctl add-br leaf_8
+      ovs-vsctl set-fail-mode leaf_8 secure
+      ovs-vsctl set bridge leaf_8 stp_enable=true
+      ovs-vsctl add-port leaf_8 eth0
+      ip link set eth0 up
+      ovs-vsctl add-port leaf_8 eth1
+      ip link set eth1 up
+      ovs-vsctl add-port leaf_8 eth2
+      ip link set eth2 up
+      ovs-vsctl add-port leaf_8 eth3
+      ip link set eth3 up
+      ovs-vsctl add-port leaf_8 eth4
+      ip link set eth4 up
+      ovs-vsctl add-port leaf_8 eth5
+      ip link set eth5 up
+      ovs-vsctl add-port leaf_8 eth6
+      ip link set eth6 up
+      ovs-vsctl add-port leaf_8 eth7
+      ip link set eth7 up
+      ovs-vsctl add-port leaf_8 eth8
+      ovs-vsctl add-port leaf_8 eth9
+      ovs-vsctl add-port leaf_8 eth10
+      ovs-vsctl add-port leaf_8 eth11
+      ip addr add 20.0.0.12/24 dev eth12
+      ip link set eth12 up
+      ovs-vsctl set-controller leaf_8 tcp:20.0.0.100:6633
+      ovs-vsctl set bridge leaf_8 stp_enable=true
+      sleep infinity
+      '
+  host_1_1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_1_1
+    cap_add: &id002
+    - NET_ADMIN
+    privileged: true
+    networks:
+      host_1_1_leaf_1:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.1/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_1_2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_1_2
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_1_2_leaf_1:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.2/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_1_3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_1_3
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_1_3_leaf_1:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.3/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_1_4:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_1_4
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_1_4_leaf_1:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.4/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_1_5:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_1_5
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_1_5_leaf_1:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.5/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_1_6:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_1_6
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_1_6_leaf_1:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.6/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_1_7:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_1_7
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_1_7_leaf_1:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.7/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_1_8:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_1_8
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_1_8_leaf_1:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.8/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_2_1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_2_1
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_2_1_leaf_2:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.9/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_2_2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_2_2
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_2_2_leaf_2:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.10/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_2_3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_2_3
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_2_3_leaf_2:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.11/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_2_4:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_2_4
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_2_4_leaf_2:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.12/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_2_5:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_2_5
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_2_5_leaf_2:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.13/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_2_6:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_2_6
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_2_6_leaf_2:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.14/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_2_7:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_2_7
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_2_7_leaf_2:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.15/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_2_8:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_2_8
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_2_8_leaf_2:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.16/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_3_1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_3_1
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_3_1_leaf_3:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.17/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_3_2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_3_2
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_3_2_leaf_3:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.18/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_3_3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_3_3
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_3_3_leaf_3:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.19/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_3_4:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_3_4
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_3_4_leaf_3:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.20/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_3_5:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_3_5
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_3_5_leaf_3:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.21/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_3_6:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_3_6
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_3_6_leaf_3:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.22/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_3_7:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_3_7
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_3_7_leaf_3:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.23/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_3_8:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_3_8
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_3_8_leaf_3:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.24/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_4_1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_4_1
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_4_1_leaf_4:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.25/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_4_2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_4_2
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_4_2_leaf_4:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.26/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_4_3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_4_3
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_4_3_leaf_4:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.27/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_4_4:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_4_4
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_4_4_leaf_4:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.28/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_4_5:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_4_5
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_4_5_leaf_4:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.29/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_4_6:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_4_6
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_4_6_leaf_4:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.30/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_4_7:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_4_7
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_4_7_leaf_4:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.31/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_4_8:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_4_8
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_4_8_leaf_4:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.32/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_5_1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_5_1
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_5_1_leaf_5:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.33/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_5_2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_5_2
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_5_2_leaf_5:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.34/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_5_3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_5_3
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_5_3_leaf_5:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.35/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_5_4:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_5_4
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_5_4_leaf_5:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.36/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_5_5:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_5_5
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_5_5_leaf_5:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.37/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_5_6:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_5_6
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_5_6_leaf_5:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.38/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_5_7:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_5_7
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_5_7_leaf_5:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.39/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_5_8:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_5_8
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_5_8_leaf_5:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.40/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_6_1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_6_1
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_6_1_leaf_6:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.41/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_6_2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_6_2
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_6_2_leaf_6:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.42/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_6_3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_6_3
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_6_3_leaf_6:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.43/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_6_4:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_6_4
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_6_4_leaf_6:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.44/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_6_5:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_6_5
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_6_5_leaf_6:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.45/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_6_6:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_6_6
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_6_6_leaf_6:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.46/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_6_7:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_6_7
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_6_7_leaf_6:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.47/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_6_8:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_6_8
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_6_8_leaf_6:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.48/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_7_1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_7_1
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_7_1_leaf_7:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.49/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_7_2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_7_2
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_7_2_leaf_7:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.50/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_7_3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_7_3
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_7_3_leaf_7:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.51/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_7_4:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_7_4
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_7_4_leaf_7:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.52/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_7_5:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_7_5
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_7_5_leaf_7:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.53/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_7_6:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_7_6
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_7_6_leaf_7:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.54/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_7_7:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_7_7
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_7_7_leaf_7:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.55/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_7_8:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_7_8
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_7_8_leaf_7:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.56/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_8_1:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_8_1
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_8_1_leaf_8:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.57/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_8_2:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_8_2
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_8_2_leaf_8:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.58/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_8_3:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_8_3
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_8_3_leaf_8:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.59/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_8_4:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_8_4
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_8_4_leaf_8:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.60/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_8_5:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_8_5
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_8_5_leaf_8:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.61/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_8_6:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_8_6
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_8_6_leaf_8:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.62/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_8_7:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_8_7
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_8_7_leaf_8:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.63/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  host_8_8:
+    image: kathara/nika-base
+    x-local: true
+    init: true
+    hostname: host_8_8
+    cap_add: *id002
+    privileged: true
+    networks:
+      host_8_8_leaf_8:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 10.0.0.64/24 dev eth0
+      ip link set eth0 up
+      sleep infinity
+      '
+  controller:
+    image: kathara/nika-ryu
+    x-local: true
+    init: true
+    hostname: controller
+    cap_add: *id001
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      switch_controller:
+        interface_name: eth0
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f ryu-manager
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip addr add 20.0.0.100/24 dev eth0
+      ip link set eth0 up
+      ryu-manager ryu.app.simple_switch &
+      sleep infinity
+      '
+networks:
+  host_1_1_leaf_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.0/28
+  host_1_2_leaf_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.16/28
+  host_1_3_leaf_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.32/28
+  host_1_4_leaf_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.48/28
+  host_1_5_leaf_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.64/28
+  host_1_6_leaf_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.80/28
+  host_1_7_leaf_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.96/28
+  host_1_8_leaf_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.112/28
+  host_2_1_leaf_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.128/28
+  host_2_2_leaf_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.144/28
+  host_2_3_leaf_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.160/28
+  host_2_4_leaf_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.176/28
+  host_2_5_leaf_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.192/28
+  host_2_6_leaf_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.208/28
+  host_2_7_leaf_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.224/28
+  host_2_8_leaf_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.240/28
+  host_3_1_leaf_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.0/28
+  host_3_2_leaf_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.16/28
+  host_3_3_leaf_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.32/28
+  host_3_4_leaf_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.48/28
+  host_3_5_leaf_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.64/28
+  host_3_6_leaf_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.80/28
+  host_3_7_leaf_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.96/28
+  host_3_8_leaf_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.112/28
+  host_4_1_leaf_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.128/28
+  host_4_2_leaf_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.144/28
+  host_4_3_leaf_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.160/28
+  host_4_4_leaf_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.176/28
+  host_4_5_leaf_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.192/28
+  host_4_6_leaf_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.208/28
+  host_4_7_leaf_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.224/28
+  host_4_8_leaf_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.1.240/28
+  host_5_1_leaf_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.0/28
+  host_5_2_leaf_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.16/28
+  host_5_3_leaf_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.32/28
+  host_5_4_leaf_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.48/28
+  host_5_5_leaf_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.64/28
+  host_5_6_leaf_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.80/28
+  host_5_7_leaf_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.96/28
+  host_5_8_leaf_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.112/28
+  host_6_1_leaf_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.128/28
+  host_6_2_leaf_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.144/28
+  host_6_3_leaf_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.160/28
+  host_6_4_leaf_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.176/28
+  host_6_5_leaf_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.192/28
+  host_6_6_leaf_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.208/28
+  host_6_7_leaf_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.224/28
+  host_6_8_leaf_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.2.240/28
+  host_7_1_leaf_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.0/28
+  host_7_2_leaf_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.16/28
+  host_7_3_leaf_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.32/28
+  host_7_4_leaf_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.48/28
+  host_7_5_leaf_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.64/28
+  host_7_6_leaf_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.80/28
+  host_7_7_leaf_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.96/28
+  host_7_8_leaf_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.112/28
+  host_8_1_leaf_8:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.128/28
+  host_8_2_leaf_8:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.144/28
+  host_8_3_leaf_8:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.160/28
+  host_8_4_leaf_8:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.176/28
+  host_8_5_leaf_8:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.192/28
+  host_8_6_leaf_8:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.208/28
+  host_8_7_leaf_8:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.224/28
+  host_8_8_leaf_8:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.3.240/28
+  spine_1_leaf_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.0/28
+  spine_1_leaf_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.16/28
+  spine_1_leaf_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.32/28
+  spine_1_leaf_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.48/28
+  spine_1_leaf_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.64/28
+  spine_1_leaf_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.80/28
+  spine_1_leaf_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.96/28
+  spine_1_leaf_8:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.112/28
+  spine_2_leaf_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.128/28
+  spine_2_leaf_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.144/28
+  spine_2_leaf_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.160/28
+  spine_2_leaf_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.176/28
+  spine_2_leaf_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.192/28
+  spine_2_leaf_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.208/28
+  spine_2_leaf_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.224/28
+  spine_2_leaf_8:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.4.240/28
+  spine_3_leaf_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.0/28
+  spine_3_leaf_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.16/28
+  spine_3_leaf_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.32/28
+  spine_3_leaf_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.48/28
+  spine_3_leaf_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.64/28
+  spine_3_leaf_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.80/28
+  spine_3_leaf_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.96/28
+  spine_3_leaf_8:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.112/28
+  spine_4_leaf_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.128/28
+  spine_4_leaf_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.144/28
+  spine_4_leaf_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.160/28
+  spine_4_leaf_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.176/28
+  spine_4_leaf_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.192/28
+  spine_4_leaf_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.208/28
+  spine_4_leaf_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.224/28
+  spine_4_leaf_8:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.5.240/28
+  switch_controller:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.6.0/28

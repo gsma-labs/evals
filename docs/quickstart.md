@@ -78,6 +78,10 @@ uv run inspect eval src/evals/oranbench/oranbench.py --model openai/gpt-4o --lim
 
 # srsRAN codebase understanding
 uv run inspect eval src/evals/srsranbench/srsranbench.py --model openai/gpt-4o --limit 10
+
+# NIKA (Experimental): Agentic troubleshooting in network labs
+uv sync --extra nika
+uv run inspect eval src/evals/nika/nika.py --model openai/gpt-4o --limit 1 -T task_family=network_node_error
 ```
 
 ## Try Different Models

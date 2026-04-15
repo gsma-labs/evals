@@ -1,0 +1,460 @@
+# Auto-generated from Kathara lab.conf
+# Machines: host_1, host_2, host_3, switch_1, switch_2, switch_3, switch_4, switch_5, switch_6, switch_7
+# Networks: host_1_to_switch_1, switch_1_to_switch_2, switch_1_to_switch_3, switch_2_to_switch_4, switch_3_to_switch_4, switch_4_to_switch_5, switch_4_to_switch_6, switch_5_to_switch_7, switch_6_to_switch_7, switch_7_to_host_2, switch_7_to_host_3
+# Per-network x-interface-name = eth0, eth1, ... (from lab.conf machine[0], machine[1], ...)
+
+services:
+  default:
+    image: kathara/base
+    x-local: true
+    init: true
+    hostname: default
+    cap_add: &id002
+    - NET_ADMIN
+    - SYS_ADMIN
+    command: sleep infinity
+  host_1:
+    image: kathara/base
+    x-local: true
+    init: true
+    hostname: host_1
+    cap_add: &id001
+    - NET_ADMIN
+    privileged: true
+    networks:
+      host_1_to_switch_1:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip link set eth0 address 00:00:0a:01:01:02
+      ip addr add 10.1.1.2/24 dev eth0
+      ip r add 10.7.2.0/24 dev eth0
+      ip r add 10.7.3.0/24 dev eth0
+      arp -s 10.7.2.2 00:00:0a:07:02:02
+      arp -s 10.7.3.2 00:00:0a:07:03:02
+      sleep infinity
+      '
+  host_2:
+    image: kathara/base
+    x-local: true
+    init: true
+    hostname: host_2
+    cap_add: *id001
+    privileged: true
+    networks:
+      switch_7_to_host_2:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip link set eth0 address 00:00:0a:07:02:02
+      ip addr add 10.7.2.2/24 dev eth0
+      ip r add 10.1.1.0/24 dev eth0
+      ip r add 10.7.3.0/24 dev eth0
+      arp -s 10.1.1.2 00:00:0a:01:01:02
+      arp -s 10.7.3.2 00:00:0a:07:03:02
+      sleep infinity
+      '
+  host_3:
+    image: kathara/base
+    x-local: true
+    init: true
+    hostname: host_3
+    cap_add: *id001
+    privileged: true
+    networks:
+      switch_7_to_host_3:
+        interface_name: eth0
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      ip link set eth0 address 00:00:0a:07:03:02
+      ip addr add 10.7.3.2/24 dev eth0
+      ip r add 10.7.2.0/24 dev eth0
+      ip r add 10.1.1.0/24 dev eth0
+      arp -s 10.7.2.2 00:00:0a:07:02:02
+      arp -s 10.1.1.2 00:00:0a:01:01:02
+      sleep infinity
+      '
+  switch_1:
+    image: kathara/p4
+    x-local: true
+    init: true
+    hostname: switch_1
+    cap_add: *id002
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      host_1_to_switch_1:
+        interface_name: eth0
+      switch_1_to_switch_2:
+        interface_name: eth1
+      switch_1_to_switch_3:
+        interface_name: eth2
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f simple_switch_grpc
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/switch_1:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip link set eth1 address 00:00:00:01:02:00
+      ip link set eth2 address 00:00:00:01:03:00
+      p4c mpls.p4 -o /
+      simple_switch -i 1@eth0 -i 2@eth1 -i 3@eth2 --log-console mpls.json >> sw.log &
+      while [[ $(pgrep simple_switch) -eq 0 ]]; do sleep 1; done
+      until simple_switch_CLI <<< "help"; do sleep 1; done
+      simple_switch_CLI <<< $(cat commands.txt)
+      sleep infinity
+      '
+  switch_2:
+    image: kathara/p4
+    x-local: true
+    init: true
+    hostname: switch_2
+    cap_add: *id002
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      switch_1_to_switch_2:
+        interface_name: eth0
+      switch_2_to_switch_4:
+        interface_name: eth1
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f simple_switch_grpc
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/switch_2:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip link set eth0 address 00:00:00:02:01:00
+      ip link set eth1 address 00:00:00:02:04:00
+      p4c mpls.p4 -o /
+      simple_switch -i 1@eth0 -i 2@eth1 --log-console mpls.json >> sw.log &
+      while [[ $(pgrep simple_switch) -eq 0 ]]; do sleep 1; done
+      until simple_switch_CLI <<< "help"; do sleep 1; done
+      simple_switch_CLI <<< $(cat commands.txt)
+      sleep infinity
+      '
+  switch_3:
+    image: kathara/p4
+    x-local: true
+    init: true
+    hostname: switch_3
+    cap_add: *id002
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      switch_1_to_switch_3:
+        interface_name: eth0
+      switch_3_to_switch_4:
+        interface_name: eth1
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f simple_switch_grpc
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/switch_3:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip link set eth0 address 00:00:00:03:01:00
+      ip link set eth1 address 00:00:00:03:04:00
+      p4c mpls.p4 -o /
+      simple_switch -i 1@eth0 -i 2@eth1 --log-console mpls.json >> sw.log &
+      while [[ $(pgrep simple_switch) -eq 0 ]]; do sleep 1; done
+      until simple_switch_CLI <<< "help"; do sleep 1; done
+      simple_switch_CLI <<< $(cat commands.txt)
+      sleep infinity
+      '
+  switch_4:
+    image: kathara/p4
+    x-local: true
+    init: true
+    hostname: switch_4
+    cap_add: *id002
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      switch_2_to_switch_4:
+        interface_name: eth0
+      switch_3_to_switch_4:
+        interface_name: eth1
+      switch_4_to_switch_5:
+        interface_name: eth2
+      switch_4_to_switch_6:
+        interface_name: eth3
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f simple_switch_grpc
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/switch_4:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip link set eth0 address 00:00:00:04:02:00
+      ip link set eth1 address 00:00:00:04:03:00
+      ip link set eth2 address 00:00:00:04:05:00
+      ip link set eth3 address 00:00:00:04:06:00
+      p4c mpls.p4 -o /
+      simple_switch -i 1@eth0 -i 2@eth1 -i 3@eth2 -i 4@eth3 --log-console mpls.json >> sw.log &
+      while [[ $(pgrep simple_switch) -eq 0 ]]; do sleep 1; done
+      until simple_switch_CLI <<< "help"; do sleep 1; done
+      simple_switch_CLI <<< $(cat commands.txt)
+      sleep infinity
+      '
+  switch_5:
+    image: kathara/p4
+    x-local: true
+    init: true
+    hostname: switch_5
+    cap_add: *id002
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      switch_4_to_switch_5:
+        interface_name: eth0
+      switch_5_to_switch_7:
+        interface_name: eth1
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f simple_switch_grpc
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/switch_5:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip link set eth0 address 00:00:00:05:04:00
+      ip link set eth1 address 00:00:00:05:07:00
+      p4c mpls.p4 -o /
+      simple_switch -i 1@eth0 -i 2@eth1 --log-console mpls.json >> sw.log &
+      while [[ $(pgrep simple_switch) -eq 0 ]]; do sleep 1; done
+      until simple_switch_CLI <<< "help"; do sleep 1; done
+      simple_switch_CLI <<< $(cat commands.txt)
+      sleep infinity
+      '
+  switch_6:
+    image: kathara/p4
+    x-local: true
+    init: true
+    hostname: switch_6
+    cap_add: *id002
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      switch_4_to_switch_6:
+        interface_name: eth0
+      switch_6_to_switch_7:
+        interface_name: eth1
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f simple_switch_grpc
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/switch_6:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip link set eth0 address 00:00:00:06:04:00
+      ip link set eth1 address 00:00:00:06:07:00
+      p4c mpls.p4 -o /
+      simple_switch -i 1@eth0 -i 2@eth1 --log-console mpls.json >> sw.log &
+      while [[ $(pgrep simple_switch) -eq 0 ]]; do sleep 1; done
+      until simple_switch_CLI <<< "help"; do sleep 1; done
+      simple_switch_CLI <<< $(cat commands.txt)
+      sleep infinity
+      '
+  switch_7:
+    image: kathara/p4
+    x-local: true
+    init: true
+    hostname: switch_7
+    cap_add: *id002
+    privileged: true
+    sysctls:
+      net.ipv4.ip_forward: '1'
+    networks:
+      switch_5_to_switch_7:
+        interface_name: eth0
+      switch_6_to_switch_7:
+        interface_name: eth1
+      switch_7_to_host_2:
+        interface_name: eth2
+      switch_7_to_host_3:
+        interface_name: eth3
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pgrep -f simple_switch_grpc
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    volumes:
+    - ./topology/switch_7:/tmp/config:ro
+    command: |-
+      bash -lc '
+      for d in $(ls /sys/class/net | grep -v lo); do ip addr flush dev "$$d"; done;
+      for d in $(ls /sys/class/net | grep -v lo); do ip route flush dev "$$d"; done;
+      cp -r /tmp/config/* /;
+      ip link set eth0 address 00:00:00:07:05:00
+      ip link set eth1 address 00:00:00:07:06:00
+      p4c mpls.p4 -o /
+      simple_switch -i 1@eth0 -i 2@eth1 -i 3@eth2 -i 4@eth3 --log-console mpls.json >> sw.log &
+      while [[ $(pgrep simple_switch) -eq 0 ]]; do sleep 1; done
+      until simple_switch_CLI <<< "help"; do sleep 1; done
+      simple_switch_CLI <<< $(cat commands.txt)
+      sleep infinity
+      '
+networks:
+  host_1_to_switch_1:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.0/28
+  switch_1_to_switch_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.16/28
+  switch_1_to_switch_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.32/28
+  switch_2_to_switch_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.48/28
+  switch_3_to_switch_4:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.64/28
+  switch_4_to_switch_5:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.80/28
+  switch_4_to_switch_6:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.96/28
+  switch_5_to_switch_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.112/28
+  switch_6_to_switch_7:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.128/28
+  switch_7_to_host_2:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.144/28
+  switch_7_to_host_3:
+    driver: bridge
+    internal: true
+    enable_ipv6: false
+    enable_ipv4: true
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.128.0.160/28
